@@ -3,7 +3,7 @@ from flask import Flask, render_template, Response, request, json, jsonify, sess
 from markupsafe import escape
 import json
 from sup_information import get_hostname, process_swap, sup_State, process_AllInfo,process_memory_usage, process_Info
-
+from flask_cors import CORS
 # ...
 import os
 
@@ -11,7 +11,7 @@ import os
 
 app = Flask(__name__)
 
-
+CORS(app)
 # get the cpu usage by the os module and assign it to the cpuUsage variable
 
 cpuUsage = os.popen("top -n1 | awk '/Cpu\(s\):/ {print $2}'").readline()
