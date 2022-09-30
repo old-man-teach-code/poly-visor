@@ -1,36 +1,29 @@
-import re
-from unittest import result
+
 from flask import Flask, render_template, Response, request, json, jsonify, session
-from markupsafe import escape
-import json
-from sup_information import get_hostname, process_PID, process_readLogFile_out, process_swap, sup_Identification, sup_State, process_AllInfo, process_memory_usage, process_Info
+from sup_information import get_current_cpu_usage, get_each_cpu_usage, get_hostname, get_memory_status, process_PID, process_readLogFile_out, process_swap, sup_Identification, sup_State, process_AllInfo, process_memory_usage, process_Info
 from flask_cors import CORS
-# ...
-import os
 
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/capitalize/<word>/')
-def capitalize(word):
-    return jsonify({'word': word.capitalize()})
 
-
+# get the state of the supervisor
 @app.route('/api/state')
 def returnState():
     return jsonify((sup_State()))
 
 
+# get all process info
 @app.route('/api/allProcessInfo')
 def returnAllProcessInfo():
     return jsonify((process_AllInfo()))
 
+
 # get process info by name
-
-
 @app.route('/api/processInfo/<name>')
 def returnProcessInfo(name):
     return jsonify((process_Info(name)))
+
 
 # get process_memory_usage
 @app.route('/api/processMemoryUsage/<pid>')
@@ -60,6 +53,7 @@ def returnHostname():
     result = result.replace("\n", "")
     return jsonify({"Host name": result})
 
+
 # get identifications
 @app.route('/api/identifications')
 def returnIdentifications():
@@ -73,4 +67,31 @@ def returnPid(name):
     result = process_PID(name)
     return jsonify({name: result})
 
+
+# get current cpu usage
+@app.route('/api/cpuUsage')
+def returnCpuUsage():
+    result = get_current_cpu_usage()
+    result = result.replace("%\n", "")
+    return jsonify({"cpuUsage": result})
+
+
+# get each core cpu usage
+@app.route('/api/cpuUsageCore')
+def returnCpuCoreUsage():
+    result = get_each_cpu_usage()
+    result = result.replace("\nst", "")
+    result = result.replace("\n", " ")
+    result = result.replace("us,", "")
+    result = result.replace(":", " ")
+    result = dict(zip(result.split()[::2], result.split()[1::2]))
+    return result
+
+
+# get memory status
+@app.route('/api/memoryStatus')
+def returnMemoryStatus():
+    result = get_memory_status()
+    result = result.replace("\n", "")
+    return jsonify({"Memory": result})
 
