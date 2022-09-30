@@ -62,14 +62,10 @@ def get_memory_status():
     stream = os.popen("""free -g -h -t | grep Mem | awk '{print ($3/$2) * 100"%"}'""")
     output = stream.read()
     return  output
-    
+
 #Get total memory spec GB
 def get_machine_spec():
     stream = os.popen("""cat /proc/cpuinfo | grep 'model name' | uniq && free -g -h -t | grep Mem | awk '{print "Total Memory: " $2}'""")
     output = stream.read()
     output+= "CPUs: "+str(os.cpu_count())
     return  output.replace("model name","CPU Model Name")
-
-
-
-print (get_machine_spec())
