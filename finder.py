@@ -50,9 +50,9 @@ def get_proc_config_path():
 
 #Get serverurl Supervisor
 def get_sup_serverurl():
-    parser_file = configparser.ConfigParser()
+    parser_file = configparser.RawConfigParser(dict_type=MultiOrderedDict, strict=False)   
     parser_file.read(get_sup_config_path())
-    sup_url= parser_file['supervisorctl']['serverurl']   #Conflict when two more line in .conf file, work well on .ini file
+    sup_url= parser_file.get("supervisorctl","serverurl") #Conflict when two more line in .conf file, work well on .ini file
     return str(sup_url)
 
 #Get path of process with pid when it running
@@ -68,5 +68,3 @@ def get_path_sup_logfile():
     config.read(supervisord_config_path)
     path = config.get("supervisord","logfile")
     return path
-
-
