@@ -1,10 +1,10 @@
-
-from flask import Flask, render_template, Response, request, json, jsonify, session
-
+from flask import Flask, jsonify
 from flask_cors import CORS
-
 from machinestatus import get_current_cpu_usage, get_each_cpu_usage, get_hostname, get_machine_spec, get_memory_status, process_AllInfo, process_memory_usage, sup_Indentification, sup_State
 from procstatus import process_Info, process_PID, process_swap
+
+
+
 
 app = Flask(__name__)
 CORS(app)
