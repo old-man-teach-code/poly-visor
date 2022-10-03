@@ -77,5 +77,3 @@ def get_data_sup_config_file(path_file):
     data = fil.read()
     fil.close()
     return data
-
-print(get_memory_status())
