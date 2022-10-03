@@ -1,7 +1,10 @@
 
 from flask import Flask, render_template, Response, request, json, jsonify, session
-from sup_information import get_current_cpu_usage, get_each_cpu_usage, get_hostname, get_memory_status, process_PID, process_readLogFile_out, process_swap, sup_Identification, sup_State, process_AllInfo, process_memory_usage, process_Info
+
 from flask_cors import CORS
+
+from machinestatus import get_current_cpu_usage, get_each_cpu_usage, get_hostname, get_machine_spec, get_memory_status, process_AllInfo, process_memory_usage, sup_Indentification, sup_State
+from procstatus import process_Info, process_PID, process_swap
 
 app = Flask(__name__)
 CORS(app)
@@ -57,7 +60,7 @@ def returnHostname():
 # get identifications
 @app.route('/api/identifications')
 def returnIdentifications():
-    result = sup_Identification()
+    result = sup_Indentification()
     return jsonify(result)
 
 
@@ -95,3 +98,11 @@ def returnMemoryStatus():
     result = result.replace("\n", "")
     return jsonify({"Memory": result})
 
+
+# get machine spec
+@app.route('/api/machineSpec')
+def returnMachineSpec():
+    result = get_machine_spec()
+    result = result.replace("\t", "")
+    result = (dict([line.split(': ') for line in result.splitlines()]))
+    return jsonify(result)
