@@ -27,3 +27,9 @@ def process_swap(pid_process):
     stream = os.popen("grep --color VmSwap /proc/"+ str(pid_process)+"/status")
     output = stream.read()
     return output
+
+#Get mem, cpu, core of process running on
+def process_memory_usage(pid_porcess):
+    stream = os.popen("ps -o pid,psr,%cpu,%mem,comm -p "+ str(pid_porcess))
+    output = stream.read()
+    return output

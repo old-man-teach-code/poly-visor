@@ -1,10 +1,6 @@
-from ctypes.wintypes import PLARGE_INTEGER
-from time import sleep, thread_time
 from xmlrpc.client import ServerProxy
 import os
-
-from urllib3 import Retry
-from finder import get_sup_serverurl, get_sup_config_path
+from finder import get_sup_serverurl
 
 #server = ServerProxy('http://localhost:10019/RPC2')
 
@@ -54,12 +50,6 @@ def get_each_cpu_usage():
     result=b.replace(" us,","")
     return  result
 
-#Get mem, cpu, core of process running on
-def process_memory_usage(pid_porcess):
-    stream = os.popen("ps -o pid,psr,%cpu,%mem,comm -p "+ str(pid_porcess))
-    output = stream.read()
-    return output
-
 #Get current CPU Usage
 def get_current_cpu_usage():
     stream = os.popen("""top -bn 1  | grep '^%Cpu' | tail -n 1 | awk '{print $2"%"}'""")
@@ -74,10 +64,11 @@ def get_memory_status():
 
 #Get total memory, CPU model, processor spec GB
 def get_machine_spec():
-    stream = os.popen("""cat /proc/cpuinfo | grep 'model name' | uniq && free -g -h -t | grep Mem | awk '{print "Total Memory: " $2}'""")
+    stream = os.popen(
+        """cat /proc/cpuinfo | grep 'model name' | uniq && free -g -h -t | grep Mem | awk '{print "TotalMemory: " $2}'""")
     output = stream.read()
-    output+= "CPUs: "+str(os.cpu_count())
-    return  output.replace("model name","CPU Model Name")
+    output += "CPUs: "+str(os.cpu_count())
+    return output.replace("model name", "CPUModelName")
 
 #Get data from config file of supervisord
 def get_data_sup_config_file(path_file):
@@ -85,5 +76,3 @@ def get_data_sup_config_file(path_file):
     data = fil.read()
     fil.close()
     return data
-
-

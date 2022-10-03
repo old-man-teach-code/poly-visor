@@ -1,6 +1,3 @@
-from ctypes.wintypes import PLARGE_INTEGER
-from distutils.command import config
-from importlib.resources import path
 from collections import OrderedDict
 import os
 import re
@@ -68,3 +65,5 @@ def get_path_sup_logfile():
     config.read(supervisord_config_path)
     path = config.get("supervisord","logfile")
     return path
+
+print(get_sup_serverurl())
