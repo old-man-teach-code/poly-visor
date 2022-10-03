@@ -1,3 +1,4 @@
+from time import process_time_ns
 from xmlrpc.client import ServerProxy
 import os
 from finder import get_sup_serverurl
@@ -5,7 +6,7 @@ from finder import get_sup_serverurl
 #server = ServerProxy('http://localhost:10019/RPC2')
 
 #Server can be auto set by read logfile
-server = ServerProxy(str(get_sup_serverurl())+"/RPC2")
+server = ServerProxy("http://localhost"+str(get_sup_serverurl())+"/RPC2")
 
 
 #Get Supervior State 
@@ -28,8 +29,8 @@ def sup_APIVer():
 def sup_Version():
     return server.supervisor.getSupervisorVersion()
 
-#Get Supervisor Indentification
-def sup_Indentification():
+#Get Supervisor Identification
+def sup_Identification():
     return server.supervisor.getIdentification()
 
 #Get Information of all process in machine

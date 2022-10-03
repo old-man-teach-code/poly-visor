@@ -3,7 +3,6 @@ import os
 import re
 import configparser
 
-
 #To get multiple value in config file
 class MultiOrderedDict(OrderedDict):
     def __setitem__(self, key, value):
@@ -15,30 +14,34 @@ class MultiOrderedDict(OrderedDict):
 #Get config file path of Supervisord when it running on machine
 def get_sup_config_path():
     output=""
-    stream = os.popen("""ps ux | grep -P '^(?=.*.conf)(?=.*supervisord)' | head -n -2""")
-    output = stream.read()
-    if("supervisord" not in output):
-        stream2 = os.popen("""ps ux | grep -P '^(?=.*.ini)(?=.*supervisord)' | head -n -2""")
-        output = stream2.read() 
-   
+    stream = os.popen("""ps ux | grep -P '^(?=.*.ini)(?=.*supervisord) | (?=.*.conf)(?=.*.supervisord)' | head -n -2""")
+    raw = stream.read()
+    if("supervisord" not in raw):
+         stream = os.popen("""sudo ps ux | grep -P '^(?=.*.ini)(?=.*supervisord) | (?=.*.conf)(?=.*.supervisord)'| head -n -2""")
+         output = stream.read()
+    else:       
+        output = raw
+    path=""
     s = re.findall(r'(\/.*?\.[\w:]+)', output)
     try:
         lis = s[1].split()
-    except: return "Supervisord is not running"
-    
-    path=""
-    for x in lis:
-        if(r".conf"in x or r".ini" in x):
-            path+=x
+        for x in lis:
+            if(r".conf"in x or r".ini" in x):
+                path+=x
+    except: 
+        lis2 = s[0].split()
+        for x in lis2:
+            if(r".conf"in x or r".ini" in x):
+                path+=x
+  
     if path=="" or not path:
         path="Can't find config path of Supervisord"
+     
     return path
-
-supervisord_config_path = get_sup_config_path()
 
 #Get include process config files path
 def get_proc_config_path():
-    config = configparser.RawConfigParser(dict_type=MultiOrderedDict, strict=False)    #Can't read more one line
+    config = configparser.RawConfigParser(dict_type=MultiOrderedDict, strict=False)   
     config.read(get_sup_config_path())
     #path = config['include']['files']   
     path = config.get("include","files")
@@ -49,7 +52,7 @@ def get_proc_config_path():
 def get_sup_serverurl():
     parser_file = configparser.RawConfigParser(dict_type=MultiOrderedDict, strict=False)   
     parser_file.read(get_sup_config_path())
-    sup_url= parser_file.get("supervisorctl","serverurl") #Conflict when two more line in .conf file, work well on .ini file
+    sup_url= parser_file.get("inet_http_server","port")
     return str(sup_url)
 
 #Get path of process with pid when it running
@@ -62,8 +65,6 @@ def get_path_proc(proc_PID):
 #Get path of logfile supervisord
 def get_path_sup_logfile():
     config = configparser.RawConfigParser(dict_type=MultiOrderedDict, strict=False)   
-    config.read(supervisord_config_path)
+    config.read(get_sup_config_path())
     path = config.get("supervisord","logfile")
     return path
-
-print(get_sup_serverurl())
