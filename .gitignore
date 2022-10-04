@@ -1,3 +1,14 @@
+<<<<<<< HEAD
+.DS_Store
+node_modules
+/build
+/.svelte-kit
+/package
+/venv
+.env
+.env.*
+!.env.example
+=======
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -145,6 +156,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+<<<<<<< HEAD
+*.pyc
+>>>>>>> origin/dev-long
+=======
 
 # pytype static type analyzer
 .pytype/
@@ -158,3 +173,4 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+>>>>>>> f7f9cc5a529d85f9802d8d526ea9d2f00e60cd72
