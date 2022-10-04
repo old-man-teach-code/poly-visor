@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
-from machinestatus import get_current_cpu_usage, get_each_cpu_usage, get_hostname, get_machine_spec, get_memory_status, process_AllInfo, process_memory_usage, sup_Indentification, sup_State
+from machinestatus import get_current_cpu_usage, get_each_cpu_usage, get_hostname, get_machine_spec, get_memory_status, process_AllInfo, sup_Identification, sup_State
 from procstatus import process_Info, process_PID, process_swap
 
 
@@ -29,12 +29,12 @@ def returnProcessInfo(name):
 
 
 # get process_memory_usage
-@app.route('/api/processMemoryUsage/<pid>')
-def returnProcessMemoryUsage(pid):
-    result = process_memory_usage(pid)
-    array_result = [line.split() for line in result.splitlines()]
-    array_result = list(zip(*array_result))
-    return jsonify(dict(array_result))
+# @app.route('/api/processMemoryUsage/<pid>')
+# def returnProcessMemoryUsage(pid):
+#     result = process_memory_usage(pid)
+#     array_result = [line.split() for line in result.splitlines()]
+#     array_result = list(zip(*array_result))
+#     return jsonify(dict(array_result))
 
 
 # get the swap memory used by the process
@@ -60,7 +60,7 @@ def returnHostname():
 # get identifications
 @app.route('/api/identifications')
 def returnIdentifications():
-    result = sup_Indentification()
+    result = sup_Identification()
     return jsonify(result)
 
 
@@ -105,4 +105,36 @@ def returnMachineSpec():
     result = get_machine_spec()
     result = result.replace("\t", "")
     result = (dict([line.split(': ') for line in result.splitlines()]))
+    return jsonify(result)
+
+
+# get all server info
+@app.route('/api/allMachineInfo')
+def returnBatchInfo():
+    sup_state = sup_State()
+    sup_identification = sup_Identification()
+    hostname = get_hostname()
+    hostname = hostname.replace("\n", "")
+    cpu_usage = get_current_cpu_usage()
+    cpu_usage = cpu_usage.replace("%\n", "")
+    memory_status = get_memory_status()
+    memory_status = memory_status.replace("\n", "")
+    machine_spec = get_machine_spec()
+    machine_spec = machine_spec.replace("\t", "")
+    machine_spec = (dict([line.split(': ') for line in machine_spec.splitlines()]))
+    cpuCore = get_each_cpu_usage()
+    cpuCore = cpuCore.replace("\nst", "")
+    cpuCore = cpuCore.replace("\n", " ")
+    cpuCore = cpuCore.replace("us,", "")
+    cpuCore = cpuCore.replace(":", " ")
+    cpuCore = dict(zip(cpuCore.split()[::2], cpuCore.split()[1::2]))
+    result = {
+        "supervisor_state": sup_state,
+        "supervisor_identification": sup_identification,
+        "hostname": hostname,
+        "cpu_usage": cpu_usage,
+        "memory_status": memory_status,
+        "machine_spec": machine_spec,
+        "cpu_core": cpuCore
+    }
     return jsonify(result)
