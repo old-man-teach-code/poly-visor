@@ -14,7 +14,7 @@ class MultiOrderedDict(OrderedDict):
 #Get config file path of Supervisord when it running on machine
 def get_sup_config_path():
     output=""
-    stream = os.popen("""ps ux | grep -P '^(?=.*.ini)(?=.*supervisord)' | head -n -2""")
+    stream = os.popen("""ps ux | grep -P '^(?=.*.ini)(?=.*supervisord) | (?=.*.conf)(?=.*.supervisord)' | head -n -2""")
     raw = stream.read()
     if("supervisord" not in raw):
          stream = os.popen("""sudo ps ux | grep -P '^(?=.*.ini)(?=.*supervisord) | (?=.*.conf)(?=.*.supervisord)'| head -n -2""")
