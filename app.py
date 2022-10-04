@@ -1,7 +1,8 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
-from machinestatus import get_current_cpu_usage, get_each_cpu_usage, get_hostname, get_machine_spec, get_memory_status, process_AllInfo, process_memory_usage, sup_Indentification, sup_State
-from procstatus import process_Info, process_PID, process_swap
+
+from machinestatus import get_current_cpu_usage, get_each_cpu_usage, get_hostname, get_machine_spec, get_memory_status, process_AllInfo, sup_Identification, sup_State
+from procstatus import process_Info, process_PID, process_memory_usage, process_swap
 
 
 
@@ -60,7 +61,7 @@ def returnHostname():
 # get identifications
 @app.route('/api/identifications')
 def returnIdentifications():
-    result = sup_Indentification()
+    result = sup_Identification()
     return jsonify(result)
 
 
