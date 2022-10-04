@@ -1,10 +1,7 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
-
 from machinestatus import get_current_cpu_usage, get_each_cpu_usage, get_hostname, get_machine_spec, get_memory_status, process_AllInfo, sup_Identification, sup_State
 from procstatus import process_Info, process_PID, process_memory_usage, process_swap
-
-
 
 
 app = Flask(__name__)
@@ -106,4 +103,56 @@ def returnMachineSpec():
     result = get_machine_spec()
     result = result.replace("\t", "")
     result = (dict([line.split(': ') for line in result.splitlines()]))
+    return jsonify(result)
+
+
+# get all server info
+@app.route('/api/allMachineInfo')
+def returnBatchInfo():
+    sup_state = sup_State()
+    sup_identification = sup_Identification()
+    hostname = get_hostname()
+    hostname = hostname.replace("\n", "")
+    cpu_usage = get_current_cpu_usage()
+    cpu_usage = cpu_usage.replace("%\n", "")
+    memory_status = get_memory_status()
+    memory_status = memory_status.replace("\n", "")
+    machine_spec = get_machine_spec()
+    machine_spec = machine_spec.replace("\t", "")
+    machine_spec = (dict([line.split(': ')
+                    for line in machine_spec.splitlines()]))
+    cpuCore = get_each_cpu_usage()
+    cpuCore = cpuCore.replace("\nst", "")
+    cpuCore = cpuCore.replace("\n", " ")
+    cpuCore = cpuCore.replace("us,", "")
+    cpuCore = cpuCore.replace(":", " ")
+    cpuCore = dict(zip(cpuCore.split()[::2], cpuCore.split()[1::2]))
+    result = {
+        "supervisor_state": sup_state,
+        "supervisor_identification": sup_identification,
+        "hostname": hostname,
+        "cpu_usage": cpu_usage,
+        "memory_status": memory_status,
+        "machine_spec": machine_spec,
+        "cpu_core": cpuCore
+    }
+    return jsonify(result)
+
+# get both memory and swap memory used by the process
+
+
+@app.route('/api/processMemorySwap/<pid>')
+def returnProcessMemorySwap(pid):
+    processMemoryUsage = process_memory_usage(pid)
+    processMemoryUsage = [line.split()
+                            for line in processMemoryUsage.splitlines()]
+    processMemoryUsage = dict(zip(*processMemoryUsage))
+    processSwap = process_swap(pid)
+    processSwap = processSwap.replace("kB", "")
+    processSwap = (dict([line.split() for line in processSwap.splitlines()]))
+    processSwap.update(dict(processSwap))
+    result = {
+        "process_memory_usage": processMemoryUsage,
+        "process_swap": processSwap
+    }
     return jsonify(result)
