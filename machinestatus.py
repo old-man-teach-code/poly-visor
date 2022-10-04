@@ -1,4 +1,3 @@
-from time import process_time_ns
 from xmlrpc.client import ServerProxy
 import os
 from finder import get_sup_serverurl
