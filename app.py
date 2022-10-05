@@ -1,3 +1,4 @@
+from finder import get_sup_config_path
 from flask import Flask, jsonify
 from flask_cors import CORS
 from machinestatus import get_current_cpu_usage, get_each_cpu_usage, get_hostname, get_machine_spec, get_memory_status, process_AllInfo, sup_Identification, sup_State
@@ -105,6 +106,11 @@ def returnMachineSpec():
     result = (dict([line.split(': ') for line in result.splitlines()]))
     return jsonify(result)
 
+#get the config path
+@app.route('/api/configPath')
+def returnConfigPath():
+    result = get_sup_config_path()
+    return jsonify({"configPath": result})
 
 # get all server info
 @app.route('/api/allMachineInfo')
