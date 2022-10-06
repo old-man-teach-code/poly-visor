@@ -2,6 +2,7 @@ from collections import OrderedDict
 import os
 import re
 import configparser
+from unittest import result
 
 #To get multiple value in config file
 class MultiOrderedDict(OrderedDict):
@@ -11,18 +12,19 @@ class MultiOrderedDict(OrderedDict):
         else:
             super().__setitem__(key, value)
 
+#Get pid supervisord by name in linux with shell 
+def get_pid():
+    stream = os.popen("pgrep supervisord")
+    a =stream.read()
+    result =a.replace("\n","")
+    return result
+   
+
 #Get config file path of Supervisord when it running on machine
 def get_sup_config_path():
     output=""
-    # stream = os.popen("""ps ux | awk '/.conf/ && /supervisord/ || /.ini/ && /supervisord/'""")
-    # raw = stream.read()
-    # print(raw)
-    # if("supervisord" not in raw):
-    stream = os.popen("""sudo ps ux | awk '/.conf/ && /supervisord/' """)
+    stream = os.popen("ps -p "+get_pid()+" -o args")
     output = stream.read()
-    print(output)
-    # else:       
-    # output = raw
     path=""
     s = re.findall(r'(\/.*?\.[\w:]+)', output)
     try:
