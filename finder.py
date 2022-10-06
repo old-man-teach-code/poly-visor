@@ -14,13 +14,15 @@ class MultiOrderedDict(OrderedDict):
 #Get config file path of Supervisord when it running on machine
 def get_sup_config_path():
     output=""
-    stream = os.popen("""ps ux | awk '/.conf/ && /supervisord/ || /.ini/ && /supervisord/' | head -n -2""")
-    raw = stream.read()
-    if("supervisord" not in raw):
-         stream = os.popen("""sudo ps ux | awk '/.conf/ && /supervisord/ || /.ini/ && /supervisord/' | head -n -2""")
-         output = stream.read()
-    else:       
-        output = raw
+    # stream = os.popen("""ps ux | awk '/.conf/ && /supervisord/ || /.ini/ && /supervisord/'""")
+    # raw = stream.read()
+    # print(raw)
+    # if("supervisord" not in raw):
+    stream = os.popen("""sudo ps ux | awk '/.conf/ && /supervisord/' """)
+    output = stream.read()
+    print(output)
+    # else:       
+    # output = raw
     path=""
     s = re.findall(r'(\/.*?\.[\w:]+)', output)
     try:
@@ -68,3 +70,4 @@ def get_path_sup_logfile():
     config.read(get_sup_config_path())
     path = config.get("supervisord","logfile")
     return path
+print(get_sup_config_path())
