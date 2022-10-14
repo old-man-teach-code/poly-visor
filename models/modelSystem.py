@@ -1,5 +1,4 @@
 import os
-
 class System:
 
     def __init__(self):
@@ -35,15 +34,8 @@ class System:
         result += "CPUs: "+str(os.cpu_count())
         return result.replace("model name", "CPUModelName")
 
-a=System()
-
-print(a.machine_spec)
 
 def runShell(command):
     stream = os.popen(command)
     output = stream.read()
     return output
-
-
-
-    
