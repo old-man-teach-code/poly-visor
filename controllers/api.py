@@ -1,5 +1,6 @@
 
 from controllers.processes import get_all_processes
+from controllers.supervisor import get_supervisor
 from flask import Flask,jsonify
 from flask_cors import CORS
 import logging
@@ -20,3 +21,12 @@ try:
         return jsonify(list_of_processes_json)
 except Exception as e:
     print(e)
+
+#get supervisor object and return a json object
+try:
+    @app.route('/api/supervisor', methods=['GET'])
+    def get_supervisor_api():
+        supervisor = get_supervisor()
+        return jsonify(supervisor.__dict__)
+except Exception as e:
+    print(e)        

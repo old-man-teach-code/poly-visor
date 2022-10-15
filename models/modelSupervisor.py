@@ -1,6 +1,7 @@
+from http import server
 import sys
-sys.path.insert(1,"/home/hlk9/Documents/GitHub/poly-visor/models/modelSystem.py")
-import modelSystem
+
+from models.modelSystem import runShell
 from xmlrpc.client import ServerProxy
 import re
 import configparser 
@@ -16,12 +17,12 @@ class MultiOrderedDict(OrderedDict):
 
 #Get pid supervisord by name in linux with shell 
 def get_pid():
-    output=modelSystem.runShell("pgrep supervisord")
+    output=runShell("pgrep supervisord")
     result =output.replace("\n","")
     return result
 
 def config_Path():
-    result = modelSystem.runShell("ps -p "+str(get_pid())+" -o args")
+    result = runShell("ps -p "+str(get_pid())+" -o args")
     path=""
     s = re.findall(r'(\/.*?\.[\w:]+)', result)
     try:
@@ -50,6 +51,8 @@ def serverURL():
     return str(url.string)
 
 server = ServerProxy("http://"+serverURL()+"/RPC2")
+
+#server = ServerProxy("http://localhost:9001/RPC2")
 
 class Supervisor:
 
