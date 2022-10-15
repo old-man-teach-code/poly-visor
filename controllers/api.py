@@ -27,6 +27,6 @@ try:
     @app.route('/api/supervisor', methods=['GET'])
     def get_supervisor_api():
         supervisor = get_supervisor()
-        return jsonify(supervisor.__dict__)
+        return jsonify(supervisor.stateName)
 except Exception as e:
     print(e)        
