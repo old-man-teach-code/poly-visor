@@ -1,8 +1,7 @@
-from collections import OrderedDict
 import os
 import re
 import configparser
-from unittest import result
+from collections import OrderedDict
 
 #To get multiple value in config file
 class MultiOrderedDict(OrderedDict):
@@ -14,19 +13,16 @@ class MultiOrderedDict(OrderedDict):
 
 #Get pid supervisord by name in linux with shell 
 def get_pid():
-    stream = os.popen("pgrep supervisord")
-    a =stream.read()
-    result =a.replace("\n","")
+    output=runShell("pgrep supervisord")
+    result =output.replace("\n","")
     return result
    
 
 #Get config file path of Supervisord when it running on machine
-def get_sup_config_path():
-    output=""
-    stream = os.popen("ps -p "+get_pid()+" -o args")
-    output = stream.read()
+def configPath():
+    result = runShell("ps -p "+str(get_pid())+" -o args")
     path=""
-    s = re.findall(r'(\/.*?\.[\w:]+)', output)
+    s = re.findall(r'(\/.*?\.[\w:]+)', result)
     try:
         lis = s[1].split()
         for x in lis:
@@ -37,38 +33,42 @@ def get_sup_config_path():
         for x in lis2:
             if(r".conf"in x or r".ini" in x):
                 path+=x
-  
+
     if path=="" or not path:
-        path="Can't find config path of Supervisord"
-     
+        path="Can't find config path of Supervisord"        
     return path
 
 #Get include process config files path
 def get_proc_config_path():
     config = configparser.RawConfigParser(dict_type=MultiOrderedDict, strict=False)   
-    config.read(get_sup_config_path())
+    config.read(configPath())
     #path = config['include']['files']   
     path = config.get("include","files")
     
     return path
 
 #Get serverurl Supervisor
-def get_sup_serverurl():
+def serverURL():
     parser_file = configparser.RawConfigParser(dict_type=MultiOrderedDict, strict=False)   
-    parser_file.read(get_sup_config_path())
+    parser_file.read(configPath())    
     sup_url= parser_file.get("inet_http_server","port")
-    return str(sup_url)
+    if("localhost" in sup_url):
+        return str(sup_url)       
+    url=re.search("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]):[0-9]+$",sup_url) 
+    return str(url.string)
 
 #Get path of process with pid when it running
 def get_path_proc(proc_PID):
-    from procstatus import process_PID
-    stream = os.popen("readlink -f /proc/"+str(proc_PID)+"/exe")
-    output = stream.read()
-    return  output
+    return  runShell("readlink -f /proc/"+str(proc_PID)+"/exe")
 
 #Get path of logfile supervisord
-def get_path_sup_logfile():
+def path_sup_logfile():
     config = configparser.RawConfigParser(dict_type=MultiOrderedDict, strict=False)   
-    config.read(get_sup_config_path())
+    config.read(configPath())
     path = config.get("supervisord","logfile")
     return path
+#Run shell command and return output
+def runShell(command):
+    stream = os.popen(command)
+    output = stream.read()
+    return output

@@ -1,7 +1,6 @@
 import json
-from finder import get_sup_serverurl
 from xmlrpc.client import ServerProxy
-server = ServerProxy("http://localhost"+str(get_sup_serverurl())+"/RPC2")
+from modelSupervisor import server
 
 
 class Process:

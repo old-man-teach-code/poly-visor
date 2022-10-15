@@ -1,5 +1,14 @@
+import sys
+import os
+#Get PARENT path of project to import modules
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+#insert into PYTHONPATH
+sys.path.insert(1,parent)
 from models.modelSupervisor import Supervisor
 
 # get Supervisor object from modelSupervisor
 def get_supervisor():
-    return Supervisor()
+    a = Supervisor()
+    return a
+print(get_supervisor())
