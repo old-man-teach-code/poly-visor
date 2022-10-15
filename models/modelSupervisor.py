@@ -1,5 +1,6 @@
-from http import server
+
 import sys
+from finder import get_sup_serverurl
 
 from models.modelSystem import runShell
 from xmlrpc.client import ServerProxy
@@ -41,16 +42,9 @@ def config_Path():
     return path
 
 
-def serverURL():
-    parser_file = configparser.RawConfigParser(dict_type=MultiOrderedDict, strict=False)   
-    parser_file.read(config_Path())    
-    sup_url= parser_file.get("inet_http_server","port")
-    if("localhost" in sup_url):
-        return str(sup_url)       
-    url=re.search("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]):[0-9]+$",sup_url) 
-    return str(url.string)
 
-server = ServerProxy("http://"+serverURL()+"/RPC2")
+
+server = ServerProxy("http://localhost"+str(get_sup_serverurl())+"/RPC2")
 
 #server = ServerProxy("http://localhost:9001/RPC2")
 

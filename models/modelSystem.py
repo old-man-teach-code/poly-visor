@@ -9,30 +9,35 @@ class System:
         stream = os.popen(
             """top 1 -bn1  | grep '^%Cpu' |awk '{print $1,$2,$3"\\n"$18,$19,$20,$21}'""")
         output = stream.read()
-        b = output.replace("st ", "")
-        result = b.replace(" us,", "")
-        result = output.replace("\nst", "")
+        b = output.replace("st ","")               #Output cpu stats
+        result=b.replace(" us,","")
         result = result.replace("\n", " ")
         result = result.replace("us,", "")
         result = result.replace(":", " ")
+        result = dict(zip(result.split()[::2], result.split()[1::2]))
         return result     
     @property
     def current_cpu_usage(self):
         stream = os.popen("""top -bn 1  | grep '^%Cpu' | tail -n 1 | awk '{print $2"%"}'""")
-        output = stream.read()          
+        output = stream.read()  
+        output = output.replace("\n", "")        
         return output
     @property
     def memory_status(self):
         stream = os.popen(
             """free -g -h -t | grep Mem | awk '{print ($3/$2) * 100"%"}'""")
         output = stream.read()
+        output = output.replace("\n", "")
         return output
 
     @property
     def machine_spec(self):
         result = runShell("""cat /proc/cpuinfo | grep 'model name' | uniq && free -g -h -t | grep Mem | awk '{print "TotalMemory: " $2}'""")
+        result = result.replace("model name", "CPU")
         result += "CPUs: "+str(os.cpu_count())
-        return result.replace("model name", "CPUModelName")
+        result = result.replace("\t", "")
+        result = (dict([line.split(': ') for line in result.splitlines()]))
+        return result
 
 
 def runShell(command):
