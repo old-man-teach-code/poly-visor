@@ -52,10 +52,17 @@ def serverURL():
     parser_file = configparser.RawConfigParser(dict_type=MultiOrderedDict, strict=False)   
     parser_file.read(configPath())    
     sup_url= parser_file.get("inet_http_server","port")
+    # if("localhost" in sup_url):
+    #     return str(sup_url)       
+    # else:
+    #     url=re.search("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]):[0-9]+$",sup_url) 
+    #     return str(url)
+
+    
+    #if localhost is in serverurl, replace it with blank
     if("localhost" in sup_url):
-        return str(sup_url)       
-    url=re.search("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]):[0-9]+$",sup_url) 
-    return str(url.string)
+        sup_url=sup_url.replace("localhost","")
+    return sup_url
 
 #Get path of process with pid when it running
 def get_path_proc(proc_PID):

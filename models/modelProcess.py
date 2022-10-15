@@ -1,6 +1,5 @@
-import json
-from xmlrpc.client import ServerProxy
-from modelSupervisor import server
+
+from models.modelSupervisor import server
 
 
 class Process:
