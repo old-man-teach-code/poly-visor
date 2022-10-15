@@ -1,5 +1,10 @@
 import sys
-sys.path.insert(0,'//wsl$/Ubuntu/root/new/poly-visor/models/modelSupervisor.py')
+import os
+#Get PARENT path of project to import modules
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+#insert into PYTHONPATH
+sys.path.insert(1,parent)
 from models.modelSupervisor import Supervisor
 
 
