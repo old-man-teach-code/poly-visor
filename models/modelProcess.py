@@ -134,3 +134,8 @@ class Process:
 
     def setStderrLogFile(self, stderr_logfile):
         self.stderr_logfile = stderr_logfile
+
+
+# start all processes
+def startAllProcesses():
+    server.supervisor.startAllProcesses()
