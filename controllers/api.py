@@ -2,13 +2,14 @@
 from controllers.processes import get_all_processes_model
 from controllers.supervisor import get_supervisor
 from controllers.system import get_system
+from controllers.utils import get_date
 from flask import jsonify, Blueprint
 import logging
 
 app_api = Blueprint('app_api', __name__)
 
-
-logging.basicConfig(filename='storage/logs/api.log',level=logging.DEBUG,format='%(asctime)s %(levelname)s %(name)s %(message)s')
+# log exception to storage/logs/date/api.log with the date of today
+logging.basicConfig(filename='storage/logs/'+get_date()+'/api.log',level=logging.DEBUG,format='%(asctime)s %(levelname)s %(name)s %(message)s', force=True)
 logger=logging.getLogger(__name__)
 
 #get all processes and return a json object

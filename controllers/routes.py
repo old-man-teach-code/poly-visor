@@ -1,13 +1,14 @@
 
-from controllers.processes import start_all_processes_model
+from controllers.processes import start_all_processes_model 
 from controllers.supervisor import get_supervisor, restart_supervisor_model
 from controllers.system import get_system
+from controllers.utils import get_date
 from flask import jsonify, Blueprint
 import logging
 
 app_routes = Blueprint('app_routes', __name__)
 
-logging.basicConfig(filename='storage/logs/routes.log',level=logging.DEBUG,format='%(asctime)s %(levelname)s %(name)s %(message)s')
+logging.basicConfig(filename='storage/logs/'+get_date()+'/routes.log',level=logging.DEBUG,format='%(asctime)s %(levelname)s %(name)s %(message)s', force=True)
 logger=logging.getLogger(__name__)
 
 # restart supervisor
