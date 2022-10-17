@@ -16,3 +16,8 @@ def get_supervisor():
 def restart_supervisor_model():
     a = Supervisor()
     return a.restart
+
+# clear log
+def clear_log_model():
+    a = Supervisor()
+    return a.clear_log
