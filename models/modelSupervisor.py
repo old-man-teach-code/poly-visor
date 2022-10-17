@@ -40,3 +40,9 @@ class Supervisor:
     def shutdown(self):
         return server.supervisor.shutdown()
 
+    @property
+    def clear_log(self):
+        return server.supervisor.clearLog()
+        
+
+

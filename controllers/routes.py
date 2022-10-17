@@ -8,17 +8,18 @@ import logging
 
 app_routes = Blueprint('app_routes', __name__)
 
-logging.basicConfig(filename='storage/logs/'+get_date()+'/routes.log',level=logging.DEBUG,format='%(asctime)s %(levelname)s %(name)s %(message)s', force=True)
-logger=logging.getLogger(__name__)
+logging.basicConfig(filename='storage/logs/'+get_date()+'/routes.log',level=logging.DEBUG,format='%(asctime)s %(levelname)s %(name)s %(message)s')
+logger_routes=logging.getLogger('routes')
 
 # restart supervisor
 try:
     @app_routes.route('/supervisor/restart', methods=['GET'])
     def restart_supervisor():
-        restart_supervisor_model()
+        supervisor = get_supervisor()
+        supervisor.restart()
         return jsonify({'message':'Supervisor restarted'})
 except Exception as e:
-    logger.exception(e)
+    logger_routes.exception(e)
 
 # shutdown supervisor
 try:
@@ -28,7 +29,7 @@ try:
         supervisor.shutdown()
         return jsonify({'message': 'Supervisor shutdown successfully'})
 except Exception as e:
-    logger.exception(e)
+    logger_routes.exception(e)
 
 
 # start all processes
@@ -38,4 +39,4 @@ try:
         start_all_processes_model()
         return jsonify({'message': 'All processes started successfully'})
 except Exception as e:
-    logger.exception(e)
+    logger_routes.exception(e)
