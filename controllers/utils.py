@@ -9,5 +9,3 @@ def check_logs_folder():
     import os
     if not os.path.exists('storage/logs/'+get_date()):
         os.makedirs('storage/logs/'+get_date())
-
-            

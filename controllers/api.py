@@ -1,4 +1,3 @@
-
 from controllers.processes import get_all_processes_model
 from controllers.supervisor import get_supervisor
 from controllers.system import get_system
