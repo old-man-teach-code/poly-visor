@@ -31,7 +31,8 @@ class Supervisor:
     @property
     def pid(self):
         return server.supervisor.getPID()    
-
+        
+    #Restart supervisord
     @property
     def restart(self):
         return server.supervisor.restart()
