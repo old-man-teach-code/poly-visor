@@ -43,6 +43,3 @@ class Supervisor:
     @property
     def clear_log(self):
         return server.supervisor.clearLog()
-        
-
-

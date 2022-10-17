@@ -1,5 +1,4 @@
-
-from models.modelSupervisor import server
+from modelSupervisor import server
 
 
 class Process:
@@ -136,10 +135,18 @@ class Process:
         self.stderr_logfile = stderr_logfile
 
 
-# start all processes
+# start all processes, return array result
 def startAllProcesses():
-    server.supervisor.startAllProcesses()
+    return server.supervisor.startAllProcesses()
 
-# start process by name
+# start process by name, always return True unless error
 def startProcessByName(name):
-    server.supervisor.startProcess(name)
+    return server.supervisor.startProcess(name)
+
+# stop process by name, always return True unless error
+def stopProcessByName(name):
+    return server.supervisord.stopProcess(name)
+
+# stop all process, return array result
+def stopAllProcesses():
+    return server.supervisord.stopAllProcesses()
