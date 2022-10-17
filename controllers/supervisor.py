@@ -11,4 +11,8 @@ from models.modelSupervisor import Supervisor
 def get_supervisor():
     a = Supervisor()
     return a
-print(get_supervisor())
+
+
+def restart_supervisor_model():
+    a = Supervisor()
+    return a.restart
