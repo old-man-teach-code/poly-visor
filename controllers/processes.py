@@ -5,11 +5,11 @@ from models.modelProcess import Process, startAllProcesses, startProcessByName, 
 def get_allProcesses_model():
     return Process.getAllProcessInfo()
 
-# start all processes, return array result
+#start all processes, return array result
 def start_allProcesses_model():
     return startAllProcesses()    
 
-# start process by name, always return True unless error
+#start process by name, always return True unless error
 def startProcess_byName_model(name):
     return startProcessByName(name)
 
