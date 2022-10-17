@@ -139,3 +139,7 @@ class Process:
 # start all processes
 def startAllProcesses():
     server.supervisor.startAllProcesses()
+
+# start process by name
+def startProcessByName(name):
+    server.supervisor.startProcess(name)

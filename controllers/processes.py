@@ -1,5 +1,5 @@
 
-from models.modelProcess import Process, startAllProcesses
+from models.modelProcess import Process, startAllProcesses, startProcessByName
 
 #get all processes
 def get_all_processes_model():
@@ -9,3 +9,7 @@ def get_all_processes_model():
 def start_all_processes_model():
     startAllProcesses()
     
+
+# start process by name
+def start_process_by_name_model(name):
+    return startProcessByName(name)
