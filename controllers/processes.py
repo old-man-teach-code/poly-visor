@@ -1,7 +1,11 @@
-import sys
-sys.path.insert(0,'//wsl$/Ubuntu/root/new/poly-visor/models/modelProcess.py')
-from models.modelProcess import Process
+
+from models.modelProcess import Process, startAllProcesses
 
 #get all processes
-def get_all_processes():
+def get_all_processes_model():
     return Process.getAllProcessInfo()
+
+# start all processes
+def start_all_processes_model():
+    startAllProcesses()
+    

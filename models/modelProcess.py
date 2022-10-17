@@ -1,6 +1,5 @@
-import json
-from xmlrpc.client import ServerProxy
-from modelSupervisor import server
+
+from models.modelSupervisor import server
 
 
 class Process:
@@ -135,3 +134,8 @@ class Process:
 
     def setStderrLogFile(self, stderr_logfile):
         self.stderr_logfile = stderr_logfile
+
+
+# start all processes
+def startAllProcesses():
+    server.supervisor.startAllProcesses()

@@ -9,7 +9,8 @@ sys.path.insert(1,parent)
 from finder import serverURL
 from xmlrpc.client import ServerProxy
 
-server = ServerProxy("http://"+serverURL()+"/RPC2")
+
+server = ServerProxy("http://localhost"+str(serverURL())+"/RPC2")
 
 class Supervisor:
 
@@ -29,4 +30,13 @@ class Supervisor:
     #Get Supervisor PID
     @property
     def pid(self):
-        return server.supervisor.getPID()
+        return server.supervisor.getPID()    
+
+    @property
+    def restart(self):
+        return server.supervisor.restart()
+
+    @property
+    def shutdown(self):
+        return server.supervisor.shutdown()
+

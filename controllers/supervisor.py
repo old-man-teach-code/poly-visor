@@ -7,9 +7,12 @@ parent = os.path.dirname(current)
 sys.path.insert(1,parent)
 from models.modelSupervisor import Supervisor
 
-
 # get Supervisor object from modelSupervisor
 def get_supervisor():
     a = Supervisor()
     return a
-print(get_supervisor())
+
+
+def restart_supervisor_model():
+    a = Supervisor()
+    return a.restart
