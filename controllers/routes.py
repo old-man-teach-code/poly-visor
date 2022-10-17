@@ -1,5 +1,5 @@
 
-from controllers.processes import start_all_processes_model 
+from controllers.processes import start_all_processes_model, start_process_by_name_model 
 from controllers.supervisor import get_supervisor, restart_supervisor_model
 from controllers.system import get_system
 from controllers.utils import get_date
@@ -38,5 +38,14 @@ try:
     def start_processes():
         start_all_processes_model()
         return jsonify({'message': 'All processes started successfully'})
+except Exception as e:
+    logger_routes.exception(e)
+
+#  start process by name
+try:
+    @app_routes.route('/processes/start/<name>', methods=['GET'])
+    def start_process_by_name(name):
+        start_process_by_name_model(name)
+        return jsonify({'message': 'Process started successfully'})
 except Exception as e:
     logger_routes.exception(e)
