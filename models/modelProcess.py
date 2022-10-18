@@ -1,4 +1,4 @@
-from modelSupervisor import server
+from models.modelSupervisor import server
 
 
 class Process:
