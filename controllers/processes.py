@@ -1,5 +1,5 @@
 
-from models.modelProcess import Process, startAllProcesses, startProcessByName, stopAllProcesses, stopProcessByName
+from models.modelProcess import Process, startAllProcesses, startProcessByName, startProcessGroup, stopAllProcesses, stopProcessByName, stopProcessGroup
 
 #get all processes info
 def get_all_processes_model():
@@ -20,3 +20,11 @@ def stop_process_by_name_model(name):
 #stop ALL process, return array result
 def stop_all_processes_model():
     return stopAllProcesses()
+
+# start group of process by group name, return array result
+def start_process_group_model(group):
+    return startProcessGroup(group)
+
+# stop group of process by group name, return array result
+def stop_process_group_model(group):
+    return stopProcessGroup(group)

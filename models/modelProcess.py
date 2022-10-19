@@ -150,3 +150,12 @@ def stopProcessByName(name):
 # stop all process, return array result
 def stopAllProcesses():
     return server.supervisor.stopAllProcesses()
+
+
+# start group of process by group name, return array result
+def startProcessGroup(group):
+    return server.supervisor.startProcessGroup(group)
+
+# stop group of process by group name, return array result
+def stopProcessGroup(group):
+    return server.supervisor.stopProcessGroup(group)
