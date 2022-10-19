@@ -145,8 +145,8 @@ def startProcessByName(name):
 
 # stop process by name, always return True unless error
 def stopProcessByName(name):
-    return server.supervisord.stopProcess(name)
+    return server.supervisor.stopProcess(name)
 
 # stop all process, return array result
 def stopAllProcesses():
-    return server.supervisord.stopAllProcesses()
+    return server.supervisor.stopAllProcesses()
