@@ -31,3 +31,13 @@ def clear_log_model():
 def reload_config_model():
     a = Supervisor()
     return a.reloadConfig()
+
+# get all log of supervisor since it run
+def all_log_supervisord():
+    a = Supervisor()
+    return a.all_log
+    
+#Clear all log of process when it running, return array result status info
+def clear_all_log_of_processes():
+    a= Supervisor()
+    return a.clear_all_log_processes
