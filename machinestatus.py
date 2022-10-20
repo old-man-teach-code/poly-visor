@@ -44,7 +44,9 @@ def get_hostname():
 
 #Get current each core CPU Usage
 def get_each_cpu_usage():
-    stream = os.popen("""top 1 -bn1  | grep '^%Cpu' |awk '{print $1,$2,$3"\\n"$18,$19,$20,$21}'""")
+    stream = os.popen("""top 1 -bn1  |
+    grep '^%Cpu' |
+    awk '{print $1,$2,$3"\\n"$18,$19,$20,$21}'""")
     output = stream.read()    
     b = output.replace("st ","")               #Output cpu stats
     result=b.replace(" us,","")
@@ -76,3 +78,5 @@ def get_data_sup_config_file(path_file):
     data = fil.read()
     fil.close()
     return data
+
+print(get_each_cpu_usage())

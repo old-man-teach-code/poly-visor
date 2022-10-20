@@ -1,8 +1,7 @@
-from collections import OrderedDict
 import os
 import re
 import configparser
-from unittest import result
+from collections import OrderedDict
 
 #To get multiple value in config file
 class MultiOrderedDict(OrderedDict):
@@ -12,60 +11,65 @@ class MultiOrderedDict(OrderedDict):
         else:
             super().__setitem__(key, value)
 
-#Get pid supervisord by name in linux with shell 
+# Get pid supervisord by name in linux with shell
 def get_pid():
-    stream = os.popen("pgrep supervisord")
-    a =stream.read()
-    result =a.replace("\n","")
+    result = runShell("pgrep supervisord")
+    result = result.replace("\n", "")
     return result
-   
 
-#Get config file path of Supervisord when it running on machine
-def get_sup_config_path():
-    output=""
-    stream = os.popen("ps -p "+get_pid()+" -o args")
-    output = stream.read()
-    path=""
-    s = re.findall(r'(\/.*?\.[\w:]+)', output)
+
+# Get config file path of Supervisord when it running on machine
+def configPath():
+    result = runShell("ps -p "+str(get_pid())+" -o args")
+    path = ""
+    s = re.findall(r'(\/.*?\.[\w:]+)', result)
     try:
         lis = s[1].split()
         for x in lis:
-            if(r".conf"in x or r".ini" in x):
-                path+=x
-    except: 
+            if (r".conf" in x or r".ini" in x):
+                path += x
+    except:
         lis2 = s[0].split()
         for x in lis2:
-            if(r".conf"in x or r".ini" in x):
-                path+=x
-  
-    if path=="" or not path:
-        path="Can't find config path of Supervisord"
-     
+            if (r".conf" in x or r".ini" in x):
+                path += x
+
+    if path == "" or not path:
+        path = "Can't find config path of Supervisord"
     return path
 
-#Get include process config files path
+# Get include process config files path
 def get_proc_config_path():
-    config = configparser.RawConfigParser(dict_type=MultiOrderedDict, strict=False)   
-    config.read(get_sup_config_path())
-    #path = config['include']['files']   
-    path = config.get("include","files")
-    
+    config = configparser.RawConfigParser(
+        dict_type=MultiOrderedDict, strict=False)
+    config.read(configPath())
+    #path = config['include']['files']
+    path = config.get("include", "files")
+
     return path
 
-#Get serverurl Supervisor
-def get_sup_serverurl():
-    parser_file = configparser.RawConfigParser(dict_type=MultiOrderedDict, strict=False)   
-    parser_file.read(get_sup_config_path())
-    sup_url= parser_file.get("inet_http_server","port")
-    return str(sup_url)
+# Get serverurl Supervisor
+def serverURL():
+    parser_file = configparser.RawConfigParser(
+        dict_type=MultiOrderedDict, strict=False)
+    parser_file.read(configPath())
+    sup_url = parser_file.get("inet_http_server", "port")
+    # if("localhost" in sup_url):
+    #     return str(sup_url)
+    # else:
+    #     url=re.search("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]):[0-9]+$",sup_url)
+    #     return str(url)
 
-#Get path of process with pid when it running
+    # if localhost is in serverurl, replace it with blank
+    if ("localhost" in sup_url):
+        sup_url = sup_url.replace("localhost", "")
+    return sup_url
+
+# Get path of process with pid when it running
 def get_path_proc(proc_PID):
-    from procstatus import process_PID
-    stream = os.popen("readlink -f /proc/"+str(proc_PID)+"/exe")
-    output = stream.read()
-    return  output
+    return runShell("readlink -f /proc/"+str(proc_PID)+"/exe")
 
+<<<<<<< HEAD
 #Get path of logfile supervisord
 def get_path_sup_logfile():
     config = configparser.RawConfigParser(dict_type=MultiOrderedDict, strict=False)   
@@ -73,3 +77,26 @@ def get_path_sup_logfile():
     path = config.get("supervisord","logfile")
     return path
 
+=======
+
+def path_sup_logfile():
+    config = configparser.RawConfigParser(
+        dict_type=MultiOrderedDict, strict=False)
+    config.read(configPath())
+    path = config.get("supervisord", "logfile")
+    return path
+
+# Run shell command and return output
+def runShell(command):
+    stream = os.popen(command)
+    output = stream.read()
+    return output
+
+# Check supervisord is running as Root, return True, or False
+def check_supervisor_isRunning_asRoot():
+    output = runShell("ps -p "+get_pid()+" -o user | tail -n 1")
+    result = output.replace("\n", "")
+    if result == "root":
+        return True
+    return False
+>>>>>>> origin/developement
