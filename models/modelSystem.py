@@ -8,9 +8,10 @@ class System:
 
     def __init__(self):
         pass 
-
+    
+    #Get stats of each core CPU
     @property
-    def each_cpu_usage(self): #Get stats of each core CPU 
+    def each_cpu_usage(self):  
         output = runShell("""top 1 -bn1  | grep '^%Cpu' |awk '{print $1,$2,$3"\\n"$18,$19,$20,$21}'""")
         b = output.replace("st ","")               
         result=b.replace(" us,","")
@@ -20,18 +21,20 @@ class System:
         result = dict(zip(result.split()[::2], result.split()[1::2]))
         return result  
 
+    #Get overall %CPU stats
     @property
     def current_cpu_usage(self):
         output = runShell("""top -bn 1  | grep '^%Cpu' | tail -n 1 | awk '{print $2"%"}'""")
         result = output.replace("\n", "")        
         return result
 
+    #Get %Memory stats
     @property
     def memory_status(self):
         output = runShell( """free -g -h -t | grep Mem | awk '{print ($3/$2) * 100"%"}'""")
         result = output.replace("\n", "")
         return result
-
+    #Get info about machine hardware
     @property
     def machine_spec(self):
         output = runShell("""cat /proc/cpuinfo | grep 'model name' | uniq && free -g -h -t | grep Mem | awk '{print "TotalMemory: " $2}'""")
