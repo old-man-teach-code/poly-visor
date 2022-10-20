@@ -1,7 +1,11 @@
-    <div class="p-8 max-w-6xl mx-auto">
-        <slot>
-        </slot>
-    </div>
-    <style>
+<script>
+    import Sidebar from "../components/sidebar.svelte";
+    import "../app.css";
+</script>
+<div>
+    <slot/>
+    <Sidebar/>
+</div>
 
-    </style>
+<style>
+</style>
