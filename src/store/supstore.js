@@ -13,4 +13,4 @@ export const fetchAll = async() =>{
     const dataAllProcessInfo = await resAllProcessInfo.json();
     allProcessInfo.set(dataAllProcessInfo);
 }
-setInterval(fetchAll, 1000);
+// setInterval(fetchAll, 1000);

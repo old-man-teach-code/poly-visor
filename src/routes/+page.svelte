@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
 	import { state, allProcessInfo } from '../store/supstore';
 </script>
 
@@ -28,4 +28,4 @@
     <p>Error log file: {info.stderr_logfile}</p>
     <p>Out log file: {info.stdout_logfile}</p>
     <p>Stop: {info.stop}</p>
-{/each}
+{/each} -->

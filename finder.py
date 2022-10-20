@@ -69,15 +69,6 @@ def serverURL():
 def get_path_proc(proc_PID):
     return runShell("readlink -f /proc/"+str(proc_PID)+"/exe")
 
-<<<<<<< HEAD
-#Get path of logfile supervisord
-def get_path_sup_logfile():
-    config = configparser.RawConfigParser(dict_type=MultiOrderedDict, strict=False)   
-    config.read(get_sup_config_path())
-    path = config.get("supervisord","logfile")
-    return path
-
-=======
 
 def path_sup_logfile():
     config = configparser.RawConfigParser(
@@ -99,4 +90,3 @@ def check_supervisor_isRunning_asRoot():
     if result == "root":
         return True
     return False
->>>>>>> origin/developement
