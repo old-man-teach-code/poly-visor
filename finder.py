@@ -72,4 +72,4 @@ def get_path_sup_logfile():
     config.read(get_sup_config_path())
     path = config.get("supervisord","logfile")
     return path
-print(get_sup_config_path())
+
