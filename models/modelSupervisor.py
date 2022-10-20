@@ -1,3 +1,4 @@
+from multiprocessing import reduction
 from xmlrpc.client import ServerProxy
 import sys
 import os
@@ -38,12 +39,22 @@ class Supervisor:
     @property
     def shutdown(self):
         return server.supervisor.shutdown()
-
+    #Clear log of supervisord
     @property
     def clear_log(self):
         return server.supervisor.clearLog()
+    
+    # Get all log of supervisord
+    @property
+    def all_log(self):
+        return server.supervisor.readLog(0,0)
 
     # Reload config file of supervisor,return array result [[added, changed, removed]]
     @property
-    def reloadConfig():
+    def reloadConfig(self):
         return server.supervisor.reloadConfig()
+
+    #Clear all log of process when it running, return array result status info
+    @property
+    def clear_all_log_processes(self):
+        return server.supervisor.clearAllProcessLogs()
