@@ -1,4 +1,4 @@
-from models.modelSupervisor import server
+from modelSupervisor import server
 
 
 class Process:
@@ -150,3 +150,23 @@ def stopProcessByName(name):
 # stop all process, return array result
 def stopAllProcesses():
     return server.supervisor.stopAllProcesses()
+
+
+# start group of process by group name, return array result
+def startProcessGroup(group):
+    return server.supervisor.startProcessGroup(group)
+
+# stop group of process by group name, return array result
+def stopProcessGroup(group):
+    return server.supervisor.stopProcessGroup(group)
+#return all data from stdOut in logfile of process with name
+def allData_stdOut_logFile(name):
+    return server.supervisor.readProcessStdoutLog(name,0,0)
+
+#return all data from stdErr in logfile of process with name
+def allData_stdErr_logFile(name):
+    return server.supervisor.readProcessStderrLog(name,0,0)
+
+#clear process stdOut,stdErr log by name, always return True unless error
+def clear_process_log(name):
+    return server.supervisor.clearProcessLogs(name)
