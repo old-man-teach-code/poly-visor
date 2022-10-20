@@ -151,6 +151,14 @@ def stopProcessByName(name):
 def stopAllProcesses():
     return server.supervisor.stopAllProcesses()
 
+
+# start group of process by group name, return array result
+def startProcessGroup(group):
+    return server.supervisor.startProcessGroup(group)
+
+# stop group of process by group name, return array result
+def stopProcessGroup(group):
+    return server.supervisor.stopProcessGroup(group)
 #return all data from stdOut in logfile of process with name
 def allData_stdOut_logFile(name):
     return server.supervisor.readProcessStdoutLog(name,0,0)
