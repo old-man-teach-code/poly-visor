@@ -43,6 +43,7 @@ class System:
         result = result.replace("\t", "")
         result = (dict([line.split(': ') for line in result.splitlines()]))
         return result
+    # return the CPU usage list
     @property
     def cpu_list(self):
         return cpuList
