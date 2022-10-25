@@ -7,6 +7,7 @@ from time import sleep
 
 isThen_Secs=True
 cpuList=[]
+memoryList=[]
 
 #To get multiple value in config file
 class MultiOrderedDict(OrderedDict):
@@ -96,23 +97,33 @@ def check_supervisor_isRunning_asRoot():
         return True
     return False
 
-def countDown(sec):
+#Get list CPU stats and Memory by number of "sec" seconds
+def get_list_stats_cpu_mem(sec):
+    #modify isThen_Secs and cpuList variable
     global isThen_Secs
     global cpuList
     while True:
         if isThen_Secs==True:
-            output = runShell("""top -bn 1  | grep '^%Cpu' | tail -n 1 | awk '{print $2"%"}'""")
-            result = output.replace("\n", "")
+            #get cpu stats
+            Cpu_output = runShell("""top -bn 1  | grep '^%Cpu' | tail -n 1 | awk '{print $2"%"}'""")
+            result = Cpu_output.replace("\n", "")
             result = result.replace("%","")
-            if len(cpuList)>=11:
+            if len(cpuList)>=10:
                 cpuList.pop(0)
             cpuList.append(result)
+            #get memory stats
+            Mem_output= runShell("""free -g -h -t | grep Mem | awk '{printf "%.2f\\n",(($3/$2) * 100)}'""")
+            if len(memoryList)>=10:
+                memoryList.pop(0)
+            Mem_output = Mem_output.replace("\n","")
+            memoryList.append(Mem_output)
             isThen_Secs=False
             sleep(sec)
         elif isThen_Secs==False:
             isThen_Secs=True
 
-def startCount_Down():
-    thr1 = threading.Thread(target=countDown,args=(2,))
+#Run func get_list_stats_cpu_mem with thread
+def start_getList_stats(seconds):
+    thr1 = threading.Thread(target=get_list_stats_cpu_mem,args=(seconds,))
     thr1.start()
-startCount_Down()
+start_getList_stats(3)
