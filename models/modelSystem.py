@@ -3,7 +3,7 @@ import sys
 current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 sys.path.insert(1,parent)
-from finder import runShell
+from finder import runShell,cpuList,startCount_Down
 class System:
 
     def __init__(self):
@@ -43,3 +43,6 @@ class System:
         result = result.replace("\t", "")
         result = (dict([line.split(': ') for line in result.splitlines()]))
         return result
+    @property
+    def cpu_list(self):
+        return cpuList

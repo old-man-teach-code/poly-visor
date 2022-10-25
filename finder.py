@@ -107,7 +107,6 @@ def countDown(sec):
             if len(cpuList)>=11:
                 cpuList.pop(0)
             cpuList.append(result)
-            print(cpuList)
             isThen_Secs=False
             sleep(sec)
         elif isThen_Secs==False:
@@ -115,6 +114,5 @@ def countDown(sec):
 
 def startCount_Down():
     thr1 = threading.Thread(target=countDown,args=(2,))
-    thr1.start()    
-    thr1.join()
+    thr1.start()
 startCount_Down()
