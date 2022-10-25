@@ -1,4 +1,11 @@
-from modelSupervisor import server
+import sys
+import os
+# Get parent path of project to import modules
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+# insert into PYTHONPATH
+sys.path.insert(1, parent)
+from models.modelSupervisor import server
 
 
 class Process:
@@ -151,14 +158,32 @@ def stopProcessByName(name):
 def stopAllProcesses():
     return server.supervisor.stopAllProcesses()
 
+
+# start group of process by group name, return array result
+def startProcessGroup(group):
+    return server.supervisor.startProcessGroup(group)
+
+# stop group of process by group name, return array result
+def stopProcessGroup(group):
+    return server.supervisor.stopProcessGroup(group)
+
 #return all data from stdOut in logfile of process with name
-def allData_stdOut_logFile(name):
+def read_stdOut_logFile(name):
     return server.supervisor.readProcessStdoutLog(name,0,0)
 
 #return all data from stdErr in logfile of process with name
-def allData_stdErr_logFile(name):
+def read_stdErr_logFile(name):
     return server.supervisor.readProcessStderrLog(name,0,0)
 
 #clear process stdOut,stdErr log by name, always return True unless error
 def clear_process_log(name):
     return server.supervisor.clearProcessLogs(name)
+
+# tail stdOut log file of process with name
+def tail_stdOut_logFile(name, offset, length):
+    return server.supervisor.tailProcessStdoutLog(name, offset, length)
+
+# tail stdErr log file of process with name
+def tail_stdErr_logFile(name, offset, length):
+    return server.supervisor.tailProcessStderrLog(name, offset, length)
+

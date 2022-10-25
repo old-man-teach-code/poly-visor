@@ -2,6 +2,12 @@ import os
 import re
 import configparser
 from collections import OrderedDict
+import threading
+from time import sleep
+
+isThen_Secs=True
+cpuList=[None] * 10
+memoryList=[None] * 10
 
 #To get multiple value in config file
 class MultiOrderedDict(OrderedDict):
@@ -90,3 +96,34 @@ def check_supervisor_isRunning_asRoot():
     if result == "root":
         return True
     return False
+
+#Get list CPU stats and Memory by number of "sec" seconds
+def get_list_stats_cpu_mem(sec):
+    #modify isThen_Secs and cpuList variable
+    global isThen_Secs
+    global cpuList
+    while True:
+        if isThen_Secs==True:
+            #get cpu stats
+            Cpu_output = runShell("""top -bn 1  | grep '^%Cpu' | tail -n 1 | awk '{print $2"%"}'""")
+            result = Cpu_output.replace("\n", "")
+            result = result.replace("%","")
+            if len(cpuList)>=10:
+                cpuList.pop(0)
+            cpuList.append(result)
+            #get memory stats
+            Mem_output= runShell("""free -g -h -t | grep Mem | awk '{printf "%.2f\\n",(($3/$2) * 100)}'""")
+            if len(memoryList)>=10:
+                memoryList.pop(0)
+            Mem_output = Mem_output.replace("\n","")
+            memoryList.append(Mem_output)
+            isThen_Secs=False
+            sleep(sec)
+        elif isThen_Secs==False:
+            isThen_Secs=True
+
+#Run func get_list_stats_cpu_mem with thread
+def start_getList_stats(seconds):
+    thr1 = threading.Thread(target=get_list_stats_cpu_mem,args=(seconds,))
+    thr1.start()
+start_getList_stats(1)
