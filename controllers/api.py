@@ -38,7 +38,7 @@ try:
     @app_api.route('/api/system', methods=['GET'])
     def get_system_api():
         system = get_system()
-        return jsonify({'cpu': system.current_cpu_usage,'cores':system.each_cpu_usage, 'memory':system.memory_status, 'machineSpec':system.machine_spec,'CPU List':system.cpu_list})
+        return jsonify({'cpu': system.current_cpu_usage,'cores':system.each_cpu_usage, 'memory':system.memory_status, 'machineSpec':system.machine_spec,'cpulist':system.cpu_list,'memorylist':system.memory_list})
 except Exception as e:
     #logging the exception to a test.log file in the storage/logs folder
     app_api.logger_api.debug(e)

@@ -3,7 +3,7 @@ import sys
 current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 sys.path.insert(1,parent)
-from finder import runShell,cpuList,startCount_Down
+from finder import runShell,cpuList,memoryList
 class System:
 
     def __init__(self):
@@ -34,6 +34,7 @@ class System:
         output = runShell("""free -g -h -t | grep Mem | awk '{printf "%.2f\\n%",(($3/$2) * 100)"%"}'""")
         result = output.replace("\n", "")
         return result
+        
     #Get info about machine hardware
     @property
     def machine_spec(self):
@@ -43,6 +44,13 @@ class System:
         result = result.replace("\t", "")
         result = (dict([line.split(': ') for line in result.splitlines()]))
         return result
+
+    #Get CPU Stats for Chart
     @property
     def cpu_list(self):
         return cpuList
+
+    #Get Mem Stats for Chart
+    @property
+    def memory_list(self):
+        return memoryList
