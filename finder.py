@@ -6,8 +6,8 @@ import threading
 from time import sleep
 
 isThen_Secs=True
-cpuList=[]
-memoryList=[]
+cpuList=[None] * 10
+memoryList=[None] * 10
 
 #To get multiple value in config file
 class MultiOrderedDict(OrderedDict):
@@ -126,4 +126,4 @@ def get_list_stats_cpu_mem(sec):
 def start_getList_stats(seconds):
     thr1 = threading.Thread(target=get_list_stats_cpu_mem,args=(seconds,))
     thr1.start()
-start_getList_stats(3)
+start_getList_stats(1)
