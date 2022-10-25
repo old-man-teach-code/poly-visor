@@ -2,6 +2,11 @@ import os
 import re
 import configparser
 from collections import OrderedDict
+import threading
+from time import sleep
+
+isThen_Secs=True
+cpuList=[]
 
 #To get multiple value in config file
 class MultiOrderedDict(OrderedDict):
@@ -90,3 +95,26 @@ def check_supervisor_isRunning_asRoot():
     if result == "root":
         return True
     return False
+
+def countDown(sec):
+    global isThen_Secs
+    global cpuList
+    while True:
+        if isThen_Secs==True:
+            output = runShell("""top -bn 1  | grep '^%Cpu' | tail -n 1 | awk '{print $2"%"}'""")
+            result = output.replace("\n", "")
+            result = result.replace("%","")
+            if len(cpuList)>=11:
+                cpuList.pop(0)
+            cpuList.append(result)
+            print(cpuList)
+            isThen_Secs=False
+            sleep(sec)
+        elif isThen_Secs==False:
+            isThen_Secs=True
+
+def startCount_Down():
+    thr1 = threading.Thread(target=countDown,args=(2,))
+    thr1.start()    
+    thr1.join()
+startCount_Down()
