@@ -23,7 +23,7 @@ class System:
     #Get overall %CPU stats
     @property
     def current_cpu_usage(self):
-        output = runShell("""top -bn 1  | grep '^%Cpu' | tail -n 1 | awk '{print $2"%"}'""")
+        output = runShell("""top -bn 1  | grep '^%Cpu' | tail -n 1 | awk '{print $2}'""")
         result = output.replace("\n", "")    
         result = result.replace(",",".")    
         return result
