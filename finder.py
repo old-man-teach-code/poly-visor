@@ -111,14 +111,14 @@ def get_list_stats_cpu_mem(sec):
             result = result.replace(",",".")
             if len(cpuList)>=10:
                 cpuList.pop(0)
-            cpuList.append(result)
+            cpuList.append(float(result))
             #get memory stats
             Mem_output= runShell("""free -g -h -t | grep Mem | awk '{printf "%.2f\\n",(($3/$2) * 100)}'""")
             if len(memoryList)>=10:
                 memoryList.pop(0)
             Mem_output = Mem_output.replace("\n","")
             Mem_output = Mem_output.replace(",",".")
-            memoryList.append(Mem_output)
+            memoryList.append(float(Mem_output))
             isThen_Secs=False
             sleep(sec)
         elif isThen_Secs==False:
