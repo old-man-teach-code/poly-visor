@@ -31,7 +31,7 @@ class System:
     #Get %Memory stats
     @property
     def memory_status(self):
-        output = runShell("""free -g -h -t | grep Mem | awk '{printf "%.2f%",(($3/$2) * 100)"%"}'""")
+        output = runShell("""free -g -h -t | grep Mem | awk '{printf "%.2f%%",(($3/$2) * 100)}'""")
         result = output.replace("\n", "")
         result = result.replace(",",".")
         return result
