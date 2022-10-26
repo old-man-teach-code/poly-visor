@@ -8,7 +8,7 @@
 
 
     console.log(JSON.stringify($system.cpulist));
-	let chartValues = [20.9, 10.1, 5.6, 2.1, 20.5, 30.4, 45.5];S
+	let chartValues = [20.9, 10.1, 5.6, 2.1, 20.5, 30.4, 45.5];
 	let chartLabels = [60,50,40,30,20,10,0];
 
 	let chartCanvas;
