@@ -18,6 +18,7 @@ class System:
         result = result.replace("\n", " ")
         result = result.replace("us,", "")
         result = result.replace(":", " ")
+        result = result.replace(",",".")
         result = dict(zip(result.split()[::2], result.split()[1::2]))
         return result  
 
@@ -25,7 +26,8 @@ class System:
     @property
     def current_cpu_usage(self):
         output = runShell("""top -bn 1  | grep '^%Cpu' | tail -n 1 | awk '{print $2"%"}'""")
-        result = output.replace("\n", "")        
+        result = output.replace("\n", "")    
+        result = result.replace(",",".")    
         return result
 
     #Get %Memory stats
@@ -33,6 +35,7 @@ class System:
     def memory_status(self):
         output = runShell("""free -g -h -t | grep Mem | awk '{printf "%.2f%",(($3/$2) * 100)"%"}'""")
         result = output.replace("\n", "")
+        result = result.replace(",",".")
         return result
         
     #Get info about machine hardware
@@ -42,6 +45,7 @@ class System:
         result = output.replace("model name", "CPU")
         result += "CPUs: "+str(os.cpu_count())
         result = result.replace("\t", "")
+        result = result.replace(",",".")
         result = (dict([line.split(': ') for line in result.splitlines()]))
         return result
 

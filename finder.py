@@ -108,6 +108,7 @@ def get_list_stats_cpu_mem(sec):
             Cpu_output = runShell("""top -bn 1  | grep '^%Cpu' | tail -n 1 | awk '{print $2"%"}'""")
             result = Cpu_output.replace("\n", "")
             result = result.replace("%","")
+            result = result.replace(",",".")
             if len(cpuList)>=10:
                 cpuList.pop(0)
             cpuList.append(result)
@@ -116,6 +117,7 @@ def get_list_stats_cpu_mem(sec):
             if len(memoryList)>=10:
                 memoryList.pop(0)
             Mem_output = Mem_output.replace("\n","")
+            Mem_output = Mem_output.replace(",",".")
             memoryList.append(Mem_output)
             isThen_Secs=False
             sleep(sec)
