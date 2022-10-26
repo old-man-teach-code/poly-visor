@@ -12,12 +12,10 @@ class System:
     #Get stats of each core CPU
     @property
     def each_cpu_usage(self):  
-        output = runShell("""top 1 -bn1  | grep '^%Cpu' |awk '{print $1,$2,$3"\\n"$18,$19,$20,$21}'""")
-        b = output.replace("st ","")               
-        result=b.replace(" us,","")
-        result = result.replace("\n", " ")
+        output = runShell("""top -bn1 1 | grep '^%Cpu' | awk '{print $1" "$3" \\n"$18$19" "$20$21}'""")
+        result = output.replace("st","")               
         result = result.replace("us,", "")
-        result = result.replace(":", " ")
+        result = result.replace(":","")
         result = result.replace(",",".")
         result = dict(zip(result.split()[::2], result.split()[1::2]))
         return result  
@@ -25,7 +23,7 @@ class System:
     #Get overall %CPU stats
     @property
     def current_cpu_usage(self):
-        output = runShell("""top -bn 1  | grep '^%Cpu' | tail -n 1 | awk '{print $2"%"}'""")
+        output = runShell("""top -bn 1  | grep '^%Cpu' | tail -n 1 | awk '{print $2}'""")
         result = output.replace("\n", "")    
         result = result.replace(",",".")    
         return result
