@@ -128,4 +128,4 @@ def get_list_stats_cpu_mem(sec):
 def start_getList_stats(seconds):
     thr1 = threading.Thread(target=get_list_stats_cpu_mem,args=(seconds,))
     thr1.start()
-start_getList_stats(1)
+#start_getList_stats(1)
