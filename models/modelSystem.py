@@ -3,7 +3,7 @@ import sys
 current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 sys.path.insert(1,parent)
-from finder import runShell,cpuList,memoryList
+from finder import runShell
 class System:
 
     def __init__(self):
@@ -18,7 +18,9 @@ class System:
         result = result.replace(":","")
         result = result.replace(",",".")
         result = dict(zip(result.split()[::2], result.split()[1::2]))
-        return result  
+        #Convert dict value from string to float
+        result_float = dict(zip(result.keys(), [float(value) for value in result.values()]))
+        return result_float
 
     #Get overall %CPU stats
     @property
@@ -26,15 +28,15 @@ class System:
         output = runShell("""top -bn 1  | grep '^%Cpu' | tail -n 1 | awk '{print $2}'""")
         result = output.replace("\n", "")    
         result = result.replace(",",".")    
-        return result
+        return float(result)
 
     #Get %Memory stats
     @property
     def memory_status(self):
-        output = runShell("""free -g -h -t | grep Mem | awk '{printf "%.2f%%",(($3/$2) * 100)}'""")
+        output = runShell("""free | grep Mem | awk '{printf "%.2f",(($3/$2) * 100)}'""")
         result = output.replace("\n", "")
         result = result.replace(",",".")
-        return result
+        return float(result)
         
     #Get info about machine hardware
     @property
@@ -45,14 +47,15 @@ class System:
         result = result.replace("\t", "")
         result = result.replace(",",".")
         result = (dict([line.split(': ') for line in result.splitlines()]))
+        result["CPUs"]=int(os.cpu_count())
         return result
 
-    #Get CPU Stats for Chart
-    @property
-    def cpu_list(self):
-        return cpuList
+    # #Get CPU Stats for Chart
+    # @property
+    # def cpu_list(self):
+    #     return cpuList
 
-    #Get Mem Stats for Chart
-    @property
-    def memory_list(self):
-        return memoryList
+    # #Get Mem Stats for Chart
+    # @property
+    # def memory_list(self):
+    #     return memoryList
