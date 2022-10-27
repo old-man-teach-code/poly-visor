@@ -19,8 +19,12 @@ class System:
         result = result.replace(",",".")
         result = dict(zip(result.split()[::2], result.split()[1::2]))
         #Convert dict value from string to float
-        result_float = dict(zip(result.keys(), [float(value) for value in result.values()]))
-        return result_float
+        try:
+
+            result_float = dict(zip(result.keys(), [float(value) for value in result.values()]))
+            return result_float
+        except:
+            return result
 
     #Get overall %CPU stats
     @property
