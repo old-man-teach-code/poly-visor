@@ -12,7 +12,7 @@ class System:
     #Get stats of each core CPU
     @property
     def each_cpu_usage(self):  
-        output = runShell("""top -bn1 1 | grep '^%Cpu' | awk '{print $1" "$3" \\n"$18$19" "$20$21}'""")
+        output = runShell("""grep 'cpu' /proc/stat | awk -v OFS="\t" 'NR==1{$11="usr"}NR>1{$11=($2*100)/($2+$3+$4+$5+$6+$7+$8+$9+$10)}2' | awk '{printf($1" %.2f\\n",$11)}'| tail -n +2""")
         result = output.replace("st","")               
         result = result.replace("us,", "")
         result = result.replace(":","")
