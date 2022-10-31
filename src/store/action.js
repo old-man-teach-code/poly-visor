@@ -1,5 +1,30 @@
-import Chart from 'chart.js/auto';
+//ChartJS import
+import {
+    Chart,
+    LineElement,
+    PointElement,
+    LineController,
+    CategoryScale,
+    LinearScale,
+    Filler,
+    Legend,
+    Title,
+    Tooltip,
+} from 'chart.js';
 
+Chart.register(
+    LineElement,
+    PointElement,
+    LineController,
+    CategoryScale,
+    LinearScale,
+    Filler,
+    Legend,
+    Title,
+    Tooltip,
+);
+
+//ChartJS function for creating, updating. Delete chart when there's no param
 export function chartJS(node, config) {
     const ctx = node.getContext('2d');
     const chart = new Chart(ctx, config)
@@ -14,3 +39,4 @@ export function chartJS(node, config) {
         }
     }
 }
+
