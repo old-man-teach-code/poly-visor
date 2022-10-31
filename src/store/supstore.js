@@ -14,7 +14,12 @@ const fetchAll = async () => {
     // fetching processes data
     const resProcesses = await fetch('http://127.0.0.1:5000/api/processes');
     const dataProcesses = await resProcesses.json();
-    processes.set(dataProcesses);
+    const loadedProcesses = dataProcesses.map((data) => ({
+        name: data.name,
+        statename: data.statename,
+        stateColor: (((data.statename == "RUNNING") || (data.statename == "STARTING")) ? ('bg-green-300') : (data.statname == "BACKOFF") ? ('bg-yellow-300') : ('bg-red-300'))
+    }));
+    processes.set(loadedProcesses);
 
     count.set(0);
     for (let process of dataProcesses) {
@@ -23,5 +28,7 @@ const fetchAll = async () => {
         }
     }
 }
+//First time calling api
+fetchAll();
 //fetch api every 2 seconds
 setInterval(fetchAll, 2000);

@@ -125,26 +125,26 @@
 	}, 2000);
 </script>
 
-<div class="w-full h-screen px-10">
+<div class="w-full h-full px-10">
 	<h1 class=" pt-5 text-2xl font-semibold">Overview</h1>
-	<div class="grid text-center justify-items-center items-end gap-5 grid-cols-4 grid-rows-4">
-		<button class="border-2 bg-white w-full h-32 rounded-xl {textCpu}" on:click={chartCpu}>
+	<div class="grid text-center justify-items-center items-end gap-4 grid-cols-4 grid-rows-4">
+		<button class="border-2 bg-white w-full h-32 rounded-md {textCpu}" on:click={chartCpu}>
 			<h1 class="text-xl">CPU Usage</h1>
 			<h4>{$system.cpu}%</h4>
 		</button>
-		<button class="border-2 bg-white w-full h-32 rounded-xl {textRam}" on:click={chartRam}>
+		<button class="border-2 bg-white w-full h-32 rounded-md {textRam}" on:click={chartRam}>
 			<h1 class="text-xl">Ram Usage</h1>
 			<h4>{$system.memory}%</h4>
 		</button>
-		<div class="border-2 bg-white w-full h-32 rounded-xl">
+		<div class="border-2 bg-white w-full h-32 rounded-md">
 			<h1 class="text-xl pt-9">Running process</h1>
 			<h4>{$count}</h4>
 		</div>
-		<div class="border-2 bg-white w-full h-32 rounded-xl">
+		<div class="border-2 bg-white w-full h-32 rounded-md">
 			<h1 class="text-xl pt-9">Total process</h1>
 			<h4>{Object.keys($processes).length}</h4>
 		</div>
-		<div class="border-2 bg-white w-3/4 rounded-xl row-span-3 col-span-4">
+		<div class="border-2 bg-white w-3/4 rounded-md row-span-3 col-span-4">
 			<canvas class="p-2" use:chartJS={data} id="myChart" />
 		</div>
 	</div>
