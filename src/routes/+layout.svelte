@@ -1,10 +1,12 @@
 <script>
-    import Sidebar from "../components/sidebar.svelte";
-    import "../app.css";
+	import Sidebar from '../components/sidebar.svelte';
+	import '../app.css';
 </script>
+
 <div class="flex justify-items-center">
-    <Sidebar/>
-    <slot/>
+	<!-- Import sidebar -->
+	<Sidebar />
+	<slot />
 </div>
 
 <style>
