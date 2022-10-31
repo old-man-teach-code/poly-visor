@@ -3,11 +3,12 @@
 	import { processes } from '../store/supstore';
 	import { count } from '../store/supstore';
 	import { chartJS } from '../store/action.js';
-	import { disableScrollHandling } from '$app/navigation';
 
+	//Initial data for ChartJS
 	let data = {
 		type: 'line',
 		data: {
+			//X axis data label
 			labels: [
 				'60s',
 				'',
@@ -41,6 +42,7 @@
 				'',
 				'0s'
 			],
+			//set default dataset as CPU
 			datasets: [
 				{
 					label: 'CPU %',
@@ -64,6 +66,7 @@
 				}
 			},
 			scales: {
+				//Y axis min max data value
 				y: {
 					suggestedMin: 0,
 					suggestedMax: 50
@@ -72,10 +75,13 @@
 		}
 	};
 
+	//Reactive variable for pushing data into ChartJS
 	$: chartData = $system.cpu;
 	let chart;
-	let textCpu = 'text-[#FF8C32]';
+	let textCpu = 'text-[#FF8C32]'; //initial text color for CPU as orange
 	let textRam;
+
+	//Reactive function, changing datasets infor when swapping between CPU and Ram
 	$: if (chart == 'CPU %') {
 		chartData = $system.cpu;
 		data.options.plugins.title.text = 'Overall CPU usage';
@@ -94,13 +100,14 @@
 		});
 	}
 
+	//function for handling CPU's chart
 	function chartCpu() {
 		chart = 'CPU %';
 		data.data.datasets.forEach((ds) => {
 			ds.data = Array(31);
 		});
 	}
-
+	//Function for handling RAM's chart
 	function chartRam() {
 		chart = 'RAM %';
 		data.data.datasets.forEach((ds) => {
@@ -108,6 +115,7 @@
 		});
 	}
 
+	//Push new data from the API every 2 seconds
 	setInterval(() => {
 		data.data.datasets.forEach((ds) => {
 			ds.data.shift();
