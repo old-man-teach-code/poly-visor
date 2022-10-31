@@ -8,19 +8,52 @@
 	let data = {
 		type: 'line',
 		data: {
-			labels: ['60s', '', '', '', '', '', '', '', '', '', '', '', '0s'],
+			labels: [
+				'60s',
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+				'',
+				'0s'
+			],
 			datasets: [
 				{
 					label: 'CPU %',
 					backgroundColor: '#FF8C32',
 					borderColor: 'rgb(255, 99, 132)',
-					data: Array(13)
+					data: Array(31)
 				}
 			]
 		},
 		options: {
 			fill: true,
 			responsive: true,
+			maintainAspectRatio: true,
 			plugins: {
 				legend: {
 					position: 'top'
@@ -64,14 +97,14 @@
 	function chartCpu() {
 		chart = 'CPU %';
 		data.data.datasets.forEach((ds) => {
-			ds.data = Array(13);
+			ds.data = Array(31);
 		});
 	}
 
 	function chartRam() {
 		chart = 'RAM %';
 		data.data.datasets.forEach((ds) => {
-			ds.data = Array(13);
+			ds.data = Array(31);
 		});
 	}
 
@@ -81,10 +114,10 @@
 			ds.data.push(chartData);
 		});
 		data = data;
-	}, 1000);
+	}, 2000);
 </script>
 
-<div class="w-full px-10">
+<div class="w-full h-screen px-10">
 	<h1 class=" pt-5 text-2xl font-semibold">Overview</h1>
 	<div class="grid text-center justify-items-center items-end gap-5 grid-cols-4 grid-rows-4">
 		<button class="border-2 bg-white w-full h-32 rounded-xl {textCpu}" on:click={chartCpu}>
@@ -103,8 +136,8 @@
 			<h1 class="text-xl pt-9">Total process</h1>
 			<h4>{Object.keys($processes).length}</h4>
 		</div>
-		<div class="border-2 bg-white w-full h-full rounded-xl row-span-3 col-span-4">
-			<canvas class="p-5" use:chartJS={data} id="myChart" />
+		<div class="border-2 bg-white w-3/4 rounded-xl row-span-3 col-span-4">
+			<canvas class="p-2" use:chartJS={data} id="myChart" />
 		</div>
 	</div>
 </div>
