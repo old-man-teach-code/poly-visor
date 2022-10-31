@@ -59,9 +59,7 @@ class Process:
                 process['stderr_logfile'],
                 process['pid'],
                 process['description']))
-
-            print(process['name'])
-
+                
         return processList
 
 
