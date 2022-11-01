@@ -4,12 +4,15 @@ import { writable } from "svelte/store";
 export const system = writable([]);
 export const processes = writable([]);
 export const count = writable(0);
+export const cpuCount = writable(0);
 
 //fetch api
 const fetchAll = async () => {
     // fetching system data
     const resSystem = await fetch('http://127.0.0.1:5000/api/system');
     const dataSystem = await resSystem.json();
+    let cpus = dataSystem.machineSpec.CPUs;
+    cpuCount.set(cpus);
     system.set(dataSystem);
     // fetching processes data
     const resProcesses = await fetch('http://127.0.0.1:5000/api/processes');

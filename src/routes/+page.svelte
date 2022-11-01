@@ -3,12 +3,13 @@
 	import { processes } from '../store/supstore';
 	import { count } from '../store/supstore';
 	import { chartJS } from '../store/action.js';
+	import { cpuCount } from '../store/supstore';
 
 	//Variables for storing data as an array for chartJS
 	let chartCpuData = Array(31);
 	let chartRamData = Array(31);
 	let chart;
-	let textCpu = 'text-[#FF8C32]'; //initial text color for CPU as orange
+	let textCpu = 'text-[#FF8C32]'; //initial text color fo0r CPU as orange
 	let textRam;
 
 	//Initial data for ChartJS
@@ -138,12 +139,12 @@
 			<h4>{$system.memory}%</h4>
 		</button>
 		<div class="border-2 bg-white w-full h-32 rounded-md">
-			<h1 class="text-xl pt-9">Running process</h1>
-			<h4>{$count}/{Object.keys($processes).length}</h4>
+			<h1 class="text-xl pt-9">Number of cores</h1>
+			<h4>{$cpuCount}</h4>
 		</div>
 		<div class="border-2 bg-white w-full h-32 rounded-md">
-			<h1 class="text-xl pt-9">Number of cores</h1>
-			<h4>{$system.machineSpec.CPUs}</h4>
+			<h1 class="text-xl pt-9">Running process</h1>
+			<h4>{$count}/{Object.keys($processes).length}</h4>
 		</div>
 		<div class="border-2 bg-white w-3/4 rounded-md row-span-3 col-span-4">
 			<canvas class="p-2" use:chartJS={data} id="myChart" />
