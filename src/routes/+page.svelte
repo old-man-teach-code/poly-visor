@@ -4,12 +4,11 @@
 	import { count } from '../store/supstore';
 	import { chartJS } from '../store/action.js';
 	import { cpuCount } from '../store/supstore';
+	import { cpuChart } from '../store/supstore';
+	import { ramChart } from '../store/supstore.js';
 
-	//Variables for storing data as an array for chartJS
-	let chartCpuData = Array(31);
-	let chartRamData = Array(31);
 	let chart;
-	let textCpu = 'text-[#FF8C32]'; //initial text color fo0r CPU as orange
+	let textCpu = 'text-[#FF8C32]'; //initial text color for CPU as orange
 	let textRam;
 
 	//Initial data for ChartJS
@@ -56,7 +55,7 @@
 					label: 'CPU %',
 					backgroundColor: '#FF8C32',
 					borderColor: 'rgb(255, 99, 132)',
-					data: chartCpuData
+					data: $cpuChart
 				}
 			]
 		},
@@ -87,7 +86,7 @@
 	$: if (chart == 'CPU %') {
 		data.data.datasets.forEach((ds) => {
 			ds.label = chart;
-			ds.data = chartCpuData;
+			ds.data = $cpuChart;
 		});
 		data.options.plugins.title.text = 'Overall CPU usage';
 		textCpu = 'text-[#FF8C32]';
@@ -95,7 +94,7 @@
 	} else if (chart == 'RAM %') {
 		data.data.datasets.forEach((ds) => {
 			ds.label = chart;
-			ds.data = chartRamData;
+			ds.data = $ramChart;
 		});
 		data.options.plugins.title.text = 'Overall RAM usage';
 		textCpu = 'text-black';
@@ -111,14 +110,10 @@
 		chart = 'RAM %';
 	}
 
-	//Push new data from the API every 2 seconds
-	setInterval(() => {
-		chartCpuData.shift();
-		chartCpuData.push($system.cpu);
-		chartRamData.shift();
-		chartRamData.push($system.memory);
+	//Chart data get updated whenever the writable change
+	$: if ($cpuChart) {
 		data = data;
-	}, 2000);
+	}
 </script>
 
 <div class="w-full h-full px-10">
