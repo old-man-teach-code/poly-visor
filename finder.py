@@ -20,13 +20,14 @@ class MultiOrderedDict(OrderedDict):
 # Get pid supervisord by name in linux with shell
 def get_pid():
     result = runShell("pgrep supervisord")
-    result = result.replace("\n", "")
-    return result
+    result = result.split()
+    return result[0]
 
 
 # Get config file path of Supervisord when it running on machine
 def configPath():
-    result = runShell("ps -p "+str(get_pid())+" -o args")
+    pid = get_pid()
+    result = runShell("ps -p "+pid+" -o args")
     path = ""
     s = re.findall(r'(\/.*?\.[\w:]+)', result)
     try:
@@ -51,7 +52,6 @@ def get_proc_config_path():
     config.read(configPath())
     #path = config['include']['files']
     path = config.get("include", "files")
-
     return path
 
 # Get serverurl Supervisor
@@ -128,4 +128,3 @@ def get_list_stats_cpu_mem(sec):
 def start_getList_stats(seconds):
     thr1 = threading.Thread(target=get_list_stats_cpu_mem,args=(seconds,))
     thr1.start()
-#start_getList_stats(1)
