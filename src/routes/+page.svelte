@@ -6,10 +6,13 @@
 	import { cpuCount } from '../store/supstore';
 	import { cpuChart } from '../store/supstore';
 	import { ramChart } from '../store/supstore.js';
+	import CpuCore from '../components/cpuCore.svelte';
 
 	let chart;
 	let textCpu = 'text-[#FF8C32]'; //initial text color for CPU as orange
 	let textRam;
+	let textCores;
+	let chartState = true;
 
 	//Initial data for ChartJS
 	let data = {
@@ -91,6 +94,7 @@
 		data.options.plugins.title.text = 'Overall CPU usage';
 		textCpu = 'text-[#FF8C32]';
 		textRam = 'text-black';
+		textCores = 'text-black';
 	} else if (chart == 'RAM %') {
 		data.data.datasets.forEach((ds) => {
 			ds.label = chart;
@@ -99,15 +103,25 @@
 		data.options.plugins.title.text = 'Overall RAM usage';
 		textCpu = 'text-black';
 		textRam = 'text-[#FF8C32]';
+		textCores = 'text-black';
+	} else if (chart == 'Cores') {
+		textCpu = 'text-black';
+		textRam = 'text-black';
+		textCores = 'text-[#FF8C32]';
 	}
-
 	//function for handling CPU's chart
 	function chartCpu() {
+		chartState = true;
 		chart = 'CPU %';
 	}
 	//Function for handling RAM's chart
 	function chartRam() {
+		chartState = true;
 		chart = 'RAM %';
+	}
+	function chartCores() {
+		chartState = false;
+		chart = 'Cores';
 	}
 
 	//Chart data get updated whenever the writable change
@@ -116,9 +130,9 @@
 	}
 </script>
 
-<div class="w-full h-full px-10">
+<div class="w-full h-screen px-10">
 	<h1 class=" pt-5 text-2xl font-semibold">Overview</h1>
-	<div class="grid text-center justify-items-center items-end gap-4 grid-cols-4 grid-rows-4">
+	<div class="grid text-center justify-items-center gap-4 grid-cols-4 grid-rows-4">
 		<button
 			class="hover:text-2xl border-2 bg-white w-full h-32 rounded-md {textCpu}"
 			on:click={chartCpu}
@@ -133,17 +147,29 @@
 			<h1 class="text-xl">Ram Usage</h1>
 			<h4>{$system.memory}%</h4>
 		</button>
-		<div class="border-2 bg-white w-full h-32 rounded-md">
+		<!-- <div class="border-2 bg-white w-full h-32 rounded-md">
 			<h1 class="text-xl pt-9">Number of cores</h1>
 			<h4>{$cpuCount}</h4>
-		</div>
+		</div> -->
+		<button
+			class="hover:text-2xl border-2 bg-white w-full h-32 rounded-md {textCores}"
+			on:click={chartCores}
+		>
+			<h1 class="text-xl">Number of cores</h1>
+			<h4>{$cpuCount}</h4>
+		</button>
 		<div class="border-2 bg-white w-full h-32 rounded-md">
 			<h1 class="text-xl pt-9">Running process</h1>
 			<h4>{$count}/{Object.keys($processes).length}</h4>
 		</div>
-		<div class="border-2 bg-white w-3/4 rounded-md row-span-3 col-span-4">
-			<canvas class="p-2" use:chartJS={data} id="myChart" />
-		</div>
+		{#if chartState}
+			<div class="border-2 bg-white w-3/4 rounded-md row-span-3 col-span-4">
+				<canvas class="p-2" use:chartJS={data} id="myChart" />
+			</div>
+		{:else}
+			{#each Object.entries($system.cores) as [key, value]}
+				<CpuCore coreName={key} coreValue={value} />
+			{/each}
+		{/if}
 	</div>
 </div>
-7

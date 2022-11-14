@@ -3,9 +3,9 @@
 	import '../app.css';
 </script>
 
-<div class="flex justify-items-center">
-	<!-- Import sidebar -->
-	<Sidebar />
+<!-- Import sidebar -->
+<Sidebar />
+<div class="pl-56">
 	<slot />
 </div>
 

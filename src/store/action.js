@@ -24,10 +24,11 @@ Chart.register(
     Tooltip,
 );
 
+let chart;
 //ChartJS function for creating, updating. Delete chart when there's no param
 export function chartJS(node, config) {
     const ctx = node.getContext('2d');
-    const chart = new Chart(ctx, config)
+    chart = new Chart(ctx, config)
     return {
         update(newConfig) {
             chart.data = newConfig.data;
@@ -38,5 +39,9 @@ export function chartJS(node, config) {
             chart.destroy();
         }
     }
+}
+
+export function destroyChart() {
+    chart.destroy();
 }
 
