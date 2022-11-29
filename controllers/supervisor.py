@@ -1,5 +1,9 @@
 import sys
 import os
+import configparser
+
+
+
 # Get PARENT path of project to import modules
 current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
@@ -41,3 +45,34 @@ def all_log_supervisord():
 def clear_all_log_of_processes():
     a= Supervisor()
     return a.clear_all_log_processes
+
+def createConfig(process_name, command):
+    config = configparser.ConfigParser()
+    config['program:' + process_name] = {
+        'command': command,
+        'autostart': 'true',
+        'autorestart': 'true',
+        'stdout_logfile': '/var/log/' + process_name +'.out.log',
+        'stderr_logfile': '/var/log/' + process_name +'.err.log',
+    }
+    with open('/etc/supervisor/conf.d/' + process_name + '.ini', 'w') as configfile:
+        config.write(configfile)
+
+
+# create updateConfig function to update the config file based on the key
+def updateConfig(process_name, key, value):
+    config = configparser.ConfigParser()
+    config.read('/etc/supervisor/conf.d/test.ini')
+    config['program:' + process_name][key] = value
+    with open('/etc/supervisor/conf.d/' + process_name + '.ini', 'w') as configfile:
+        config.write(configfile)
+
+
+
+# create updateConfig function to update the config file based on the key
+def updateConfig(process_name, key, value):
+    config = configparser.ConfigParser()
+    config.read('/etc/supervisor/conf.d/test.ini')
+    config['program:' + process_name][key] = value
+    with open('/etc/supervisor/conf.d/' + process_name + '.ini', 'w') as configfile:
+        config.write(configfile)    
