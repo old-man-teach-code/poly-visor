@@ -2,6 +2,8 @@ import sys
 import os
 import configparser
 
+from finder import configPath
+
 
 
 # Get PARENT path of project to import modules
@@ -46,33 +48,27 @@ def clear_all_log_of_processes():
     a= Supervisor()
     return a.clear_all_log_processes
 
+# Create config file for supervisor
 def createConfig(process_name, command):
     config = configparser.ConfigParser()
     config['program:' + process_name] = {
         'command': command,
         'autostart': 'true',
         'autorestart': 'true',
-        'stdout_logfile': '/var/log/' + process_name +'.out.log',
-        'stderr_logfile': '/var/log/' + process_name +'.err.log',
+        'stdout_logfile': '/var/log/' + process_name + '.out.log',
+        'stderr_logfile': '/var/log/' + process_name + '.err.log',
     }
     with open('/etc/supervisor/conf.d/' + process_name + '.ini', 'w') as configfile:
         config.write(configfile)
 
 
 # create updateConfig function to update the config file based on the key
-def updateConfig(process_name, key, value):
+def updateConfig(process_name, key, action, value=''):
     config = configparser.ConfigParser()
-    config.read('/etc/supervisor/conf.d/test.ini')
-    config['program:' + process_name][key] = value
+    config.read('/etc/supervisor/conf.d/' + process_name + '.ini')
+    if action == 'update':
+        config['program:' + process_name][key] = value
+    elif action == 'delete':
+        del config['program:' + process_name][key]
     with open('/etc/supervisor/conf.d/' + process_name + '.ini', 'w') as configfile:
         config.write(configfile)
-
-
-
-# create updateConfig function to update the config file based on the key
-def updateConfig(process_name, key, value):
-    config = configparser.ConfigParser()
-    config.read('/etc/supervisor/conf.d/test.ini')
-    config['program:' + process_name][key] = value
-    with open('/etc/supervisor/conf.d/' + process_name + '.ini', 'w') as configfile:
-        config.write(configfile)    
