@@ -4,7 +4,9 @@ import configparser
 
 from finder import configPath
 
-
+if os.geteuid() != 0:
+    print("You need to have switch user to root to run the Flask .")
+    exit()
 
 # Get PARENT path of project to import modules
 current = os.path.dirname(os.path.realpath(__file__))
@@ -48,27 +50,38 @@ def clear_all_log_of_processes():
     a= Supervisor()
     return a.clear_all_log_processes
 
-# Create config file for supervisor
+
+# Create config file for supervisor and check if file exist
 def createConfig(process_name, command):
-    config = configparser.ConfigParser()
-    config['program:' + process_name] = {
-        'command': command,
-        'autostart': 'true',
-        'autorestart': 'true',
-        'stdout_logfile': '/var/log/' + process_name + '.out.log',
-        'stderr_logfile': '/var/log/' + process_name + '.err.log',
-    }
-    with open('/etc/supervisor/conf.d/' + process_name + '.ini', 'w') as configfile:
-        config.write(configfile)
+    if(os.path.isfile('/etc/supervisor/conf.d/' + process_name + '.ini')):
+        return False
+    else:
+        config = configparser.ConfigParser()
+        config['program:' + process_name] = {
+            'command': command,
+            'autostart': 'true',
+            'autorestart': 'true',
+            'stdout_logfile': '/var/log/' + process_name + '.out.log',
+            'stderr_logfile': '/var/log/' + process_name + '.err.log',
+        }
+        with open('/etc/supervisor/conf.d/' + process_name + '.ini', 'w') as config_file:
+            config.write(config_file)
+        return True                
+
 
 
 # create updateConfig function to update the config file based on the key
 def updateConfig(process_name, key, action, value=''):
-    config = configparser.ConfigParser()
-    config.read('/etc/supervisor/conf.d/' + process_name + '.ini')
-    if action == 'update':
-        config['program:' + process_name][key] = value
-    elif action == 'delete':
-        del config['program:' + process_name][key]
-    with open('/etc/supervisor/conf.d/' + process_name + '.ini', 'w') as configfile:
-        config.write(configfile)
+    if(os.path.isfile('/etc/supervisor/conf.d/' + process_name + '.ini')):
+        config = configparser.ConfigParser()
+        config.read('/etc/supervisor/conf.d/' + process_name + '.ini')
+        if(action == 'add'):
+            config.set('program:' + process_name, key, value)
+        elif(action == 'remove'):
+            config.remove_option('program:' + process_name, key)
+        with open('/etc/supervisor/conf.d/' + process_name + '.ini', 'w') as config_file:
+            config.write(config_file)
+        return True
+    else:
+        return False
+        
