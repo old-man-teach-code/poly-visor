@@ -3,8 +3,6 @@ import json
 from time import sleep
 from controllers.processes import start_all_processes_model, start_process_by_name_model, start_process_group_model, stop_all_processes_model, stop_process_by_name_model, stop_process_group_model, tail_stdErr_logFile_model, tail_stdOut_logFile_model
 from controllers.supervisor import createConfig, restart_supervisor_model, shutdown_supervisor_model, updateConfig
-from controllers.system import get_system
-from controllers.utils import get_date
 from flask import jsonify, Blueprint, Response
 
 import logging
@@ -122,7 +120,7 @@ try:
     @app_routes.route('/config/create/<process_name>/<command>', methods=['GET'])
     def create_config(process_name, command):
         result = createConfig(process_name, command)
-        if(result):
+        if (result):
             return jsonify({'message': 'Config file created successfully'})
         else:
             return jsonify({'message': 'Config file creation failed'})
@@ -132,9 +130,9 @@ except Exception as e:
 # update the config file
 try:
     @app_routes.route('/config/update/<process_name>/<key>/<action>/<value>', methods=['GET'])
-    def update_config(process_name, key, action, value ):
+    def update_config(process_name, key, action, value):
         result = updateConfig(process_name, key, action, value)
-        if(result):
+        if (result):
             return jsonify({'message': 'Config file updated successfully'})
         else:
             return jsonify({'message': 'Config file update failed'})
