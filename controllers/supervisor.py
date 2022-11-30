@@ -75,10 +75,10 @@ def updateConfig(process_name, key, action, value=''):
     if(os.path.isfile('/etc/supervisor/conf.d/' + process_name + '.ini')):
         config = configparser.ConfigParser()
         config.read('/etc/supervisor/conf.d/' + process_name + '.ini')
-        if(action == 'add'):
-            config.set('program:' + process_name, key, value)
-        elif(action == 'remove'):
-            config.remove_option('program:' + process_name, key)
+        if action == 'update':
+            config['program:' + process_name][key] = value
+        elif action == 'delete':
+            del config['program:' + process_name][key]
         with open('/etc/supervisor/conf.d/' + process_name + '.ini', 'w') as config_file:
             config.write(config_file)
         return True
