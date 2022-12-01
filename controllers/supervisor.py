@@ -82,7 +82,7 @@ def createConfig(process_name, command):
 
 
 # create updateConfig function to update the config file based on the key
-def updateConfig(process_name, key, action, value=''):
+def modifyConfig(process_name,action, key , value = ''):
     if (os.path.isfile('/etc/supervisor/conf.d/' + process_name + '.ini')):
         config = configparser.ConfigParser()
         config.read('/etc/supervisor/conf.d/' + process_name + '.ini')

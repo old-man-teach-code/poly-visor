@@ -2,7 +2,7 @@
 import json
 from time import sleep
 from controllers.processes import start_all_processes_model, start_process_by_name_model, start_process_group_model, stop_all_processes_model, stop_process_by_name_model, stop_process_group_model, tail_stdErr_logFile_model, tail_stdOut_logFile_model
-from controllers.supervisor import createConfig, restart_supervisor_model, shutdown_supervisor_model, updateConfig
+from controllers.supervisor import createConfig, modifyConfig, restart_supervisor_model, shutdown_supervisor_model
 from flask import jsonify, Blueprint, Response
 
 import logging
@@ -129,9 +129,9 @@ except Exception as e:
 
 # update the config file
 try:
-    @app_routes.route('/config/update/<process_name>/<key>/<action>/<value>', methods=['GET'])
-    def update_config(process_name, key, action, value):
-        result = updateConfig(process_name, key, action, value)
+    @app_routes.route('/config/modify/<process_name>/<action>/<key>/<value>', methods=['GET'])
+    def modify_config(process_name, action, key, value):
+        result = modifyConfig(process_name, action, key, value)
         if (result):
             return jsonify({'message': 'Config file updated successfully'})
         else:
