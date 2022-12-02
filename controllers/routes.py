@@ -129,6 +129,7 @@ except Exception as e:
 
 # update the config file
 try:
+    @app_routes.route('/config/modify/<process_name>/<action>/<key>/',defaults={'value': ''}, methods=['GET'] )
     @app_routes.route('/config/modify/<process_name>/<action>/<key>/<value>', methods=['GET'])
     def modify_config(process_name, action, key, value):
         result = modifyConfig(process_name, action, key, value)
