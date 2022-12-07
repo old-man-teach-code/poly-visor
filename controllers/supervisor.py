@@ -4,9 +4,9 @@ import os
 import configparser
 
 
-if os.geteuid() != 0:
-    print("You need to have switch user to root to run the Flask .")
-    exit()
+# if os.geteuid() != 0:
+#     print("You need to have switch user to root to run the Flask .")
+#     exit()
 
 # Get PARENT path of project to import modules
 current = os.path.dirname(os.path.realpath(__file__))
@@ -65,7 +65,7 @@ def clear_all_log_of_processes():
 
 # Create config file for supervisor and check if file exist
 def createConfig(process_name, command):
-    if (os.path.isfile('/etc/supervisor/conf.d/' + process_name + '.ini')):
+    if (os.path.isfile('/var/supervisor/' + process_name + '.ini')):
         return False
     else:
         config = configparser.ConfigParser()
@@ -76,21 +76,21 @@ def createConfig(process_name, command):
             'stdout_logfile': '/var/log/' + process_name + '.out.log',
             'stderr_logfile': '/var/log/' + process_name + '.err.log',
         }
-        with open('/etc/supervisor/conf.d/' + process_name + '.ini', 'w') as config_file:
+        with open('/var/supervisor/' + process_name + '.ini', 'w') as config_file:
             config.write(config_file)
         return True
 
 
 # create updateConfig function to update the config file based on the key
 def modifyConfig(process_name,action, key , value = ''):
-    if (os.path.isfile('/etc/supervisor/conf.d/' + process_name + '.ini')):
+    if (os.path.isfile('/var/supervisor/' + process_name + '.ini')):
         config = configparser.ConfigParser()
-        config.read('/etc/supervisor/conf.d/' + process_name + '.ini')
+        config.read('/var/supervisor/' + process_name + '.ini')
         if action == 'update':
             config['program:' + process_name][key] = value
         elif action == 'delete':
             del config['program:' + process_name][key]
-        with open('/etc/supervisor/conf.d/' + process_name + '.ini', 'w') as config_file:
+        with open('/var/supervisor/' + process_name + '.ini', 'w') as config_file:
             config.write(config_file)
         return True
     else:
