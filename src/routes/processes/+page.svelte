@@ -4,16 +4,24 @@
 	import StartButton from '../../components/StartButton.svelte';
 	import StopButton from '../../components/StopButton.svelte';
 	import ViewButton from '../../components/ViewButton.svelte';
+	import { startProcess } from '../../store/action.js';
+	import { startAllProcess } from '../../store/action.js';
+	import { stopProcess } from '../../store/action.js';
+	import { stopAllProcess } from '../../store/action.js';
+
 	let values;
-	function Start() {
-		console.log('stop');
-	}
 </script>
 
 <div class="w-full h-screen px-10">
 	<h1 class=" pt-5 text-2xl font-semibold">Processes</h1>
 	<div class="border-2 bg-white w-full h-5/6 rounded-md mt-10">
-		<h3 class="p-10 font-bold">All Processes</h3>
+		<div class="flex justify-between">
+			<h3 class="p-10 font-bold">All Processes</h3>
+			<div class="flex space-x-3 pr-28">
+				<StartButton on:event={() => startAllProcess()} />
+				<StopButton on:event={() => stopAllProcess()} />
+			</div>
+		</div>
 		<div class="w-full">
 			<table class="min-w-max w-full table-auto">
 				<thead>
@@ -46,8 +54,15 @@
 								</td>
 								<td class="py-3 px-6 text-center">
 									<div class="flex item-center justify-center">
-										<StartButton on:start={Start} />
-										<StopButton />
+										{#if process.statename != 'STOPPED'}
+											<div class="focus:animate-spin">
+												<StopButton spin on:event={() => stopProcess(process.name)} />
+											</div>
+										{:else}
+											<div class="focus:animate-spin">
+												<StartButton spin on:event={() => startProcess(process.name)} />
+											</div>
+										{/if}
 										<ViewButton />
 									</div>
 								</td>
