@@ -2,10 +2,10 @@
 import json
 from time import sleep
 from controllers.processes import start_all_processes_model, start_process_by_name_model, start_process_group_model, stop_all_processes_model, stop_process_by_name_model, stop_process_group_model, tail_stdErr_logFile_model, tail_stdOut_logFile_model
-from controllers.supervisor import restart_supervisor_model, shutdown_supervisor_model
-from controllers.system import get_system
-from controllers.utils import get_date
+from controllers.supervisor import createConfig, modifyConfig, restart_supervisor_model, shutdown_supervisor_model
 from flask import jsonify, Blueprint, Response
+import base64
+
 
 import logging
 
@@ -18,8 +18,12 @@ logger_routes = logging.getLogger(__name__)
 try:
     @app_routes.route('/supervisor/restart', methods=['GET'])
     def restart_supervisor():
-        restart_supervisor_model()
-        return jsonify({'message': 'Supervisor restarted'})
+        flag = restart_supervisor_model()
+        if flag:
+            return jsonify({'message': 'Supervisor restarted'})
+        else:
+            return jsonify({'message': 'Supervisor not restarted'})    
+            
 except Exception as e:
     app_routes.logger_routes.debug(e)
 
@@ -27,8 +31,12 @@ except Exception as e:
 try:
     @app_routes.route('/supervisor/shutdown', methods=['GET'])
     def shutdown_supervisor():
-        shutdown_supervisor_model()
-        return jsonify({'message': 'Supervisor shutdown successfully'})
+        flag = shutdown_supervisor_model()
+        if flag:
+            return jsonify({'message': 'Supervisor shutdown successfully'})
+        else:
+            return jsonify({'message': 'Supervisor not shutdown'})    
+            
 except Exception as e:
     app_routes.logger_routes.debug(e)
 
@@ -37,17 +45,24 @@ except Exception as e:
 try:
     @app_routes.route('/processes/start', methods=['GET'])
     def start_processes():
-        start_all_processes_model()
-        return jsonify({'message': 'All processes started successfully'})
+        flag = start_all_processes_model()
+        if flag:
+            return jsonify({'message': 'All processes started successfully'})
+        else:    
+            return jsonify({'message': 'All processes not started'})
+
 except Exception as e:
     app_routes.logger_routes.debug(e)
 
 #  start process by name
 try:
-    @app_routes.route('/processes/start/<name>', methods=['GET'])
+    @app_routes.route('/process/start/<name>', methods=['GET'])
     def start_process_by_name(name):
-        start_process_by_name_model(name)
-        return jsonify({'message': 'Process started successfully'})
+        flag = start_process_by_name_model(name)
+        if flag:
+            return jsonify({'message': 'Process started successfully'})
+        else:
+            return jsonify({'message': 'Process not started'})
 except Exception as e:
     app_routes.logger_routes.debug(e)
 
@@ -56,18 +71,24 @@ except Exception as e:
 try:
     @app_routes.route('/processes/stop', methods=['GET'])
     def stop_processes():
-        stop_all_processes_model()
-        return jsonify({'message': 'All processes stopped successfully'})
+        flag = stop_all_processes_model()
+        if flag:
+            return jsonify({'message': 'All processes stopped successfully'})
+        else:
+            return jsonify({'message': 'All processes not stopped'})
 except Exception as e:
     app_routes.logger_routes.debug(e)
 
 
 # stop process by name
 try:
-    @app_routes.route('/processes/stop/<name>', methods=['GET'])
+    @app_routes.route('/process/stop/<name>', methods=['GET'])
     def stop_process_by_name(name):
-        stop_process_by_name_model(name)
-        return jsonify({'message': 'Process stopped successfully'})
+        flag = stop_process_by_name_model(name)
+        if flag:
+            return jsonify({'message': 'Process stopped successfully'})
+        else:
+            return jsonify({'message': 'Process not stopped'})
 except Exception as e:
     app_routes.logger_routes.debug(e)
 
@@ -76,8 +97,11 @@ except Exception as e:
 try:
     @app_routes.route('/processes/start/group/<group>', methods=['GET'])
     def start_process_group(group):
-        start_process_group_model(group)
-        return jsonify({'message': 'Process group started successfully'})
+        flag = start_process_group_model(group)
+        if flag:
+            return jsonify({'message': 'Process group started successfully'})
+        else:
+            return jsonify({'message': 'Process group not started'})
 except Exception as e:
     app_routes.logger_routes.debug(e)
 
@@ -85,14 +109,17 @@ except Exception as e:
 try:
     @app_routes.route('/processes/stop/group/<group>', methods=['GET'])
     def stop_process_group(group):
-        stop_process_group_model(group)
-        return jsonify({'message': 'Process group stopped successfully'})
+        flag = stop_process_group_model(group)
+        if flag:
+            return jsonify({'message': 'Process group stopped successfully'})
+        else:
+            return jsonify({'message': 'Process group not stopped'})
 except Exception as e:
     app_routes.logger_routes.debug(e)
 
 # tail stdOut and stdErr log file
 try:
-    @app_routes.route('/processes/<stream>/<name>', methods=['GET'])
+    @app_routes.route('/process/<stream>/<name>', methods=['GET'])
     def process_log_tail(stream, name):
         if stream == "out":
             tail = tail_stdOut_logFile_model
@@ -114,5 +141,33 @@ try:
                 i += 1
 
         return Response(event_stream(), mimetype="text/event-stream")
+except Exception as e:
+    app_routes.logger_routes.debug(e)
+
+# make the route to create config file
+try:
+    @app_routes.route('/config/create/<process_name>/<command>', methods=['GET'])
+    def create_config(process_name, command):
+        
+        command = base64.b64decode(command).decode('utf-8')
+        result = createConfig(process_name, command)
+        if (result):
+            return jsonify({'message': 'Config file created successfully'})
+        else:
+            return jsonify({'message': 'Config file creation failed'})
+except Exception as e:
+    app_routes.logger_routes.debug(e)
+
+# update the config file
+try:
+    @app_routes.route('/config/modify/<process_name>/<action>/<key>/',defaults={'value': ''}, methods=['GET'] )
+    @app_routes.route('/config/modify/<process_name>/<action>/<key>/<value>', methods=['GET'])
+    def modify_config(process_name, action, key, value):
+        value = base64.b64decode(value).decode('utf-8')
+        result = modifyConfig(process_name, action, key, value)
+        if (result):
+            return jsonify({'message': 'Config file updated successfully'})
+        else:
+            return jsonify({'message': 'Config file update failed'})
 except Exception as e:
     app_routes.logger_routes.debug(e)
