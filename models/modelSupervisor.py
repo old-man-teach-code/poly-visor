@@ -33,7 +33,7 @@ class Supervisor:
 
     # Restart supervisord
     @property
-    def restart(self):
+    def restart(self): 
         return server.supervisor.restart()
 
     @property

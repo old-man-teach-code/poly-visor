@@ -4,10 +4,6 @@ import os
 import configparser
 
 
-# if os.geteuid() != 0:
-#     print("You need to have switch user to root to run the Flask .")
-#     exit()
-
 # Get PARENT path of project to import modules
 current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
