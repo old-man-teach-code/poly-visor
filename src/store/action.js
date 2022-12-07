@@ -45,3 +45,10 @@ export function destroyChart() {
     chart.destroy();
 }
 
+
+//call start process api
+export async function startProcess(name) {
+    const res = await fetch(`http://127.0.0.1:5000/process/start/${name}`);
+    const message = await res.json();
+    return message;
+}

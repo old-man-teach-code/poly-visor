@@ -147,10 +147,6 @@
 			<h1 class="text-xl">Ram Usage</h1>
 			<h4>{$system.memory}%</h4>
 		</button>
-		<!-- <div class="border-2 bg-white w-full h-32 rounded-md">
-			<h1 class="text-xl pt-9">Number of cores</h1>
-			<h4>{$cpuCount}</h4>
-		</div> -->
 		<button
 			class="hover:text-2xl border-2 bg-white w-full h-32 rounded-md {textCores}"
 			on:click={chartCores}
