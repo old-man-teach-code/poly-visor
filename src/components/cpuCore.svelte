@@ -13,6 +13,6 @@
 </script>
 
 <div class="border-2 bg-white w-28 h-28 grid place-content-center {coreColor} rounded-full">
-	<div class="">{coreName}</div>
+	<div>{coreName}</div>
 	<div>{coreValue}%</div>
 </div>
