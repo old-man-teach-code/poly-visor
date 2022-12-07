@@ -136,6 +136,7 @@ try:
     @app_routes.route('/config/modify/<process_name>/<action>/<key>/',defaults={'value': ''}, methods=['GET'] )
     @app_routes.route('/config/modify/<process_name>/<action>/<key>/<value>', methods=['GET'])
     def modify_config(process_name, action, key, value):
+        value = base64.b64decode(value).decode('utf-8')
         result = modifyConfig(process_name, action, key, value)
         if (result):
             return jsonify({'message': 'Config file updated successfully'})
@@ -143,8 +144,3 @@ try:
             return jsonify({'message': 'Config file update failed'})
 except Exception as e:
     app_routes.logger_routes.debug(e)
-
-
-# decode the url
-def decode_url(url):
-    return unquote(url)
