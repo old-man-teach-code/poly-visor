@@ -33,7 +33,7 @@
 			viewBox="0 0 24 24"
 			stroke-width="1.5"
 			stroke="currentColor"
-			class="text-green-400 hover:text-orange-400 w-6 h-6"
+			class="text-green-400 hover:text-orange-400 w-8 h-8"
 		>
 			<path
 				stroke-linecap="round"

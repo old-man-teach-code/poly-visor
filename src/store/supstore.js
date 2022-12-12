@@ -31,8 +31,19 @@ const fetchAll = async () => {
         const resProcesses = await fetch('http://127.0.0.1:5000/api/processes');
         const dataProcesses = await resProcesses.json();
         const loadedProcesses = dataProcesses.map((data) => ({
+            description: data.description,
+            exitstatus: data.exitstatus,
+            group: data.group,
+            logfile: data.logfile,
             name: data.name,
+            pid: data.pid,
+            spawnerr: data.spawnerr,
+            start: data.start,
+            state: data.state,
             statename: data.statename,
+            stderr_logfile: data.stderr_logfile,
+            stdout_logfile: data.stdout_logfile,
+            stop: data.stop,
             stateColor: (((data.statename == "RUNNING") || (data.statename == "STARTING")) ? ('bg-green-300') : (data.statname == "BACKOFF") ? ('bg-yellow-300') : ('bg-red-300'))
         }));
         processes.set(loadedProcesses);

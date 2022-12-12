@@ -6,6 +6,7 @@
 	import { cpuCount } from '../store/supstore';
 	import { cpuChart } from '../store/supstore';
 	import { ramChart } from '../store/supstore.js';
+	import Card from '../components/Card.svelte';
 	import CpuCore from '../components/cpuCore.svelte';
 
 	let chart;
@@ -133,31 +134,17 @@
 <div class="w-full h-screen px-10">
 	<h1 class=" pt-5 text-2xl font-semibold">Overview</h1>
 	<div class="grid text-center justify-items-center gap-4 grid-cols-4 grid-rows-4">
-		<button
-			class="hover:text-2xl border-2 bg-white w-full h-32 rounded-md {textCpu}"
-			on:click={chartCpu}
-		>
-			<h1 class="text-xl">CPU Usage</h1>
-			<h4>{$system.cpu}%</h4>
-		</button>
-		<button
-			class="hover:text-2xl border-2 bg-white w-full h-32 rounded-md {textRam}"
-			on:click={chartRam}
-		>
-			<h1 class="text-xl">Ram Usage</h1>
-			<h4>{$system.memory}%</h4>
-		</button>
-		<button
-			class="hover:text-2xl border-2 bg-white w-full h-32 rounded-md {textCores}"
-			on:click={chartCores}
-		>
-			<h1 class="text-xl">Number of cores</h1>
-			<h4>{$cpuCount}</h4>
-		</button>
-		<div class="border-2 bg-white w-full h-32 rounded-md">
-			<h1 class="text-xl pt-9">Running process</h1>
-			<h4>{$count}/{Object.keys($processes).length}</h4>
-		</div>
+		<Card color={textCpu} content="{$system.cpu}%" title="Cpu Usage" on:event={chartCpu} />
+		<Card color={textRam} content="{$system.memory}%" title="Ram Usage" on:event={chartRam} />
+		<Card color={textCores} content={$cpuCount} title="Number of cores" on:event={chartCores} />
+		<Card
+			content="{$count}/{Object.keys($processes).length}"
+			color="null"
+			title="Running processes"
+			on:event={() => {
+				window.location.replace('/processes');
+			}}
+		/>
 		{#if chartState}
 			<div class="border-2 bg-white w-3/4 rounded-md row-span-3 col-span-4">
 				<canvas class="p-2" use:chartJS={data} id="myChart" />
