@@ -48,28 +48,27 @@ export function destroyChart() {
 
 //call start process api
 export async function startProcess(name) {
-    console.log(name);
     const res = await fetch(`http://127.0.0.1:5000/process/start/${name}`);
     const message = await res.json();
-    console.log(message);
     return message;
 }
 export async function stopProcess(name) {
-    console.log(name);
     const res = await fetch(`http://127.0.0.1:5000/process/stop/${name}`);
     const message = await res.json();
-    console.log(message);
     return message;
 }
 export async function startAllProcess() {
     const res = await fetch('http://127.0.0.1:5000/processes/start');
     const message = await res.json();
-    console.log(message);
     return message;
 }
 export async function stopAllProcess() {
     const res = await fetch('http://127.0.0.1:5000/processes/stop');
     const message = await res.json();
-    console.log(message);
+    return message;
+}
+export async function viewProcessLog(name) {
+    const res = await fetch(`http://127.0.0.1:5000/process/out/${name}`);
+    const message = await res.json();
     return message;
 }
