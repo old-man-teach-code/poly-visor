@@ -91,3 +91,13 @@ def modifyConfig(process_name,action, key , value = ''):
         return True
     else:
         return False
+
+
+# render config file
+def renderConfig(process_name):
+    if (os.path.isfile('/var/supervisor/' + process_name + '.ini')):
+        config = configparser.ConfigParser()
+        config.read('/var/supervisor/' + process_name + '.ini')
+        return config
+    else:
+        return False
