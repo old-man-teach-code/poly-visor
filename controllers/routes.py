@@ -127,7 +127,7 @@ try:
             tail = tail_stdErr_logFile_model
 
         def event_stream():
-            i, offset, length = 0, 0, 2 ** 12
+            i, offset, length = 0, 0, 2 ** 1
             while True:
                 data = tail(name, offset, length)
                 log, offset, overflow = data
