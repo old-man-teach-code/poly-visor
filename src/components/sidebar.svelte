@@ -1,9 +1,21 @@
 <script>
-	let active;
-
-	let overview = true;
-	let processes = false;
-	let setting = false;
+	import { page } from '$app/stores';
+	let overview;
+	let processes;
+	let setting;
+	$: if ($page.url.pathname == '/') {
+		overview = true;
+		processes = false;
+		setting = false;
+	} else if ($page.url.pathname == '/processes') {
+		processes = true;
+		overview = false;
+		setting = false;
+	} else {
+		setting = true;
+		overview = false;
+		processes = false;
+	}
 </script>
 
 <!-- Side bar -->
@@ -15,11 +27,6 @@
 	<ul class="pt-5">
 		<li class="text-center">
 			<a
-				on:click={() => {
-					overview = true;
-					processes = false;
-					setting = false;
-				}}
 				href="/"
 				class="text-white text-sm py-5 pr-8 justify-center flex hover:bg-gray-600 {overview
 					? 'bg-gray-600'
@@ -30,11 +37,6 @@
 		</li>
 		<li>
 			<a
-				on:click={() => {
-					overview = false;
-					processes = true;
-					setting = false;
-				}}
 				href="/processes"
 				class="text-white text-sm pr-8 justify-center py-5 flex hover:bg-gray-600 {processes
 					? 'bg-gray-600'
@@ -46,11 +48,6 @@
 	<div class="h-px bg-gray-600 mt-48" />
 	<div>
 		<a
-			on:click={() => {
-				overview = false;
-				processes = false;
-				setting = true;
-			}}
 			href="#setting"
 			class="text-white justify-center pr-14 text-sm py-5 flex hover:bg-gray-600 {setting
 				? 'bg-gray-600'
