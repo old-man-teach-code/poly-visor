@@ -11,13 +11,12 @@
 	import { stopAllProcess } from '../../store/action.js';
 	import ToolTip from '../../components/toolTip.svelte';
 	import Modal from '../../components/Modal.svelte';
-	import { viewProcessLog } from '../../store/action.js';
 
 	let values;
 	let showModal = 'close';
 	let modalContent;
-
-	function getProcess(name) {}
+	let logName;
+	let logStream;
 </script>
 
 <div class="w-full h-screen px-10">
@@ -78,7 +77,8 @@
 											><LogButton
 												on:event={() => {
 													showModal = 'Log';
-													modalContent = viewProcessLog(process.name);
+													logName = process.name;
+													logStream = 'out';
 												}}
 											/></ToolTip
 										>
@@ -99,38 +99,11 @@
 			</table>
 			<Pagination rows={$processes} perPage={5} bind:trimmedRows={values} />
 			{#if showModal != 'close'}
-				<Modal on:close={() => (showModal = 'close')}>
-					{#if showModal == 'Log'}
-						{modalContent}
-					{:else if showModal == 'Detail'}
-						Description: {modalContent.description}
-						<br />
-						Exit status: {modalContent.exitstatus}
-						<br />
-						Group: {modalContent.group}
-						<br />
-						Log file: {modalContent.logfile}
-						<br />
-						Name: {modalContent.name}
-						<br />
-						Pid: {modalContent.pid}
-						<br />
-						Spawnerr: {modalContent.spawnerr}
-						<br />
-						Start: {modalContent.start}
-						<br />
-						State: {modalContent.state}
-						<br />
-						State name: {modalContent.statename}
-						<br />
-						Error log file: {modalContent.stderr_logfile}
-						<br />
-						Out log file: {modalContent.stdout_logfile}
-						<br />
-						Stop: {modalContent.stop}
-						<br />
-					{/if}
-				</Modal>
+				{#if showModal == 'Log'}
+					<Modal log on:close={() => (showModal = 'close')} name={logName} stream={logStream} />
+				{:else if showModal == 'Detail'}
+					<Modal on:close={() => (showModal = 'close')} content={modalContent} />
+				{/if}
 			{/if}
 		</div>
 	</div>
