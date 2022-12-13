@@ -1,6 +1,8 @@
 
 import json
 from time import sleep
+
+from flask_cors import CORS
 from controllers.processes import start_all_processes_model, start_process_by_name_model, start_process_group_model, stop_all_processes_model, stop_process_by_name_model, stop_process_group_model, tail_stdErr_logFile_model, tail_stdOut_logFile_model
 from controllers.supervisor import createConfig, modifyConfig, renderConfig, restart_supervisor_model, shutdown_supervisor_model
 from flask import jsonify, Blueprint, Response
@@ -13,6 +15,7 @@ app_routes = Blueprint('app_routes', __name__)
 
 logger_routes = logging.getLogger(__name__)
 
+CORS(app_routes)
 
 # restart supervisor
 try:
@@ -127,7 +130,7 @@ try:
             tail = tail_stdErr_logFile_model
 
         def event_stream():
-            i, offset, length = 0, 0, 2 ** 1
+            i, offset, length = 0, 0, 2 ** 12
             while True:
                 data = tail(name, offset, length)
                 log, offset, overflow = data
