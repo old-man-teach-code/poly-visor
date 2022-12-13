@@ -78,7 +78,7 @@
 											><LogButton
 												on:event={() => {
 													showModal = 'Log';
-													modalContent = process.description;
+													modalContent = viewProcessLog(process.name);
 												}}
 											/></ToolTip
 										>
