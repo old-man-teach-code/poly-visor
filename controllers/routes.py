@@ -2,7 +2,7 @@
 import json
 from time import sleep
 from controllers.processes import start_all_processes_model, start_process_by_name_model, start_process_group_model, stop_all_processes_model, stop_process_by_name_model, stop_process_group_model, tail_stdErr_logFile_model, tail_stdOut_logFile_model
-from controllers.supervisor import createConfig, modifyConfig, restart_supervisor_model, shutdown_supervisor_model
+from controllers.supervisor import createConfig, modifyConfig, renderConfig, restart_supervisor_model, shutdown_supervisor_model
 from flask import jsonify, Blueprint, Response
 import base64
 
@@ -127,7 +127,7 @@ try:
             tail = tail_stdErr_logFile_model
 
         def event_stream():
-            i, offset, length = 0, 0, 2 ** 12
+            i, offset, length = 0, 0, 2 ** 1
             while True:
                 data = tail(name, offset, length)
                 log, offset, overflow = data
@@ -169,5 +169,17 @@ try:
             return jsonify({'message': 'Config file updated successfully'})
         else:
             return jsonify({'message': 'Config file update failed'})
+except Exception as e:
+    app_routes.logger_routes.debug(e)
+
+# render the config file
+try:
+    @app_routes.route('/config/render/<process_name>', methods=['GET'])
+    def render_config(process_name):
+        result = renderConfig(process_name)
+        if (result):
+            return jsonify({'message': 'Config file rendered successfully'})
+        else:
+            return jsonify({'message': 'Config file render failed'})
 except Exception as e:
     app_routes.logger_routes.debug(e)
