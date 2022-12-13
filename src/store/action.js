@@ -67,8 +67,13 @@ export async function stopAllProcess() {
     const message = await res.json();
     return message;
 }
-export async function viewProcessLog(name) {
-    const res = await fetch(`http://127.0.0.1:5000/process/out/${name}`);
-    const message = await res.json();
-    return message;
+function viewProcessLog(stream, logName) {
+    let eventSource = new EventSource(`http://127.0.0.1:5000/process/${stream}/${logName}`);
+    eventSource.onmessage = (event) => {
+        let dataProcesses = JSON.parse(event.data);
+        processLog.update((items) => {
+            items += dataProcesses.message;
+            return items;
+        });
+    };
 }
