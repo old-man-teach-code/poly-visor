@@ -1,7 +1,8 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
-	function handleEvent() {
+	export let error;
+	export function handleEvent() {
 		dispatch('event');
 	}
 </script>
@@ -13,7 +14,7 @@
 		viewBox="0 0 24 24"
 		stroke-width="1.5"
 		stroke="currentColor"
-		class="w-5 h-5 text-cyan-400 hover:text-orange-400"
+		class="w-5 h-5 {error ? 'text-amber-400' : 'text-cyan-400'} hover:text-orange-400"
 	>
 		<path
 			stroke-linecap="round"
