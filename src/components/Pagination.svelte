@@ -1,4 +1,5 @@
 <script>
+	import ArrowButton from './Buttons/ArrowButton.svelte';
 	export let rows;
 	export let perPage;
 	export let trimmedRows;
@@ -17,24 +18,14 @@
 
 {#if totalRows && totalRows > perPage}
 	<div class="flex pt-20 justify-center">
-		<button
-			on:click={() => (currentPage -= 1)}
-			disabled={currentPage === 0 ? true : false}
-			aria-label="left arrow icon"
-			aria-describedby="prev"
-		>
-			Prev
-		</button>
+		{#if currentPage > 0}
+			<ArrowButton direction="left" on:event={() => (currentPage -= 1)} />
+		{/if}
 		<span class="sr-only">Load previous {perPage} rows</span>
 		<p class="px-52">{start + 1} - {end + 1} of {totalRows}</p>
-		<button
-			on:click={() => (currentPage += 1)}
-			disabled={currentPage === totalPages - 1 ? true : false}
-			aria-label="right arrow icon"
-			aria-describedby="next"
-		>
-			Next</button
-		>
+		{#if currentPage < totalPages - 1}
+			<ArrowButton direction="right" on:event={() => (currentPage += 1)} />
+		{/if}
 		<span class="sr-only">Load next {perPage} rows</span>
 	</div>
 {/if}
