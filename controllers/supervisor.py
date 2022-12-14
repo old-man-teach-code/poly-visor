@@ -40,9 +40,9 @@ def clear_log_model():
 # reload config supervisor, return array result [[added, changed, removed]]
 
 
-def reload_config_model():
+def reload_config():
     a = Supervisor()
-    return a.reloadConfig()
+    return a.reload_config_model
 
 # get all log of supervisor since it run
 
@@ -58,10 +58,14 @@ def clear_all_log_of_processes():
     a = Supervisor()
     return a.clear_all_log_processes
 
+# update the config file for a running process
+def update_config(process_name):
+    a = Supervisor()
+    return a.update_config_model(process_name)
 
 # Create config file for supervisor and check if file exist
 def createConfig(process_name, command):
-    if (os.path.isfile('/var/supervisor/' + process_name + '.ini')):
+    if (os.path.isfile('/var/supervisor/conf.d/' + process_name + '.ini')):
         return False
     else:
         config = configparser.ConfigParser()
@@ -72,21 +76,24 @@ def createConfig(process_name, command):
             'stdout_logfile': '/var/log/' + process_name + '.out.log',
             'stderr_logfile': '/var/log/' + process_name + '.err.log',
         }
-        with open('/var/supervisor/' + process_name + '.ini', 'w') as config_file:
+        with open('/var/supervisor/conf.d/' + process_name + '.ini', 'w') as config_file:
             config.write(config_file)
+        result = reload_config()
+        
+
         return True
 
 
 # create updateConfig function to update the config file based on the key
 def modifyConfig(process_name,action, key , value = ''):
-    if (os.path.isfile('/var/supervisor/' + process_name + '.ini')):
+    if (os.path.isfile('/var/supervisor/conf.d/' + process_name + '.ini')):
         config = configparser.ConfigParser()
-        config.read('/var/supervisor/' + process_name + '.ini')
+        config.read('/var/supervisor/conf.d/' + process_name + '.ini')
         if action == 'update':
             config['program:' + process_name][key] = value
         elif action == 'delete':
             del config['program:' + process_name][key]
-        with open('/var/supervisor/' + process_name + '.ini', 'w') as config_file:
+        with open('/var/supervisor/conf.d/' + process_name + '.ini', 'w') as config_file:
             config.write(config_file)
         return True
     else:
@@ -95,9 +102,9 @@ def modifyConfig(process_name,action, key , value = ''):
 
 # render config file
 def renderConfig(process_name):
-    if (os.path.isfile('/var/supervisor/' + process_name + '.ini')):
+    if (os.path.isfile('/var/supervisor/conf.d/' + process_name + '.ini')):
         config = configparser.ConfigParser()
-        config.read('/var/supervisor/' + process_name + '.ini')
+        config.read('/var/supervisor/conf.d/' + process_name + '.ini')
         return config
     else:
         return False
