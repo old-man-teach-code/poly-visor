@@ -107,3 +107,10 @@ def tail_stdOut_logFile(name, offset, length):
 def tail_stdErr_logFile(name, offset, length):
     return server.supervisor.tailProcessStderrLog(name, offset, length)
 
+# clear process log  with name
+def clear_process_log(name):
+    return server.supervisor.clearProcessLogs(name)
+
+# clear all process log
+def clear_all_process_log():
+    return server.supervisor.clearAllProcessLogs()

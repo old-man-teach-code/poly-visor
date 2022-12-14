@@ -51,10 +51,15 @@ class Supervisor:
 
     # Reload config file of supervisor,return array result [[added, changed, removed]]
     @property
-    def reloadConfig(self):
+    def reload_config_model(self):
         return server.supervisor.reloadConfig()
 
     #Clear all log of process when it running, return array result status info
     @property
     def clear_all_log_processes(self):
         return server.supervisor.clearAllProcessLogs()
+
+    #Update the config for a running process from config file.    
+    @property
+    def update_config_model(name):
+        return server.supervisor.addProcessGroup(name)

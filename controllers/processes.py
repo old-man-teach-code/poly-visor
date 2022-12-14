@@ -5,7 +5,7 @@ current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 # insert into PYTHONPATH
 sys.path.insert(1, parent)
-from models.modelProcess import Process, read_stdErr_logFile, read_stdOut_logFile, startAllProcesses, startProcessByName, startProcessGroup, stopAllProcesses, stopProcessByName, clear_process_log, stopProcessGroup, tail_stdErr_logFile, tail_stdOut_logFile
+from models.modelProcess import Process, clear_all_process_log, read_stdErr_logFile, read_stdOut_logFile, startAllProcesses, startProcessByName, startProcessGroup, stopAllProcesses, stopProcessByName, clear_process_log, stopProcessGroup, tail_stdErr_logFile, tail_stdOut_logFile
 
 #get all processes info
 def get_all_processes_model():
@@ -68,3 +68,11 @@ def assign_core_to_process_model(name, core):
     command = "taskset -p -c " + core + " " + pid
     os.system(command)
     return True
+
+# clear process log with name
+def clear_process_log_model(name):
+    return clear_process_log(name)
+
+# clear all process log
+def clear_all_process_log_model():
+    return clear_all_process_log()

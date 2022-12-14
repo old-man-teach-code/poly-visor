@@ -3,7 +3,7 @@ import json
 from time import sleep
 
 from flask_cors import CORS
-from controllers.processes import start_all_processes_model, start_process_by_name_model, start_process_group_model, stop_all_processes_model, stop_process_by_name_model, stop_process_group_model, tail_stdErr_logFile_model, tail_stdOut_logFile_model
+from controllers.processes import clear_all_process_log_model, clear_process_log_model, start_all_processes_model, start_process_by_name_model, start_process_group_model, stop_all_processes_model, stop_process_by_name_model, stop_process_group_model, tail_stdErr_logFile_model, tail_stdOut_logFile_model
 from controllers.supervisor import createConfig, modifyConfig, renderConfig, restart_supervisor_model, shutdown_supervisor_model
 from flask import jsonify, Blueprint, Response
 import base64
@@ -184,5 +184,29 @@ try:
             return jsonify({'message': 'Config file rendered successfully'})
         else:
             return jsonify({'message': 'Config file render failed'})
+except Exception as e:
+    app_routes.logger_routes.debug(e)
+
+# clear process log with name
+try:
+    @app_routes.route('/process/log/clear/<name>', methods=['GET'])
+    def clear_process_log(name):
+        result = clear_process_log_model(name)
+        if (result):
+            return jsonify({'message': 'Process log cleared successfully'})
+        else:
+            return jsonify({'message': 'Process log clear failed'})
+except Exception as e:
+    app_routes.logger_routes.debug(e)
+
+# clear all process logs
+try:
+    @app_routes.route('/processes/log/clear', methods=['GET'])
+    def clear_all_process_logs():
+        result = clear_all_process_log_model()
+        if (result):
+            return jsonify({'message': 'All process logs cleared successfully'})
+        else:
+            return jsonify({'message': 'All process logs clear failed'})
 except Exception as e:
     app_routes.logger_routes.debug(e)
