@@ -1,7 +1,7 @@
-<script>
+<script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
-	let color;
+	let color: Boolean;
 	function handleEvent() {
 		color = !color;
 		dispatch('event');
@@ -15,7 +15,7 @@
 		viewBox="0 0 24 24"
 		stroke-width="1.5"
 		stroke="currentColor"
-		class="w-16 h-16 hover:text-orange-400 {color ? 'text-green-400' : 'text-red-400'}"
+		class="w-10 h-10 hover:text-orange-400 {color ? 'text-green-400' : 'text-red-400'}"
 	>
 		<path
 			stroke-linecap="round"

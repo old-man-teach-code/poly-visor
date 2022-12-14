@@ -1,7 +1,7 @@
-<script>
+<script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
-	export let error;
+	export let error: Boolean;
 	export function handleEvent() {
 		dispatch('event');
 	}

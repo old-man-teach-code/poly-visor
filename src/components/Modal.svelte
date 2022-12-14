@@ -1,16 +1,15 @@
-<script>
+<script lang="ts">
 	import { createEventDispatcher, onDestroy, onMount, afterUpdate } from 'svelte';
 	import { writable } from 'svelte/store';
 	import CloseButton from './Buttons/CloseButton.svelte';
 	import PlayPauseButton from './Buttons/PlayPauseButton.svelte';
-	import ToolTip from './toolTip.svelte';
 	const dispatch = createEventDispatcher();
 	const close = () => dispatch('close');
-	export let content;
-	export let log;
-	export let stream;
-	export let name;
-	let modal;
+	export let content: String;
+	export let log: Boolean;
+	export let stream: String;
+	export let name: String;
+	let modal: HTMLElement;
 	let scroll = true;
 
 	const processLog = writable('');
@@ -70,8 +69,19 @@
 {#if log}
 	<div class="modal-background" on:click={close} />
 	<div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
-		<div class="flex justify-end">
-			<CloseButton on:event={close} />
+		<div class="sticky top-0 bg-orange-200 py-3 flex items-center justify-between">
+			<div class="pl-8">
+				<div class="left-56 top-64">
+					<PlayPauseButton
+						on:event={() => {
+							scroll = !scroll;
+						}}
+					/>
+				</div>
+			</div>
+			<div class="pr-4">
+				<CloseButton on:event={close} />
+			</div>
 		</div>
 		<div class="p-10">
 			<pre>
@@ -81,18 +91,9 @@
 		<hr />
 		<!-- svelte-ignore a11y-autofocus -->
 	</div>
-	<ToolTip title={scroll ? 'Stop auto scroll' : 'Auto scroll'}>
-		<div class="absolute left-56 top-64">
-			<PlayPauseButton
-				on:event={() => {
-					scroll = !scroll;
-				}}
-			/>
-		</div>
-	</ToolTip>
 {:else}
 	<div class="modal-background" on:click={close} />
-	<div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
+	<div class="modal p-10" role="dialog" aria-modal="true" bind:this={modal}>
 		<div class="flex justify-end">
 			<CloseButton on:event={close} />
 		</div>
@@ -146,7 +147,6 @@
 		max-height: calc(100vh - 4em);
 		overflow: auto;
 		transform: translate(-50%, -50%);
-		padding: 1em;
 		border-radius: 0.2em;
 		background: white;
 	}
