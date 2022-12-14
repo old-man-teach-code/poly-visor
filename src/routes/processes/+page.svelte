@@ -75,10 +75,21 @@
 										{/if}
 										<ToolTip title="View process log"
 											><LogButton
+												error={false}
 												on:event={() => {
 													showModal = 'Log';
 													logName = process.name;
 													logStream = 'out';
+												}}
+											/></ToolTip
+										>
+										<ToolTip title="View process error log"
+											><LogButton
+												error
+												on:event={() => {
+													showModal = 'Log';
+													logName = process.name;
+													logStream = 'err';
 												}}
 											/></ToolTip
 										>
