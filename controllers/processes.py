@@ -53,3 +53,18 @@ def tail_stdOut_logFile_model(name, offset, length):
 # tail stdErr log file of process with name
 def tail_stdErr_logFile_model(name, offset, length):
     return tail_stdErr_logFile(name, offset, length)
+
+# assign core to process by using taskset
+def assign_core_to_process_model(name, core):
+    # check core is number
+    if not core.isdigit():
+        return False
+    # get pid
+    # check pid is number    
+    pid = Process.getProcessPidByName(name)
+    if not pid.isdigit():
+        return False
+    # assign core to process
+    command = "taskset -p -c " + core + " " + pid
+    os.system(command)
+    return True
