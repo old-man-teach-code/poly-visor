@@ -1,8 +1,8 @@
 <script>
 	import { createEventDispatcher, onDestroy, onMount, afterUpdate } from 'svelte';
 	import { writable } from 'svelte/store';
-	import CloseButton from '../components/CloseButton.svelte';
-	import PlayPauseButton from '../components/PlayPauseButton.svelte';
+	import CloseButton from './Buttons/CloseButton.svelte';
+	import PlayPauseButton from './Buttons/PlayPauseButton.svelte';
 	import ToolTip from './toolTip.svelte';
 	const dispatch = createEventDispatcher();
 	const close = () => dispatch('close');

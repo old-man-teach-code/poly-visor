@@ -1,10 +1,10 @@
 <script>
 	import { processes } from '../../store/supstore';
 	import Pagination from '../../components/Pagination.svelte';
-	import StartButton from '../../components/StartButton.svelte';
-	import StopButton from '../../components/StopButton.svelte';
-	import ViewButton from '../../components/ViewButton.svelte';
-	import LogButton from '../../components/LogButton.svelte';
+	import StartButton from '../../components/Buttons/StartButton.svelte';
+	import StopButton from '../../components/Buttons/StopButton.svelte';
+	import ViewButton from '../../components/Buttons/ViewButton.svelte';
+	import LogButton from '../../components/Buttons/LogButton.svelte';
 	import { startProcess } from '../../store/action.js';
 	import { startAllProcess } from '../../store/action.js';
 	import { stopProcess } from '../../store/action.js';
@@ -83,7 +83,7 @@
 												}}
 											/></ToolTip
 										>
-										<ToolTip title="View process error log"
+										<ToolTip title="View error log"
 											><LogButton
 												error
 												on:event={() => {
