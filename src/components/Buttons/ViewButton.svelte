@@ -1,7 +1,7 @@
-<script>
+<script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
-	export let spin;
+	export let spin: Boolean;
 	function handleEvent() {
 		dispatch('event');
 	}
