@@ -201,7 +201,7 @@ except Exception as e:
 
 # clear all process logs
 try:
-    @app_routes.route('/processes/log/clear', methods=['GET'])
+    @app_routes.route('/processes/log/clearAll', methods=['GET'])
     def clear_all_process_logs():
         result = clear_all_process_log_model()
         if (result):
