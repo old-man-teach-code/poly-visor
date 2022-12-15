@@ -63,6 +63,13 @@ def update_config(process_name):
     a = Supervisor()
     return a.update_config_model(process_name)
 
+# reread and update by supervisorctl command
+def reread_and_update():
+    commandReread = 'supervisorctl reread'
+    commandUpdate = 'supervisorctl update'
+    os.system(commandReread)
+    os.system(commandUpdate)
+
 # Create config file for supervisor and check if file exist
 def createConfig(process_name, command):
     if (os.path.isfile('/var/supervisor/conf.d/' + process_name + '.ini')):
@@ -78,7 +85,7 @@ def createConfig(process_name, command):
         }
         with open('/var/supervisor/conf.d/' + process_name + '.ini', 'w') as config_file:
             config.write(config_file)
-        result = reload_config()
+        reread_and_update()
         
 
         return True
