@@ -1,8 +1,11 @@
 <script lang="ts">
 	import { createEventDispatcher, onDestroy, onMount, afterUpdate } from 'svelte';
 	import { writable } from 'svelte/store';
+	import ClearLogButton from './Buttons/ClearLogButton.svelte';
 	import CloseButton from './Buttons/CloseButton.svelte';
 	import PlayPauseButton from './Buttons/PlayPauseButton.svelte';
+	import { clearProcessLog } from '../store/action';
+
 	const dispatch = createEventDispatcher();
 	const close = () => dispatch('close');
 	export let content: String;
@@ -79,6 +82,11 @@
 					/>
 				</div>
 			</div>
+			<ClearLogButton
+				on:event={() => {
+					clearProcessLog(name);
+				}}
+			/>
 			<div class="pr-4">
 				<CloseButton on:event={close} />
 			</div>
