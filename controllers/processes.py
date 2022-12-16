@@ -76,3 +76,8 @@ def clear_process_log_model(name):
 # clear all process log
 def clear_all_process_log_model():
     return clear_all_process_log()
+
+# auto clear log of process after a limited amount of bytes
+def auto_clear_log_process_model(name, limit):
+    
+    return True

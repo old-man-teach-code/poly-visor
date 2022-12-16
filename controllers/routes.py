@@ -122,21 +122,26 @@ except Exception as e:
 
 # tail stdOut and stdErr log file
 try:
-    @app_routes.route('/process/<stream>/<name>', methods=['GET'])
-    def process_log_tail(stream, name):
+    @app_routes.route('/process/<stream>/<name>',defaults={'action': ''}, methods=['GET'])
+    @app_routes.route('/process/<stream>/<name>/<action>', methods=['GET'])
+    def process_log_tail(stream, name,action):
         if stream == "out":
             tail = tail_stdOut_logFile_model
         else:
             tail = tail_stdErr_logFile_model
 
         def event_stream():
-            i, offset, length = 0, 0, 2 ** 12
+            i, offset, length = 0, 0, 2 ** 10
             while True:
                 data = tail(name, offset, length)
                 log, offset, overflow = data
-                # don't care about overflow in first log message
+                # stop the loop at the current offset
+                if action == "stop":
+                    break
+                elif action == 'continue':
+                    pass
                 if overflow and i:
-                    length = min(length * 2, 2 ** 14)
+                    length = min(length * 2, 2 ** 10)
                 else:
                     data = json.dumps(dict(message=log, size=offset))
                     yield "data: {}\n\n".format(data)
