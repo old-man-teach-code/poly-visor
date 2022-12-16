@@ -17,18 +17,17 @@
 	let modal: HTMLElement;
 	let scroll = true;
 	let logState: Boolean = true;
-
+	let logStore: string;
 	const processLog = writable('');
+
 	if (log) {
 		onMount(() => {
 			let eventSource = new EventSource(`http://127.0.0.1:5000/process/${stream}/${name}`);
 			eventSource.onmessage = (event) => {
 				let dataProcesses = JSON.parse(event.data);
+				logStore += dataProcesses.message;
 				if (logState) {
-					processLog.update((items) => {
-						items += dataProcesses.message;
-						return items;
-					});
+					processLog.update((n) => logStore);
 				}
 			};
 		});
