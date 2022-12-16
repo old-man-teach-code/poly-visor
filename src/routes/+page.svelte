@@ -7,7 +7,7 @@
 	import { cpuChart } from '../store/supstore';
 	import { ramChart } from '../store/supstore.js';
 	import Card from '../components/Card.svelte';
-	import CpuCore from '../components/cpuCore.svelte';
+	import CpuCore from '../components/CpuCore.svelte';
 
 	let chart;
 	let textCpu = 'text-[#FF8C32]'; //initial text color for CPU as orange
