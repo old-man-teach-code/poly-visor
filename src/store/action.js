@@ -68,9 +68,3 @@ export async function stopAllProcess() {
     return message;
 }
 
-export async function clearProcessLog(name) {
-    const res = await fetch(`http://127.0.0.1:5000/process/log/clear/${name}`);
-    const message = await res.json();
-    alert(message.message);
-    return message.message;
-}

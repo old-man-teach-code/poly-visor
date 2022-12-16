@@ -4,7 +4,9 @@
 	import ClearLogButton from './Buttons/ClearLogButton.svelte';
 	import CloseButton from './Buttons/CloseButton.svelte';
 	import PlayPauseButton from './Buttons/PlayPauseButton.svelte';
-	import { clearProcessLog } from '../store/action';
+	import StartButton from './Buttons/StartButton.svelte';
+	import StopButton from './Buttons/StopButton.svelte';
+	import ToolTip from './ToolTip.svelte';
 
 	const dispatch = createEventDispatcher();
 	const close = () => dispatch('close');
@@ -14,6 +16,7 @@
 	export let name: String;
 	let modal: HTMLElement;
 	let scroll = true;
+	let logState: Boolean = true;
 
 	const processLog = writable('');
 	if (log) {
@@ -21,10 +24,12 @@
 			let eventSource = new EventSource(`http://127.0.0.1:5000/process/${stream}/${name}`);
 			eventSource.onmessage = (event) => {
 				let dataProcesses = JSON.parse(event.data);
-				processLog.update((items) => {
-					items += dataProcesses.message;
-					return items;
-				});
+				if (logState) {
+					processLog.update((items) => {
+						items += dataProcesses.message;
+						return items;
+					});
+				}
 			};
 		});
 	}
@@ -72,28 +77,49 @@
 {#if log}
 	<div class="modal-background" on:click={close} />
 	<div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
-		<div class="sticky top-0 bg-orange-200 py-3 flex items-center justify-between">
+		<div class="sticky top-0 bg-orange-200 py-5 flex items-center justify-between">
 			<div class="pl-8">
-				<div class="left-56 top-64">
+				<ToolTip title={scroll ? 'Stop auto scroll' : 'Auto scroll'}>
 					<PlayPauseButton
 						on:event={() => {
 							scroll = !scroll;
 						}}
 					/>
-				</div>
+				</ToolTip>
 			</div>
-			<ClearLogButton
-				on:event={() => {
-					clearProcessLog(name);
-				}}
-			/>
-			<div class="pr-4">
-				<CloseButton on:event={close} />
+			<ToolTip title={logState ? 'Pause' : 'Continue'}>
+				{#if logState}
+					<StopButton
+						spin={false}
+						on:event={() => {
+							logState = !logState;
+						}}
+					/>
+				{:else}
+					<StartButton
+						spin={false}
+						on:event={() => {
+							logState = !logState;
+						}}
+					/>
+				{/if}
+			</ToolTip>
+			<ToolTip title="Clear process log">
+				<ClearLogButton
+					on:event={() => {
+						processLog.set('');
+					}}
+				/>
+			</ToolTip>
+			<div class="pr-5">
+				<ToolTip title="Close log">
+					<CloseButton on:event={close} />
+				</ToolTip>
 			</div>
 		</div>
 		<div class="p-10">
 			<pre>
-				{$processLog}
+			{$processLog}
 			</pre>
 		</div>
 		<hr />
@@ -152,7 +178,7 @@
 		top: 50%;
 		width: calc(100vw - 4em);
 		max-width: 32em;
-		max-height: calc(100vh - 4em);
+		max-height: 42rem;
 		overflow: auto;
 		transform: translate(-50%, -50%);
 		border-radius: 0.2em;
