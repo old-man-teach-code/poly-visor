@@ -106,7 +106,7 @@
 			<ToolTip title="Clear process log">
 				<ClearLogButton
 					on:event={() => {
-						processLog.set('');
+						logStore = '';
 					}}
 				/>
 			</ToolTip>
@@ -177,7 +177,7 @@
 		top: 50%;
 		width: calc(100vw - 4em);
 		max-width: 32em;
-		max-height: 42rem;
+		max-height: calc(100vh - 4em);
 		overflow: auto;
 		transform: translate(-50%, -50%);
 		border-radius: 0.2em;
