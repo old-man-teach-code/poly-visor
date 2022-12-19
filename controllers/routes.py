@@ -1,8 +1,10 @@
 
 import json
+import os
 from time import sleep
 
 from flask_cors import CORS
+from finder import get_std_log_path, split_config_path
 from controllers.processes import clear_all_process_log_model, clear_process_log_model, read_stdOut_process_model, start_all_processes_model, start_process_by_name_model, start_process_group_model, stop_all_processes_model, stop_process_by_name_model, stop_process_group_model, tail_stdErr_logFile_model, tail_stdOut_logFile_model
 from controllers.supervisor import createConfig, modifyConfig, renderConfig, restart_supervisor_model, shutdown_supervisor_model
 from flask import jsonify, Blueprint, Response
@@ -120,34 +122,6 @@ try:
 except Exception as e:
     app_routes.logger_routes.debug(e)
 
-# tail stdOut and stdErr log file
-try:
-    @app_routes.route('/process/<stream>/<name>',defaults={'action': ''}, methods=['GET'])
-    @app_routes.route('/process/<stream>/<name>/<action>', methods=['GET'])
-    def process_log_tail(stream, name,action):
-        if stream == "out":
-            tail = tail_stdOut_logFile_model
-        else:
-            tail = tail_stdErr_logFile_model
-
-        def event_stream():
-            i, offset, length = 0, 0, 2 ** 10
-            while True:
-                data = tail(name, offset, length)
-                log, offset, overflow = data
-                if overflow and i:
-                    length = min(length * 2, 2 ** 10)
-                else:
-                    data = json.dumps(dict(message=log, size=offset))
-                    yield "data: {}\n\n".format(data)
-                sleep(1)
-                i += 1
-
-        return Response(event_stream(), mimetype="text/event-stream")
-except Exception as e:
-    app_routes.logger_routes.debug(e)
-
-# make the route to create config file
 try:
     @app_routes.route('/config/create/<process_name>/<command>', methods=['GET'])
     def create_config(process_name, command):
@@ -189,4 +163,20 @@ except Exception as e:
 
 
 
+# tail the /var/log/demo.out.log on the browser
+@app_routes.route('/process/<stream>/<name>', methods=['GET'])
+def stream(stream,name):
+    def generate():
+        config_path = split_config_path() + name + ".ini"
+        log_path = get_std_log_path(config_path,stream,name)
+        # reading the log file from the end
+        with open(log_path, 'r') as f:
+            f.seek(0, 2)
+            while True:
+                line = f.readline()
+                if not line:
+                    sleep(1)
+                    continue
+                yield line
 
+    return Response(generate(), mimetype='text/event-stream')

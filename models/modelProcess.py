@@ -88,8 +88,8 @@ def stopProcessGroup(group):
     return server.supervisor.stopProcessGroup(group)
 
 #return all data from stdOut in logfile of process with name
-def read_stdOut_logFile(name):
-    return server.supervisor.readProcessStdoutLog(name,0,0)
+def read_stdOut_logFile(name, offset, length):
+    return server.supervisor.readProcessStdoutLog(name, offset, length)
 
 #return all data from stdErr in logfile of process with name
 def read_stdErr_logFile(name):
