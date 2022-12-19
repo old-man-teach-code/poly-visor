@@ -68,3 +68,8 @@ export async function stopAllProcess() {
     return message;
 }
 
+export async function addNewProcessConf(name, command) {
+    const res = await fetch(`http://127.0.0.1:5000/config/create/${name}/${command}`);
+    const message = await res.json();
+    return message;
+}

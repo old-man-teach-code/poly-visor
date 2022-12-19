@@ -7,11 +7,12 @@
 	import StartButton from './Buttons/StartButton.svelte';
 	import StopButton from './Buttons/StopButton.svelte';
 	import ToolTip from './ToolTip.svelte';
+	import Input from './Input.svelte';
 
 	const dispatch = createEventDispatcher();
 	const close = () => dispatch('close');
 	export let content: String;
-	export let log: Boolean;
+	export let modalType: String;
 	export let stream: String;
 	export let name: String;
 	let modal: HTMLElement;
@@ -20,7 +21,7 @@
 	let logStore: string;
 	const processLog = writable('');
 
-	if (log) {
+	if (modalType === 'log') {
 		onMount(() => {
 			let eventSource = new EventSource(`http://127.0.0.1:5000/process/${stream}/${name}`);
 			eventSource.onmessage = (event) => {
@@ -73,7 +74,7 @@
 </script>
 
 <svelte:window on:keydown={handle_keydown} />
-{#if log}
+{#if modalType === 'log'}
 	<div class="modal-background" on:click={close} />
 	<div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
 		<div class="sticky top-0 bg-orange-200 py-5 flex items-center justify-between">
@@ -124,7 +125,7 @@
 		<hr />
 		<!-- svelte-ignore a11y-autofocus -->
 	</div>
-{:else}
+{:else if modalType === 'detail'}
 	<div class="modal-background" on:click={close} />
 	<div class="modal p-10" role="dialog" aria-modal="true" bind:this={modal}>
 		<div class="flex justify-end">
@@ -157,6 +158,15 @@
 		Stop: {content.stop}
 		<br />
 		<hr />
+		<!-- svelte-ignore a11y-autofocus -->
+	</div>
+{:else if modalType === 'addProcess'}
+	<div class="modal-background" on:click={close} />
+	<div class="modal p-10" role="dialog" aria-modal="true" bind:this={modal}>
+		<div class="flex justify-end">
+			<CloseButton on:event={close} />
+		</div>
+		<Input />
 		<!-- svelte-ignore a11y-autofocus -->
 	</div>
 {/if}
