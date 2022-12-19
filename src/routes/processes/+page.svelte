@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { processes } from '../../store/supstore';
 	import Pagination from '../../components/Pagination.svelte';
 	import StartButton from '../../components/Buttons/StartButton.svelte';
@@ -9,27 +9,27 @@
 	import { startAllProcess } from '../../store/action.js';
 	import { stopProcess } from '../../store/action.js';
 	import { stopAllProcess } from '../../store/action.js';
-	import ToolTip from '../../components/toolTip.svelte';
+	import ToolTip from '../../components/ToolTip.svelte';
 	import Modal from '../../components/Modal.svelte';
 
-	let values;
+	let values: Object;
 	let showModal = 'close';
-	let modalContent;
-	let logName;
-	let logStream;
+	let modalContent: String;
+	let logName: String;
+	let logStream: String;
 </script>
 
 <div class="w-full h-screen px-10">
-	<h1 class=" pt-5 text-2xl font-semibold">Processes</h1>
+	<h1 class="pt-5 text-2xl font-semibold">Processes</h1>
 	<div class="border-2 bg-white w-full h-5/6 rounded-md mt-10">
 		<div class="flex justify-between">
 			<h3 class="p-10 font-bold">All Processes</h3>
 			<div class="flex items-center pr-16">
 				<ToolTip title="Start all processes">
-					<StartButton on:event={() => startAllProcess()} />
+					<StartButton spin={false} on:event={() => startAllProcess()} />
 				</ToolTip>
 				<ToolTip title="Stop all processes">
-					<StopButton on:event={() => stopAllProcess()} />
+					<StopButton spin={false} on:event={() => stopAllProcess()} />
 				</ToolTip>
 			</div>
 		</div>
@@ -95,6 +95,7 @@
 										>
 										<ToolTip title="View process detail">
 											<ViewButton
+												spin={false}
 												on:event={() => {
 													showModal = 'Detail';
 													modalContent = process;
@@ -111,9 +112,21 @@
 			<Pagination rows={$processes} perPage={5} bind:trimmedRows={values} />
 			{#if showModal != 'close'}
 				{#if showModal == 'Log'}
-					<Modal log on:close={() => (showModal = 'close')} name={logName} stream={logStream} />
+					<Modal
+						content=""
+						log
+						on:close={() => (showModal = 'close')}
+						name={logName}
+						stream={logStream}
+					/>
 				{:else if showModal == 'Detail'}
-					<Modal on:close={() => (showModal = 'close')} content={modalContent} />
+					<Modal
+						content={modalContent}
+						log={false}
+						stream=""
+						name=""
+						on:close={() => (showModal = 'close')}
+					/>
 				{/if}
 			{/if}
 		</div>
