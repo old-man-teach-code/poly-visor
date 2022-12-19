@@ -122,6 +122,7 @@ try:
 except Exception as e:
     app_routes.logger_routes.debug(e)
 
+# 
 try:
     @app_routes.route('/config/create/<process_name>/<command>', methods=['GET'])
     def create_config(process_name, command):
@@ -177,6 +178,9 @@ def stream(stream,name):
                 if not line:
                     sleep(1)
                     continue
-                yield line
+                message = json.dumps(dict(message=line))
+                yield "data: {}\n\n".format(message)
 
     return Response(generate(), mimetype='text/event-stream')
+
+
