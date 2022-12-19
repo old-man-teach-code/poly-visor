@@ -1,3 +1,4 @@
+from flask_cors import CORS
 from controllers.processes import get_all_processes_model
 from controllers.supervisor import get_supervisor
 from controllers.system import get_system
@@ -7,6 +8,7 @@ import logging
 
 app_api = Blueprint('app_api', __name__)
 
+CORS(app_api)
 # configure logger again for api after routes logger
 logger_api = logging.getLogger(__name__)
 logging.basicConfig(filename='storage/logs/' + get_date() + '/api_&_routes.log', level=logging.DEBUG, format='%(asctime)s %(levelname)s %(name)s %(message)s')

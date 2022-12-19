@@ -1,20 +1,44 @@
-<script>
+<script lang="ts">
 	import { processes } from '../../store/supstore';
 	import Pagination from '../../components/Pagination.svelte';
+	import StartButton from '../../components/Buttons/StartButton.svelte';
+	import StopButton from '../../components/Buttons/StopButton.svelte';
+	import ViewButton from '../../components/Buttons/ViewButton.svelte';
+	import LogButton from '../../components/Buttons/LogButton.svelte';
+	import { startProcess } from '../../store/action.js';
+	import { startAllProcess } from '../../store/action.js';
+	import { stopProcess } from '../../store/action.js';
+	import { stopAllProcess } from '../../store/action.js';
+	import ToolTip from '../../components/ToolTip.svelte';
+	import Modal from '../../components/Modal.svelte';
 
-	let values;
+	let values: Object;
+	let showModal = 'close';
+	let modalContent: String;
+	let logName: String;
+	let logStream: String;
 </script>
 
 <div class="w-full h-screen px-10">
-	<h1 class=" pt-5 text-2xl font-semibold">Processes</h1>
+	<h1 class="pt-5 text-2xl font-semibold">Processes</h1>
 	<div class="border-2 bg-white w-full h-5/6 rounded-md mt-10">
-		<h3 class="p-10 font-bold">All Processes</h3>
-		<div class="w-full">
-			<table class="min-w-max w-full table-auto">
+		<div class="flex justify-between">
+			<h3 class="p-10 font-bold">All Processes</h3>
+			<div class="flex items-center pr-16">
+				<ToolTip title="Start all processes">
+					<StartButton spin={false} on:event={() => startAllProcess()} />
+				</ToolTip>
+				<ToolTip title="Stop all processes">
+					<StopButton spin={false} on:event={() => stopAllProcess()} />
+				</ToolTip>
+			</div>
+		</div>
+		<div class="overflow-auto flex flex-col items-center">
+			<table class="min-w-full w-full table-auto">
 				<thead>
 					<tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
 						<th class="py-3 px-6 text-left">Process name</th>
-						<th class="py-3 px-6 text-left">UpTime</th>
+						<th class="py-3 px-6 text-left">Description</th>
 						<th class="py-3 px-6 text-center">Status</th>
 						<th class="py-3 px-6 text-center">Actions</th>
 					</tr>
@@ -30,8 +54,7 @@
 								</td>
 								<td class="py-3 px-6 text-left">
 									<div class="flex items-center">
-										<div class="mr-2" />
-										<span>none</span>
+										<span>{process.description}</span>
 									</div>
 								</td>
 								<td class="py-3 px-6 text-center">
@@ -41,57 +64,44 @@
 								</td>
 								<td class="py-3 px-6 text-center">
 									<div class="flex item-center justify-center">
-										<div class="w-4 mr-2 transform hover:text-orange-500 hover:scale-110">
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												fill="none"
-												viewBox="0 0 24 24"
-												stroke="currentColor"
-											>
-												<path
-													stroke-linecap="round"
-													stroke-linejoin="round"
-													stroke-width="2"
-													d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-												/>
-												<path
-													stroke-linecap="round"
-													stroke-linejoin="round"
-													stroke-width="2"
-													d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-												/>
-											</svg>
-										</div>
-										<div class="w-4 mr-2 transform hover:text-orange-500 hover:scale-110">
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												fill="none"
-												viewBox="0 0 24 24"
-												stroke="currentColor"
-											>
-												<path
-													stroke-linecap="round"
-													stroke-linejoin="round"
-													stroke-width="2"
-													d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-												/>
-											</svg>
-										</div>
-										<div class="w-4 mr-2 transform hover:text-orange-500 hover:scale-110">
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												fill="none"
-												viewBox="0 0 24 24"
-												stroke="currentColor"
-											>
-												<path
-													stroke-linecap="round"
-													stroke-linejoin="round"
-													stroke-width="2"
-													d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-												/>
-											</svg>
-										</div>
+										{#if process.statename != 'STOPPED'}
+											<ToolTip title="Stop this process">
+												<StopButton spin on:event={() => stopProcess(process.name)} />
+											</ToolTip>
+										{:else}
+											<ToolTip title="Start this process">
+												<StartButton spin on:event={() => startProcess(process.name)} />
+											</ToolTip>
+										{/if}
+										<ToolTip title="View process log"
+											><LogButton
+												error={false}
+												on:event={() => {
+													showModal = 'Log';
+													logName = process.name;
+													logStream = 'out';
+												}}
+											/></ToolTip
+										>
+										<ToolTip title="View error log"
+											><LogButton
+												error
+												on:event={() => {
+													showModal = 'Log';
+													logName = process.name;
+													logStream = 'err';
+												}}
+											/></ToolTip
+										>
+										<ToolTip title="View process detail">
+											<ViewButton
+												spin={false}
+												on:event={() => {
+													showModal = 'Detail';
+													modalContent = process;
+												}}
+											/>
+										</ToolTip>
 									</div>
 								</td>
 							</tr>
@@ -100,6 +110,25 @@
 				</tbody>
 			</table>
 			<Pagination rows={$processes} perPage={5} bind:trimmedRows={values} />
+			{#if showModal != 'close'}
+				{#if showModal == 'Log'}
+					<Modal
+						content=""
+						log
+						on:close={() => (showModal = 'close')}
+						name={logName}
+						stream={logStream}
+					/>
+				{:else if showModal == 'Detail'}
+					<Modal
+						content={modalContent}
+						log={false}
+						stream=""
+						name=""
+						on:close={() => (showModal = 'close')}
+					/>
+				{/if}
+			{/if}
 		</div>
 	</div>
 </div>
