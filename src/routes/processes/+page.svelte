@@ -11,6 +11,7 @@
 	import { stopAllProcess } from '../../store/action.js';
 	import ToolTip from '../../components/ToolTip.svelte';
 	import Modal from '../../components/Modal.svelte';
+	import AddButton from '../../components/Buttons/AddButton.svelte';
 
 	let values: Object;
 	let showModal = 'close';
@@ -23,8 +24,17 @@
 	<h1 class="pt-5 text-2xl font-semibold">Processes</h1>
 	<div class="border-2 bg-white w-full h-5/6 rounded-md mt-10">
 		<div class="flex justify-between">
-			<h3 class="p-10 font-bold">All Processes</h3>
-			<div class="flex items-center pr-16">
+			<h3 class="py-10 pl-10 font-bold">All Processes</h3>
+			<div class="flex items-center">
+				<ToolTip title="Add new process">
+					<AddButton
+						on:event={() => {
+							showModal = 'addProcess';
+						}}
+					/>
+				</ToolTip>
+			</div>
+			<div class="flex items-center pr-24">
 				<ToolTip title="Start all processes">
 					<StartButton spin={false} on:event={() => startAllProcess()} />
 				</ToolTip>
@@ -106,6 +116,7 @@
 								</td>
 							</tr>
 						{/each}
+						<td class="py-3 px-6 text-center" />
 					{/if}
 				</tbody>
 			</table>
@@ -114,7 +125,7 @@
 				{#if showModal == 'Log'}
 					<Modal
 						content=""
-						log
+						modalType="log"
 						on:close={() => (showModal = 'close')}
 						name={logName}
 						stream={logStream}
@@ -122,7 +133,15 @@
 				{:else if showModal == 'Detail'}
 					<Modal
 						content={modalContent}
-						log={false}
+						modalType="detail"
+						stream=""
+						name=""
+						on:close={() => (showModal = 'close')}
+					/>
+				{:else if showModal == 'addProcess'}
+					<Modal
+						content=""
+						modalType="addProcess"
 						stream=""
 						name=""
 						on:close={() => (showModal = 'close')}
