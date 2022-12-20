@@ -22,7 +22,7 @@
 
 <div class="w-full h-screen px-10">
 	<h1 class="pt-5 text-2xl font-semibold">Processes</h1>
-	<div class="border-2 bg-white w-full h-5/6 rounded-md mt-10">
+	<div class="border-2 bg-white w-full min-h-fit rounded-md mt-10">
 		<div class="flex justify-between">
 			<h3 class="py-10 pl-10 font-bold">All Processes</h3>
 			<div class="flex items-center">

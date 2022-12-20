@@ -7,7 +7,9 @@
 	import StartButton from './Buttons/StartButton.svelte';
 	import StopButton from './Buttons/StopButton.svelte';
 	import ToolTip from './ToolTip.svelte';
-	import Input from './Input.svelte';
+	import Input from './TextInput.svelte';
+	import AddButton from './Buttons/AddButton.svelte';
+	import { addNewProcessConf } from '../store/action';
 
 	const dispatch = createEventDispatcher();
 	const close = () => dispatch('close');
@@ -19,6 +21,8 @@
 	let scroll = true;
 	let logState: Boolean = true;
 	let logStore: string;
+	let command: string;
+	let processName: string;
 	const processLog = writable('');
 
 	if (modalType === 'log') {
@@ -166,7 +170,25 @@
 		<div class="flex justify-end">
 			<CloseButton on:event={close} />
 		</div>
-		<Input />
+		<div class="flex flex-col space-y-5">
+			<Input
+				bind:inputValue={processName}
+				inputLabel="Process Name"
+				inputPlaceholder="Name of the process"
+			/>
+			<Input
+				bind:inputValue={command}
+				inputLabel="Command"
+				inputPlaceholder="full/path/to/process"
+			/>
+			<div class="place-self-center">
+				<AddButton
+					on:event={() => {
+						addNewProcessConf(processName, command);
+					}}
+				/>
+			</div>
+		</div>
 		<!-- svelte-ignore a11y-autofocus -->
 	</div>
 {/if}

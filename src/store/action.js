@@ -69,7 +69,10 @@ export async function stopAllProcess() {
 }
 
 export async function addNewProcessConf(name, command) {
-    const res = await fetch(`http://127.0.0.1:5000/config/create/${name}/${command}`);
-    const message = await res.json();
+    let encodedCommand = btoa(command)
+    const res = await fetch(`http://127.0.0.1:5000/config/create/${name}/${encodedCommand}`);
+    const data = await res.json();
+    const message = data.message;
+    alert(message);
     return message;
 }
