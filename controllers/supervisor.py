@@ -2,7 +2,7 @@ from models.modelSupervisor import Supervisor
 import sys
 import os
 import configparser
-
+from flask import send_file
 
 # Get PARENT path of project to import modules
 current = os.path.dirname(os.path.realpath(__file__))
@@ -110,8 +110,7 @@ def modifyConfig(process_name,action, key , value = ''):
 # render config file
 def renderConfig(process_name):
     if (os.path.isfile('/var/supervisor/conf.d/' + process_name + '.ini')):
-        config = configparser.ConfigParser()
-        config.read('/var/supervisor/conf.d/' + process_name + '.ini')
-        return config
-    else:
-        return False
+        # with open('/var/supervisor/conf.d/' + process_name + '.ini', 'r') as f:
+        #     # read each line and spilt each line after space
+        #     config = f.read().splitlines()
+        return send_file('/var/supervisor/conf.d/' + process_name + '.ini',mimetype='text/plain')

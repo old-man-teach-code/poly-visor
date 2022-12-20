@@ -155,10 +155,7 @@ try:
     @app_routes.route('/config/render/<process_name>', methods=['GET'])
     def render_config(process_name):
         result = renderConfig(process_name)
-        if (result):
-            return jsonify({'message': 'Config file rendered successfully'})
-        else:
-            return jsonify({'message': 'Config file render failed'})
+        return result
 except Exception as e:
     app_routes.logger_routes.debug(e)
 
