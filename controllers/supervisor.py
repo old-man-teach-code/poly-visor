@@ -81,13 +81,13 @@ def createConfig(process_name, command):
             'autostart': 'true',
             'autorestart': 'true',
             'stdout_logfile': '/var/log/' + process_name + '.out.log',
+            'stdout_logfile_maxbytes': '10MB',
             'stderr_logfile': '/var/log/' + process_name + '.err.log',
+            'stderr_logfile_maxbytes': '10MB',
         }
         with open('/var/supervisor/conf.d/' + process_name + '.ini', 'w') as config_file:
             config.write(config_file)
         reread_and_update()
-        
-
         return True
 
 
@@ -102,6 +102,7 @@ def modifyConfig(process_name,action, key , value = ''):
             del config['program:' + process_name][key]
         with open('/var/supervisor/conf.d/' + process_name + '.ini', 'w') as config_file:
             config.write(config_file)
+        reread_and_update()    
         return True
     else:
         return False
