@@ -114,3 +114,5 @@ def renderConfig(process_name):
         #     # read each line and spilt each line after space
         #     config = f.read().splitlines()
         return send_file('/var/supervisor/conf.d/' + process_name + '.ini',mimetype='text/plain')
+    else: 
+        return 'File not found'
