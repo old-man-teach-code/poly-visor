@@ -131,10 +131,11 @@
 	</div>
 {:else if modalType === 'detail'}
 	<div class="modal-background" on:click={close} />
-	<div class="modal p-10" role="dialog" aria-modal="true" bind:this={modal}>
-		<div class="flex justify-end">
+	<div class="modal px-10 py-6	" role="dialog" aria-modal="true" bind:this={modal}>
+		<div class=" pb-5 flex justify-end">
 			<CloseButton on:event={close} />
 		</div>
+		<hr class="pb-5" />
 		Description: {content.description}
 		<br />
 		Exit status: {content.exitstatus}
@@ -161,16 +162,18 @@
 		<br />
 		Stop: {content.stop}
 		<br />
-		<hr />
+		<hr class="mt-5" />
 		<!-- svelte-ignore a11y-autofocus -->
 	</div>
 {:else if modalType === 'addProcess'}
 	<div class="modal-background" on:click={close} />
-	<div class="modal p-10" role="dialog" aria-modal="true" bind:this={modal}>
-		<div class="flex justify-end">
+	<div class="modal px-10 py-8" role="dialog" aria-modal="true" bind:this={modal}>
+		<div class="pb-5 flex justify-between">
+			<h1>Add new process</h1>
 			<CloseButton on:event={close} />
 		</div>
-		<div class="flex flex-col space-y-5">
+		<hr />
+		<div class=" pt-5 flex flex-col space-y-5">
 			<Input
 				bind:inputValue={processName}
 				inputLabel="Process Name"
@@ -181,12 +184,14 @@
 				inputLabel="Command"
 				inputPlaceholder="full/path/to/process"
 			/>
-			<div class="place-self-center">
-				<AddButton
-					on:event={() => {
-						addNewProcessConf(processName, command);
-					}}
-				/>
+			<div class="pt-5 place-self-center">
+				<ToolTip title="Add process config">
+					<AddButton
+						on:event={() => {
+							addNewProcessConf(processName, command);
+						}}
+					/>
+				</ToolTip>
 			</div>
 		</div>
 		<!-- svelte-ignore a11y-autofocus -->
