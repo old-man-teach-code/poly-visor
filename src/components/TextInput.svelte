@@ -1,12 +1,13 @@
 <script lang="ts">
 	export let inputLabel: string;
 	export let inputPlaceholder: string;
-
 	export let inputValue: string;
 </script>
 
 <div>
-	<label for="text" class="block text-sm font-medium text-gray-700">{inputLabel}</label>
+	{#if inputLabel}
+		<label for="text" class="block text-sm font-medium text-gray-700">{inputLabel}</label>
+	{/if}
 	<div class="mt-1">
 		<input
 			bind:value={inputValue}

@@ -13,13 +13,26 @@
 	import Modal from '../../components/Modal.svelte';
 	import AddButton from '../../components/Buttons/AddButton.svelte';
 	import Selector from '../../components/Selector.svelte';
+	import TextInput from '../../components/TextInput.svelte';
 
 	let values: Object;
 	let showModal = 'close';
 	let modalContent: String;
 	let logName: String;
 	let logStream: String;
-	let filter = [];
+	let filter = new Array();
+	let search: string;
+	let tableRows;
+
+	$: if (search) {
+		tableRows = $processes.filter(
+			(process) =>
+				filter.includes(process.statename) &&
+				process.name.toLowerCase().includes(search.toLocaleLowerCase())
+		);
+	} else {
+		tableRows = $processes.filter((process) => filter.includes(process.statename));
+	}
 </script>
 
 <div class="w-full h-screen px-10">
@@ -47,11 +60,18 @@
 		</div>
 		<!-- options={['RUNNING', 'STOPPED', 'STARTING', 'BACKOFF', 'FATAL']} -->
 		<!-- on:event={handleFilter} -->
-		<div>
-			<Selector bind:result={filter} options={['RUNNING', 'STOPPED']} />
+		<div class="flex justify-between">
+			<div class="pl-5 pb-5">
+				<TextInput inputPlaceholder="Search" bind:inputValue={search} />
+			</div>
+			<Selector
+				bind:result={filter}
+				title="Status"
+				options={['RUNNING', 'STARTING', 'BACKOFF', 'STOPPED', 'FATAL']}
+			/>
 		</div>
 		<!-- <hr class="mb-10 mx-5" /> -->
-		<div class="overflow-auto flex flex-col items-center pb-10">
+		<div class="overflow-auto flex flex-col items-center">
 			<table class="min-w-full w-full table-auto">
 				<thead>
 					<tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
@@ -64,73 +84,71 @@
 				<tbody class="text-gray-600 text-sm font-light">
 					{#if values}
 						{#each values as process}
-							{#if filter.length == 0 || filter.includes(process.statename)}
-								<tr class="border-b border-gray-200 hover:bg-gray-100">
-									<td class="py-3 px-6 text-left whitespace-nowrap">
-										<div class="flex items-center">
-											<span class="font-medium">{process.name}</span>
-										</div>
-									</td>
-									<td class="py-3 px-6 text-left">
-										<div class="flex items-center">
-											<span>{process.description}</span>
-										</div>
-									</td>
-									<td class="py-3 px-6 text-center">
-										<span class="{process.stateColor} py-1 px-3 rounded-full text-xs"
-											>{process.statename}</span
-										>
-									</td>
-									<td class="py-3 px-6 text-center">
-										<div class="flex item-center justify-center">
-											{#if process.statename != 'STOPPED'}
-												<ToolTip title="Stop this process">
-													<StopButton spin on:event={() => stopProcess(process.name)} />
-												</ToolTip>
-											{:else}
-												<ToolTip title="Start this process">
-													<StartButton spin on:event={() => startProcess(process.name)} />
-												</ToolTip>
-											{/if}
-											<ToolTip title="View process log"
-												><LogButton
-													error={false}
-													on:event={() => {
-														showModal = 'Log';
-														logName = process.name;
-														logStream = 'out';
-													}}
-												/></ToolTip
-											>
-											<ToolTip title="View error log"
-												><LogButton
-													error
-													on:event={() => {
-														showModal = 'Log';
-														logName = process.name;
-														logStream = 'err';
-													}}
-												/></ToolTip
-											>
-											<ToolTip title="View process detail">
-												<ViewButton
-													spin={false}
-													on:event={() => {
-														showModal = 'Detail';
-														modalContent = process;
-													}}
-												/>
+							<tr class="border-b border-gray-200 hover:bg-gray-100">
+								<td class="py-3 px-6 text-left whitespace-nowrap">
+									<div class="flex items-center">
+										<span class="font-medium">{process.name}</span>
+									</div>
+								</td>
+								<td class="py-3 px-6 text-left">
+									<div class="flex items-center">
+										<span>{process.description}</span>
+									</div>
+								</td>
+								<td class="py-3 px-6 text-center">
+									<span class="{process.stateColor} py-1 px-3 rounded-full text-xs"
+										>{process.statename}</span
+									>
+								</td>
+								<td class="py-3 px-6 text-center">
+									<div class="flex item-center justify-center">
+										{#if process.statename != 'STOPPED'}
+											<ToolTip title="Stop this process">
+												<StopButton spin on:event={() => stopProcess(process.name)} />
 											</ToolTip>
-										</div>
-									</td>
-								</tr>
-							{/if}
+										{:else}
+											<ToolTip title="Start this process">
+												<StartButton spin on:event={() => startProcess(process.name)} />
+											</ToolTip>
+										{/if}
+										<ToolTip title="View process log"
+											><LogButton
+												error={false}
+												on:event={() => {
+													showModal = 'Log';
+													logName = process.name;
+													logStream = 'out';
+												}}
+											/></ToolTip
+										>
+										<ToolTip title="View error log"
+											><LogButton
+												error
+												on:event={() => {
+													showModal = 'Log';
+													logName = process.name;
+													logStream = 'err';
+												}}
+											/></ToolTip
+										>
+										<ToolTip title="View process detail">
+											<ViewButton
+												spin={false}
+												on:event={() => {
+													showModal = 'Detail';
+													modalContent = process;
+												}}
+											/>
+										</ToolTip>
+									</div>
+								</td>
+							</tr>
 						{/each}
 						<td class="py-3 px-6 text-center" />
 					{/if}
 				</tbody>
 			</table>
-			<Pagination rows={$processes} perPage={5} bind:trimmedRows={values} />
+			<Pagination rows={tableRows} perPage={5} bind:trimmedRows={values} />
 			{#if showModal != 'close'}
 				{#if showModal == 'Log'}
 					<Modal
