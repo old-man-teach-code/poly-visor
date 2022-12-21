@@ -1,9 +1,13 @@
 <script>
-	import { createEventDispatcher } from 'svelte';
+	import { onMount } from 'svelte';
 
 	export let options;
+	export let title;
 	let statename = false;
 	export let result = [];
+	onMount(() => {
+		result = options;
+	});
 </script>
 
 <div class="flex justify-end pr-24 pb-5">
@@ -23,7 +27,7 @@
 		class="group inline-flex items-center justify-center text-sm font-medium text-gray-700 hover:text-gray-900"
 		aria-expanded="false"
 	>
-		<span>Category</span>
+		<span>{title}</span>
 
 		<span
 			class="ml-1.5 rounded bg-gray-200 py-0.5 px-1.5 text-xs font-semibold tabular-nums text-gray-700"
@@ -49,18 +53,18 @@
 	<div
 		class="{statename
 			? 'transform opacity-100 scale-100 translate-y-5'
-			: 'transform opacity-0 scale-95 translate-x-3/4'} absolute z-10 mt-2 origin-top-right rounded-md bg-white p-4 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none"
+			: 'transform opacity-0 scale-95 -translate-x-full'} absolute z-10 mt-2 origin-top-right rounded-md bg-white p-4 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none"
 	>
 		<form class="space-y-4">
 			{#each options as option}
 				<div class="flex items-center">
 					<input
+						bind:group={result}
 						id={option}
 						name={option}
 						value={option}
-						bind:group={result}
 						type="checkbox"
-						class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+						class="h-4 w-4 rounded border-gray-300 text-orange-500 focus:ring-orange-400"
 					/>
 					<label for={option} class="ml-3 whitespace-nowrap pr-6 text-sm font-medium text-gray-900"
 						>{option}</label
