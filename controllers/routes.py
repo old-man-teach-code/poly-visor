@@ -162,22 +162,25 @@ except Exception as e:
 
 
 # tail the /var/log/demo.out.log on the browser
-@app_routes.route('/process/<stream>/<name>', methods=['GET'])
-def stream(stream,name):
-    def generate():
-        config_path = split_config_path() + name + ".ini"
-        log_path = get_std_log_path(config_path,stream,name)
-        # reading the log file from the end
-        with open(log_path, 'r') as f:
-            f.seek(0, 2)
-            while True:
-                line = f.readline()
-                if not line:
-                    sleep(1)
-                    continue
-                message = json.dumps(dict(message=line))
-                yield "data: {}\n\n".format(message)
+try:
+    @app_routes.route('/process/<stream>/<name>', methods=['GET'])
+    def stream(stream,name):
+        def generate():
+            config_path = split_config_path() + name + ".ini"
+            log_path = get_std_log_path(config_path,stream,name)
+            # reading the log file from the end
+            with open(log_path, 'r') as f:
+                f.seek(0, 2)
+                while True:
+                    line = f.readline()
+                    if not line:
+                        sleep(1)
+                        continue
+                    message = json.dumps(dict(message=line))
+                    yield "data: {}\n\n".format(message)
 
-    return Response(generate(), mimetype='text/event-stream')
+        return Response(generate(), mimetype='text/event-stream')
+except Exception as e:
+    app_routes.logger_routes.debug(e)
 
 
