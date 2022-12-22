@@ -218,8 +218,36 @@ try:
         serverurl = data['serverurl']
         directory = data['directory']
 
-        result = createConfig(process_name, command, numprocs, umask, numprocs_start, priority, autostart, autorestart, startsecs, startentries, exitcodes, stopsignal, stopwaitsecs, stopasgroup, killasgroup, redirect_stderr, stdout_logfile_maxbytes,
-                              stdout_logfile_backups, stdout_capture_maxbytes, stdout_events_enabled, stdout_syslog, stderr_logfile_maxbytes, stderr_logfile_backups, stderr_capture_maxbytes, stderr_events_enabled, stderr_syslog, environment, serverurl, directory)
+        result = createConfig(
+            process_name, 
+            command, 
+            numprocs, 
+            umask, 
+            numprocs_start, 
+            priority, 
+            autostart, 
+            autorestart, 
+            startsecs, 
+            startentries, 
+            exitcodes, 
+            stopsignal, 
+            stopwaitsecs, 
+            stopasgroup, 
+            killasgroup, 
+            redirect_stderr, 
+            stdout_logfile_maxbytes,
+            stdout_logfile_backups, 
+            stdout_capture_maxbytes, 
+            stdout_events_enabled, 
+            stdout_syslog, 
+            stderr_logfile_maxbytes, 
+            stderr_logfile_backups, 
+            stderr_capture_maxbytes, 
+            stderr_events_enabled, 
+            stderr_syslog, 
+            environment, 
+            serverurl, 
+            directory)
         if (result):
             return jsonify({'message': 'Config file created successfully'})
         else:
