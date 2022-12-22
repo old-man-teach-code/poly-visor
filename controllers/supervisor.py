@@ -1,4 +1,4 @@
-from models.modelSupervisor import Supervisor
+# from models.modelSupervisor import Supervisor
 import sys
 import os
 import configparser
@@ -59,11 +59,15 @@ def clear_all_log_of_processes():
     return a.clear_all_log_processes
 
 # update the config file for a running process
+
+
 def update_config(process_name):
     a = Supervisor()
     return a.update_config_model(process_name)
 
 # reread and update by supervisorctl command
+
+
 def reread_and_update():
     commandReread = 'supervisorctl reread'
     commandUpdate = 'supervisorctl update'
@@ -71,28 +75,54 @@ def reread_and_update():
     os.system(commandUpdate)
 
 # Create config file for supervisor and check if file exist
-def createConfig(process_name, command):
+
+
+def createConfig(process_name, command, numprocs=1, umask='022', numprocs_start=0, priority=999, autostart='true', autorestart='true', startsecs=1, startentries=3, exitcodes=0, stopsignal='TERM', stopwaitsecs=10, stopasgroup='false', killasgroup='false', redirect_stderr='false', stdout_logfile_maxbytes='50MB', stdout_logfile_backups=10, stdout_capture_maxbytes=0, stdout_events_enabled=0, stdout_syslog='false', stderr_logfile_maxbytes='50MB', stderr_logfile_backups=10, stderr_capture_maxbytes=0, stderr_events_enabled='false', stderr_syslog='false', environment='', serverurl='AUTO', directory='/tmp'):
     if (os.path.isfile('/var/supervisor/conf.d/' + process_name + '.ini')):
         return False
     else:
         config = configparser.ConfigParser()
         config['program:' + process_name] = {
             'command': command,
-            'autostart': 'true',
-            'autorestart': 'true',
+            'numprocs': numprocs,
+            'umask': umask,
+            'numprocs_start': numprocs_start,
+            'priority': priority,
+            'autostart': autostart,
+            'autorestart': autorestart,
+            'startsecs': startsecs,
+            'startentries': startentries,
+            'exitcodes': exitcodes,
+            'stopsignal': stopsignal,
+            'stopwaitsecs': stopwaitsecs,
+            'stopasgroup': stopasgroup,
+            'killasgroup': killasgroup,
+            'redirect_stderr': redirect_stderr,
+            'stdout_logfile_maxbytes': stdout_logfile_maxbytes,
             'stdout_logfile': '/var/log/' + process_name + '.out.log',
-            'stdout_logfile_maxbytes': '10MB',
+            'stdout_logfile_backups': stdout_logfile_backups,
+            'stdout_capture_maxbytes': stdout_capture_maxbytes,
+            'stdout_events_enabled': stdout_events_enabled,
+            'stdout_syslog': stdout_syslog,
             'stderr_logfile': '/var/log/' + process_name + '.err.log',
-            'stderr_logfile_maxbytes': '10MB',
+            'stderr_logfile_maxbytes': stderr_logfile_maxbytes,
+            'stderr_logfile_backups': stderr_logfile_backups,
+            'stderr_capture_maxbytes': stderr_capture_maxbytes,
+            'stderr_events_enabled': stderr_events_enabled,
+            'stderr_syslog': stderr_syslog,
+            'environment': environment,
+            'serverurl': serverurl,
+            'directory': directory
         }
         with open('/var/supervisor/conf.d/' + process_name + '.ini', 'w') as config_file:
             config.write(config_file)
         reread_and_update()
         return True
 
+createConfig('testDemo1', '/bin/demo.sh')
 
 # create updateConfig function to update the config file based on the key
-def modifyConfig(process_name,action, key , value = ''):
+def modifyConfig(process_name, action, key, value=''):
     if (os.path.isfile('/var/supervisor/conf.d/' + process_name + '.ini')):
         config = configparser.ConfigParser()
         config.read('/var/supervisor/conf.d/' + process_name + '.ini')
@@ -102,7 +132,7 @@ def modifyConfig(process_name,action, key , value = ''):
             del config['program:' + process_name][key]
         with open('/var/supervisor/conf.d/' + process_name + '.ini', 'w') as config_file:
             config.write(config_file)
-        reread_and_update()    
+        reread_and_update()
         return True
     else:
         return False
@@ -114,6 +144,6 @@ def renderConfig(process_name):
         # with open('/var/supervisor/conf.d/' + process_name + '.ini', 'r') as f:
         #     # read each line and spilt each line after space
         #     config = f.read().splitlines()
-        return send_file('/var/supervisor/conf.d/' + process_name + '.ini',mimetype='text/plain')
-    else: 
+        return send_file('/var/supervisor/conf.d/' + process_name + '.ini', mimetype='text/plain')
+    else:
         return 'File not found'
