@@ -27,8 +27,8 @@ try:
         if flag:
             return jsonify({'message': 'Supervisor restarted'})
         else:
-            return jsonify({'message': 'Supervisor not restarted'})    
-            
+            return jsonify({'message': 'Supervisor not restarted'})
+
 except Exception as e:
     app_routes.logger_routes.debug(e)
 
@@ -40,8 +40,8 @@ try:
         if flag:
             return jsonify({'message': 'Supervisor shutdown successfully'})
         else:
-            return jsonify({'message': 'Supervisor not shutdown'})    
-            
+            return jsonify({'message': 'Supervisor not shutdown'})
+
 except Exception as e:
     app_routes.logger_routes.debug(e)
 
@@ -53,7 +53,7 @@ try:
         flag = start_all_processes_model()
         if flag:
             return jsonify({'message': 'All processes started successfully'})
-        else:    
+        else:
             return jsonify({'message': 'All processes not started'})
 
 except Exception as e:
@@ -122,11 +122,11 @@ try:
 except Exception as e:
     app_routes.logger_routes.debug(e)
 
-# 
+#
 try:
     @app_routes.route('/config/create/<process_name>/<command>', methods=['GET'])
     def create_config(process_name, command):
-        
+
         command = base64.b64decode(command).decode('utf-8')
         result = createConfig(process_name, command)
         if (result):
@@ -138,7 +138,7 @@ except Exception as e:
 
 # update the config file
 try:
-    @app_routes.route('/config/modify/<process_name>/<action>/<key>/',defaults={'value': ''}, methods=['GET'] )
+    @app_routes.route('/config/modify/<process_name>/<action>/<key>/', defaults={'value': ''}, methods=['GET'])
     @app_routes.route('/config/modify/<process_name>/<action>/<key>/<value>', methods=['GET'])
     def modify_config(process_name, action, key, value):
         value = base64.b64decode(value).decode('utf-8')
@@ -160,14 +160,13 @@ except Exception as e:
     app_routes.logger_routes.debug(e)
 
 
-
 # tail the /var/log/demo.out.log on the browser
 try:
     @app_routes.route('/process/<stream>/<name>', methods=['GET'])
-    def stream(stream,name):
+    def stream(stream, name):
         def generate():
             config_path = split_config_path() + name + ".ini"
-            log_path = get_std_log_path(config_path,stream,name)
+            log_path = get_std_log_path(config_path, stream, name)
             # reading the log file from the end
             with open(log_path, 'r') as f:
                 f.seek(0, 2)
@@ -219,7 +218,8 @@ try:
         serverurl = data['serverurl']
         directory = data['directory']
 
-        result = createConfig(process_name, command, numprocs, umask, numprocs_start, priority, autostart, autorestart, startsecs, startentries, exitcodes, stopsignal, stopwaitsecs, stopasgroup, killasgroup, redirect_stderr, stdout_logfile_maxbytes, stdout_logfile_backups, stdout_capture_maxbytes, stdout_events_enabled, stdout_syslog, stderr_logfile_maxbytes, stderr_logfile_backups, stderr_capture_maxbytes, stderr_events_enabled, stderr_syslog, environment, serverurl, directory)
+        result = createConfig(process_name, command, numprocs, umask, numprocs_start, priority, autostart, autorestart, startsecs, startentries, exitcodes, stopsignal, stopwaitsecs, stopasgroup, killasgroup, redirect_stderr, stdout_logfile_maxbytes,
+                              stdout_logfile_backups, stdout_capture_maxbytes, stdout_events_enabled, stdout_syslog, stderr_logfile_maxbytes, stderr_logfile_backups, stderr_capture_maxbytes, stderr_events_enabled, stderr_syslog, environment, serverurl, directory)
         if (result):
             return jsonify({'message': 'Config file created successfully'})
         else:
