@@ -21,9 +21,39 @@
 	let scroll = true;
 	let logState: Boolean = true;
 	let logStore: string;
-	let command: string;
-	let processName: string;
 	const processLog = writable('');
+
+	let conf = {
+		process_name: '',
+		command: '',
+		numprocs: 1,
+		umask: '022',
+		numprocs_start: 0,
+		priority: 999,
+		autostart: true,
+		autorestart: true,
+		startsecs: 1,
+		startretries: 3,
+		exitcodes: 0,
+		stopsignal: 'TERM',
+		stopwaitsecs: 10,
+		stopasgroup: false,
+		killasgroup: false,
+		redirect_stderr: false,
+		stdout_logfile_maxbytes: '50MB',
+		stdout_logfile_backups: 10,
+		stdout_capture_maxbytes: 0,
+		stdout_events_enabled: false,
+		stdout_syslog: false,
+		stderr_logfile_maxbytes: '50MB',
+		stderr_logfile_backups: 10,
+		stderr_capture_maxbytes: 0,
+		stderr_events_enabled: false,
+		stderr_syslog: false,
+		environment: '',
+		serverurl: 'AUTO',
+		directory: ''
+	};
 
 	if (modalType === 'log') {
 		onMount(() => {
@@ -167,22 +197,77 @@
 	</div>
 {:else if modalType === 'addProcess'}
 	<div class="modal-background" on:click={close} />
-	<div class="modal px-10 py-8" role="dialog" aria-modal="true" bind:this={modal}>
-		<div class="pb-5 flex justify-between">
+	<div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
+		<div class="sticky top-0 bg-orange-200 py-5 flex items-center justify-between px-10">
 			<h1>Add new process</h1>
 			<CloseButton on:event={close} />
 		</div>
-		<hr />
-		<div class=" pt-5 flex flex-col space-y-5">
+		<div class="p-10 flex flex-col space-y-5">
 			<Input
-				bind:inputValue={processName}
+				bind:inputValue={conf.process_name}
 				inputLabel="Process Name"
 				inputPlaceholder="Name of the process"
 			/>
 			<Input
-				bind:inputValue={command}
+				bind:inputValue={conf.command}
 				inputLabel="Command"
-				inputPlaceholder="full/path/to/process"
+				inputPlaceholder="Command to run"
+			/>
+			<Input
+				bind:inputValue={conf.numprocs}
+				inputLabel="Number of processes"
+				inputPlaceholder="Number of processes to run"
+			/>
+			<Input
+				bind:inputValue={conf.numprocs_start}
+				inputLabel="Number of processes to start"
+				inputPlaceholder="Number of processes to start"
+			/>
+			<Input
+				bind:inputValue={conf.directory}
+				inputLabel="Directory"
+				inputPlaceholder="Directory to run the process"
+			/>
+			<Input bind:inputValue={conf.umask} inputLabel="Umask" inputPlaceholder="Umask" />
+			<Input bind:inputValue={conf.priority} inputLabel="Priority" inputPlaceholder="Priority" />
+			<Input bind:inputValue={conf.autostart} inputLabel="Autostart" inputPlaceholder="Autostart" />
+			<Input
+				bind:inputValue={conf.autorestart}
+				inputLabel="Autorestart"
+				inputPlaceholder="Autorestart"
+			/>
+			<Input bind:inputValue={conf.startsecs} inputLabel="Startsecs" inputPlaceholder="Startsecs" />
+			<Input
+				bind:inputValue={conf.startretries}
+				inputLabel="Startretries"
+				inputPlaceholder="Startretries"
+			/>
+			<Input bind:inputValue={conf.exitcodes} inputLabel="Exitcodes" inputPlaceholder="Exitcodes" />
+			<Input
+				bind:inputValue={conf.stopwaitsecs}
+				inputLabel="Stopwaitsecs"
+				inputPlaceholder="Stopwaitsecs"
+			/>
+			<Input
+				bind:inputValue={conf.stopasgroup}
+				inputLabel="Stopasgroup"
+				inputPlaceholder="Stopasgroup"
+			/>
+			<Input
+				bind:inputValue={conf.killasgroup}
+				inputLabel="Killasgroup"
+				inputPlaceholder="Killasgroup"
+			/>
+			<Input bind:inputValue={conf.redirect_stderr} inputLabel="User" inputPlaceholder="User" />
+			<Input
+				bind:inputValue={conf.stdout_events_enabled}
+				inputLabel="User"
+				inputPlaceholder="User"
+			/>
+			<Input
+				bind:inputValue={conf.stderr_events_enabled}
+				inputLabel="User"
+				inputPlaceholder="User"
 			/>
 			<div class="pt-5 place-self-center">
 				<ToolTip title="Add process config">
