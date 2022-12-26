@@ -127,9 +127,9 @@ def createConfig(
         environment='', 
         serverurl='AUTO', 
         directory='/tmp'):
-    if (os.path.isfile('/var/supervisor/conf.d/' + process_name + '.ini')):
-        return False
-    else:
+    # if (os.path.isfile('/var/supervisor/conf.d/' + process_name + '.ini')):
+    #     return False
+    # else:
         config = configparser.ConfigParser()
         config['program:' + process_name] = {
             'command': command,
@@ -168,6 +168,7 @@ def createConfig(
         reread_and_update()
         return True
 
+createConfig('testDemo1', 'python3 /root/test.py', environment='')
 # create updateConfig function to update the config file based on the key
 def modifyConfig(process_name, action, key, value=''):
     if (os.path.isfile('/var/supervisor/conf.d/' + process_name + '.ini')):
@@ -183,6 +184,8 @@ def modifyConfig(process_name, action, key, value=''):
         return True
     else:
         return False
+
+
 
 
 # render config file
