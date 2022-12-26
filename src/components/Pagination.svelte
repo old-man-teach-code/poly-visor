@@ -3,6 +3,7 @@
 	export let rows;
 	export let perPage;
 	export let trimmedRows;
+	export let currentPage;
 
 	$: totalRows = rows.length;
 	$: currentPage = 0;

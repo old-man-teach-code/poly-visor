@@ -197,7 +197,7 @@ try:
         autostart = data['autostart']
         autorestart = data['autorestart']
         startsecs = data['startsecs']
-        startentries = data['startentries']
+        startretries = data['startretries']
         exitcodes = data['exitcodes']
         stopsignal = data['stopsignal']
         stopwaitsecs = data['stopwaitsecs']
@@ -228,7 +228,7 @@ try:
             autostart = autostart,
             autorestart = autorestart,
             startsecs = startsecs,
-            startentries = startentries,
+            startretries = startretries,
             exitcodes = exitcodes,
             stopsignal = stopsignal,
             stopwaitsecs = stopwaitsecs,
