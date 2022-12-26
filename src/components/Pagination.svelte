@@ -17,10 +17,11 @@
 </script>
 
 {#if totalRows && totalRows > perPage}
-	<div class="flex pt-20 justify-center">
+	<div class="flex justify-center">
 		{#if currentPage > 0}
 			<ArrowButton direction="left" on:event={() => (currentPage -= 1)} />
 		{/if}
+
 		<span class="sr-only">Load previous {perPage} rows</span>
 		<p class="px-52">{start + 1} - {end + 1} of {totalRows}</p>
 		{#if currentPage < totalPages - 1}
