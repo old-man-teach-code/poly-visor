@@ -7,20 +7,25 @@
 	import StartButton from './Buttons/StartButton.svelte';
 	import StopButton from './Buttons/StopButton.svelte';
 	import ToolTip from './ToolTip.svelte';
+	import Input from './TextInput.svelte';
+	import AddButton from './Buttons/AddButton.svelte';
+	import { addNewProcessConf } from '../store/action';
 
 	const dispatch = createEventDispatcher();
 	const close = () => dispatch('close');
 	export let content: String;
-	export let log: Boolean;
+	export let modalType: String;
 	export let stream: String;
 	export let name: String;
 	let modal: HTMLElement;
 	let scroll = true;
 	let logState: Boolean = true;
 	let logStore: string;
+	let command: string;
+	let processName: string;
 	const processLog = writable('');
 
-	if (log) {
+	if (modalType === 'log') {
 		onMount(() => {
 			let eventSource = new EventSource(`http://127.0.0.1:5000/process/${stream}/${name}`);
 			eventSource.onmessage = (event) => {
@@ -73,7 +78,7 @@
 </script>
 
 <svelte:window on:keydown={handle_keydown} />
-{#if log}
+{#if modalType === 'log'}
 	<div class="modal-background" on:click={close} />
 	<div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
 		<div class="sticky top-0 bg-orange-200 py-5 flex items-center justify-between">
@@ -106,7 +111,7 @@
 			<ToolTip title="Clear process log">
 				<ClearLogButton
 					on:event={() => {
-						processLog.set('');
+						logStore = '';
 					}}
 				/>
 			</ToolTip>
@@ -124,12 +129,13 @@
 		<hr />
 		<!-- svelte-ignore a11y-autofocus -->
 	</div>
-{:else}
+{:else if modalType === 'detail'}
 	<div class="modal-background" on:click={close} />
-	<div class="modal p-10" role="dialog" aria-modal="true" bind:this={modal}>
-		<div class="flex justify-end">
+	<div class="modal px-10 py-6	" role="dialog" aria-modal="true" bind:this={modal}>
+		<div class=" pb-5 flex justify-end">
 			<CloseButton on:event={close} />
 		</div>
+		<hr class="pb-5" />
 		Description: {content.description}
 		<br />
 		Exit status: {content.exitstatus}
@@ -156,7 +162,38 @@
 		<br />
 		Stop: {content.stop}
 		<br />
+		<hr class="mt-5" />
+		<!-- svelte-ignore a11y-autofocus -->
+	</div>
+{:else if modalType === 'addProcess'}
+	<div class="modal-background" on:click={close} />
+	<div class="modal px-10 py-8" role="dialog" aria-modal="true" bind:this={modal}>
+		<div class="pb-5 flex justify-between">
+			<h1>Add new process</h1>
+			<CloseButton on:event={close} />
+		</div>
 		<hr />
+		<div class=" pt-5 flex flex-col space-y-5">
+			<Input
+				bind:inputValue={processName}
+				inputLabel="Process Name"
+				inputPlaceholder="Name of the process"
+			/>
+			<Input
+				bind:inputValue={command}
+				inputLabel="Command"
+				inputPlaceholder="full/path/to/process"
+			/>
+			<div class="pt-5 place-self-center">
+				<ToolTip title="Add process config">
+					<AddButton
+						on:event={() => {
+							addNewProcessConf(processName, command);
+						}}
+					/>
+				</ToolTip>
+			</div>
+		</div>
 		<!-- svelte-ignore a11y-autofocus -->
 	</div>
 {/if}
@@ -177,7 +214,7 @@
 		top: 50%;
 		width: calc(100vw - 4em);
 		max-width: 32em;
-		max-height: 42rem;
+		max-height: calc(100vh - 4em);
 		overflow: auto;
 		transform: translate(-50%, -50%);
 		border-radius: 0.2em;

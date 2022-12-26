@@ -27,7 +27,7 @@ def get_pid():
 # Get config file path of Supervisord when it running on machine
 def configPath():
     pid = get_pid()
-    result = runShell("ps -p "+pid+" -o args")
+    result = runShell("ps -p "+pid+" -o args") 
     path = ""
     s = re.findall(r'(\/.*?\.[\w:]+)', result)
     try:
@@ -54,6 +54,7 @@ def get_proc_config_path():
     path = config.get("include", "files")
     return path
 
+
 # Get serverurl Supervisor
 def serverURL():
     parser_file = configparser.RawConfigParser(
@@ -70,6 +71,7 @@ def serverURL():
     if ("localhost" in sup_url):
         sup_url = sup_url.replace("localhost", "")
     return sup_url
+
 
 # Get path of process with pid when it running
 def get_path_proc(proc_PID):
@@ -128,3 +130,26 @@ def get_list_stats_cpu_mem(sec):
 def start_getList_stats(seconds):
     thr1 = threading.Thread(target=get_list_stats_cpu_mem,args=(seconds,))
     thr1.start()
+
+#split the config path from the supervisor config file
+def split_config_path():
+    path = get_proc_config_path()
+    path = path.replace(" ", "")
+    path = path.replace("\t", "")
+    path = path.replace("*.ini", "")
+    path = path.split("\n")
+    if '/etc/supervisor/conf.d/' in path:
+        path.remove('/etc/supervisor/conf.d/')
+    return path[0]    
+
+# get the error and out log file path
+def get_std_log_path(path, stream,name):
+    config = configparser.RawConfigParser(
+        dict_type=MultiOrderedDict, strict=False)
+    config.read(path)
+    if stream == 'out':
+        result = config.get("program:"+name, "stdout_logfile")
+    else :
+        result = config.get("program:"+name, "stderr_logfile")    
+    
+    return result

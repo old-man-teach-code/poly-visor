@@ -35,8 +35,8 @@ def start_process_group_model(group):
 def stop_process_group_model(group):
     return stopProcessGroup(group)
 #get all data StdOut  of process by name
-def read_stdOut_process_model(name):
-    return read_stdOut_logFile(name)
+def read_stdOut_process_model(name, offset, length):
+    return read_stdOut_logFile(name , offset, length)
 
 #get all data StdErr  of process by name
 def read_stdErr_process_model(name):
