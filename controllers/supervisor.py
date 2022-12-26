@@ -86,7 +86,7 @@ def get_purpose():
         'autostart': 'If true, the program will be automatically started when Supervisor starts',
         'autorestart': 'Specifies if supervisord should automatically restart a process if it exits when it is in the RUNNING state',
         'startsecs': 'The total number of seconds which the program needs to stay running after a startup to consider the start successful',
-        'startentries': 'The number of serial failure attempts that supervisord will allow when attempting to start the program before giving up and putting the process into an FATAL state',
+        'startretries': 'The number of serial failure attempts that supervisord will allow when attempting to start the program before giving up and putting the process into an FATAL state',
         'exitcodes': 'The list of “expected” exit codes for this program used with autorestart',
         'stopsignal': 'The signal used to kill the program when a stop is requested',
         'stopwaitsecs': 'The number of seconds to wait for the OS to return a SIGCHLD to supervisord after the program has been sent a stopsignal',
@@ -107,7 +107,7 @@ def createConfig(
         autostart='true', 
         autorestart='true', 
         startsecs=1, 
-        startentries=3, 
+        startretries=3, 
         exitcodes=0, 
         stopsignal='TERM', 
         stopwaitsecs=10, 
@@ -127,9 +127,9 @@ def createConfig(
         environment='', 
         serverurl='AUTO', 
         directory='/tmp'):
-    if (os.path.isfile('/var/supervisor/conf.d/' + process_name + '.ini')):
-        return False
-    else:
+    # if (os.path.isfile('/var/supervisor/conf.d/' + process_name + '.ini')):
+    #     return False
+    # else:
         config = configparser.ConfigParser()
         config['program:' + process_name] = {
             'command': command,
@@ -140,7 +140,7 @@ def createConfig(
             'autostart': autostart,
             'autorestart': autorestart,
             'startsecs': startsecs,
-            'startentries': startentries,
+            'startretries': startretries,
             'exitcodes': exitcodes,
             'stopsignal': stopsignal,
             'stopwaitsecs': stopwaitsecs,
@@ -183,6 +183,8 @@ def modifyConfig(process_name, action, key, value=''):
         return True
     else:
         return False
+
+
 
 
 # render config file

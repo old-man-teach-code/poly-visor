@@ -132,7 +132,7 @@
 </script>
 
 <div class="w-full h-screen px-10">
-	<h1 class=" pt-5 text-2xl font-semibold">Overview</h1>
+	<h1 class=" py-5 text-2xl font-semibold">Overview</h1>
 	<div class="grid text-center justify-items-center gap-4 grid-cols-4 grid-rows-4">
 		<Card color={textCpu} content="{$system.cpu}%" title="Cpu Usage" on:event={chartCpu} />
 		<Card color={textRam} content="{$system.memory}%" title="Ram Usage" on:event={chartRam} />

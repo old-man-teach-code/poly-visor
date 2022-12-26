@@ -197,7 +197,7 @@ try:
         autostart = data['autostart']
         autorestart = data['autorestart']
         startsecs = data['startsecs']
-        startentries = data['startentries']
+        startretries = data['startretries']
         exitcodes = data['exitcodes']
         stopsignal = data['stopsignal']
         stopwaitsecs = data['stopwaitsecs']
@@ -219,35 +219,35 @@ try:
         directory = data['directory']
 
         result = createConfig(
-            process_name,
-            command,
-            numprocs,
-            umask,
-            numprocs_start,
-            priority,
-            autostart,
-            autorestart,
-            startsecs,
-            startentries,
-            exitcodes,
-            stopsignal,
-            stopwaitsecs,
-            stopasgroup,
-            killasgroup,
-            redirect_stderr,
-            stdout_logfile_maxbytes,
-            stdout_logfile_backups,
-            stdout_capture_maxbytes,
-            stdout_events_enabled,
-            stdout_syslog,
-            stderr_logfile_maxbytes,
-            stderr_logfile_backups,
-            stderr_capture_maxbytes,
-            stderr_events_enabled,
-            stderr_syslog,
-            environment,
-            serverurl,
-            directory)
+            process_name = process_name,
+            command = command,
+            numprocs = numprocs,
+            umask = umask,
+            numprocs_start = numprocs_start,
+            priority = priority,
+            autostart = autostart,
+            autorestart = autorestart,
+            startsecs = startsecs,
+            startretries = startretries,
+            exitcodes = exitcodes,
+            stopsignal = stopsignal,
+            stopwaitsecs = stopwaitsecs,
+            stopasgroup = stopasgroup,
+            killasgroup = killasgroup,
+            redirect_stderr = redirect_stderr,
+            stdout_logfile_maxbytes = stdout_logfile_maxbytes,
+            stdout_logfile_backups = stdout_logfile_backups,
+            stdout_capture_maxbytes = stdout_capture_maxbytes,
+            stdout_events_enabled = stdout_events_enabled,
+            stdout_syslog = stdout_syslog,
+            stderr_logfile_maxbytes = stderr_logfile_maxbytes,
+            stderr_logfile_backups = stderr_logfile_backups,
+            stderr_capture_maxbytes = stderr_capture_maxbytes,
+            stderr_events_enabled = stderr_events_enabled,
+            stderr_syslog = stderr_syslog,
+            environment = environment,
+            serverurl = serverurl,
+            directory = directory)
         if (result):
             return jsonify({'message': 'Config file created successfully'})
         else:
