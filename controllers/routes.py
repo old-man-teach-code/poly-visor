@@ -7,7 +7,7 @@ from flask_cors import CORS
 from finder import get_std_log_path, split_config_path
 from controllers.processes import clear_all_process_log_model, clear_process_log_model, read_stdOut_process_model, start_all_processes_model, start_process_by_name_model, start_process_group_model, stop_all_processes_model, stop_process_by_name_model, stop_process_group_model, tail_stdErr_logFile_model, tail_stdOut_logFile_model
 from controllers.supervisor import createConfig, modifyConfig, renderConfig, restart_supervisor_model, shutdown_supervisor_model
-from flask import jsonify, Blueprint, Response
+from flask import jsonify, Blueprint, Response, request
 import base64
 
 
@@ -219,38 +219,56 @@ try:
         directory = data['directory']
 
         result = createConfig(
-            process_name, 
-            command, 
-            numprocs, 
-            umask, 
-            numprocs_start, 
-            priority, 
-            autostart, 
-            autorestart, 
-            startsecs, 
-            startentries, 
-            exitcodes, 
-            stopsignal, 
-            stopwaitsecs, 
-            stopasgroup, 
-            killasgroup, 
-            redirect_stderr, 
+            process_name,
+            command,
+            numprocs,
+            umask,
+            numprocs_start,
+            priority,
+            autostart,
+            autorestart,
+            startsecs,
+            startentries,
+            exitcodes,
+            stopsignal,
+            stopwaitsecs,
+            stopasgroup,
+            killasgroup,
+            redirect_stderr,
             stdout_logfile_maxbytes,
-            stdout_logfile_backups, 
-            stdout_capture_maxbytes, 
-            stdout_events_enabled, 
-            stdout_syslog, 
-            stderr_logfile_maxbytes, 
-            stderr_logfile_backups, 
-            stderr_capture_maxbytes, 
-            stderr_events_enabled, 
-            stderr_syslog, 
-            environment, 
-            serverurl, 
+            stdout_logfile_backups,
+            stdout_capture_maxbytes,
+            stdout_events_enabled,
+            stdout_syslog,
+            stderr_logfile_maxbytes,
+            stderr_logfile_backups,
+            stderr_capture_maxbytes,
+            stderr_events_enabled,
+            stderr_syslog,
+            environment,
+            serverurl,
             directory)
         if (result):
             return jsonify({'message': 'Config file created successfully'})
         else:
             return jsonify({'message': 'Config file creation failed'})
+except Exception as e:
+    app_routes.logger_routes.debug(e)
+
+# create update the config file by using POST method
+try:
+    @app_routes.route('/config/modify', methods=['POST'])
+    def modify_config_post():
+        data = request.get_json()
+        process_name = data['process_name']
+        action = data['action']
+        key = data['key']
+        value = data['value']
+
+        result = modifyConfig(process_name, action, key, value)
+        if (result):
+            return jsonify({'message': 'Config file updated successfully'})
+        else:
+            return jsonify({'message': 'Config file update failed'})
 except Exception as e:
     app_routes.logger_routes.debug(e)

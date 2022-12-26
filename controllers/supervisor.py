@@ -74,8 +74,28 @@ def reread_and_update():
     os.system(commandReread)
     os.system(commandUpdate)
 
-# Create config file for supervisor and check if file exist
 
+# return all purpose of program settings in .ini file
+def get_purpose():
+    purpose = {
+        'command': 'The command that will be run when this program is started',
+        'numprocs': 'Supervisor will start as many instances of this program as named by numprocs',
+        'umask': 'The umask value that will be used when this program is started',
+        'numprocs_start': 'An integer offset that is used to compute the number at which process_num starts',
+        'priority': 'The relative priority of the program in the start and shutdown ordering',
+        'autostart': 'If true, the program will be automatically started when Supervisor starts',
+        'autorestart': 'Specifies if supervisord should automatically restart a process if it exits when it is in the RUNNING state',
+        'startsecs': 'The total number of seconds which the program needs to stay running after a startup to consider the start successful',
+        'startentries': 'The number of serial failure attempts that supervisord will allow when attempting to start the program before giving up and putting the process into an FATAL state',
+        'exitcodes': 'The list of “expected” exit codes for this program used with autorestart',
+        'stopsignal': 'The signal used to kill the program when a stop is requested',
+        'stopwaitsecs': 'The number of seconds to wait for the OS to return a SIGCHLD to supervisord after the program has been sent a stopsignal',
+        'stopasgroup': 'If true, the flag causes supervisor to send the stop signal to the whole process group and implies killasgroup is true',
+        'killasgroup': 'If true, the flag causes supervisor to send the kill signal to the whole process group',
+        'redirect_stderr': 'If true, cause the process’ stderr output to be sent back to supervisord on its stdout file descriptor',
+
+    }
+# Create config file for supervisor and check if file exist
 
 def createConfig(
         process_name, 
@@ -147,8 +167,6 @@ def createConfig(
             config.write(config_file)
         reread_and_update()
         return True
-
-createConfig('testDemo1', '/bin/demo.sh')
 
 # create updateConfig function to update the config file based on the key
 def modifyConfig(process_name, action, key, value=''):
