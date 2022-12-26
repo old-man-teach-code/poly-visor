@@ -61,6 +61,11 @@ def serverURL():
         dict_type=MultiOrderedDict, strict=False)
     parser_file.read(configPath())
     sup_url = parser_file.get("inet_http_server", "port")
+    if ";"in sup_url:
+        char_index=sup_url.find(";")
+        sup_url=sup_url[0:char_index]
+
+
     # if("localhost" in sup_url):
     #     return str(sup_url)
     # else:
@@ -68,7 +73,7 @@ def serverURL():
     #     return str(url)
 
     # if localhost is in serverurl, replace it with blank
-    if ("localhost" in sup_url):
+   
         sup_url = sup_url.replace("localhost", "")
     return sup_url
 
