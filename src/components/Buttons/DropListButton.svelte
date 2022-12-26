@@ -7,10 +7,8 @@
 	}
 
 	let arrow = {
-		right: 'M8.25 4.5l7.5 7.5-7.5 7.5',
-		left: 'M15.75 19.5L8.25 12l7.5-7.5',
-		down: 'M19.5 8.25l-7.5 7.5-7.5-7.5',
-		up: 'M4.5 15.75l7.5-7.5 7.5 7.5'
+		down: 'M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25',
+		up: 'M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12'
 	};
 </script>
 
@@ -21,7 +19,7 @@
 		viewBox="0 0 24 24"
 		stroke-width="1.5"
 		stroke="currentColor"
-		class="w-8 h-8 text-orange-400"
+		class="w-6 h-6 text-orange-400"
 	>
 		<path stroke-linecap="round" stroke-linejoin="round" d={arrow[direction]} />
 	</svg>

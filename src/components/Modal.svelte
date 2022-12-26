@@ -10,6 +10,7 @@
 	import Input from './TextInput.svelte';
 	import AddButton from './Buttons/AddButton.svelte';
 	import { addNewProcessConf } from '../store/action';
+	import ArrowButton from './Buttons/ArrowButton.svelte';
 
 	const dispatch = createEventDispatcher();
 	const close = () => dispatch('close');
@@ -21,9 +22,39 @@
 	let scroll = true;
 	let logState: Boolean = true;
 	let logStore: string;
-	let command: string;
-	let processName: string;
+	let required: Boolean = false;
 	const processLog = writable('');
+
+	let conf = {
+		process_name: '',
+		command: '',
+		numprocs: '1',
+		umask: '022',
+		numprocs_start: '0',
+		priority: '999',
+		autostart: 'true',
+		autorestart: 'true',
+		startsecs: '1',
+		startretries: '3',
+		exitcodes: '0',
+		stopsignal: 'TERM',
+		stopwaitsecs: '10',
+		stopasgroup: 'false',
+		killasgroup: 'false',
+		redirect_stderr: 'false',
+		stdout_logfile_maxbytes: '50MB',
+		stdout_logfile_backups: '10',
+		stdout_capture_maxbytes: '0',
+		stdout_events_enabled: 'false',
+		stdout_syslog: 'false',
+		stderr_logfile_maxbytes: '50MB',
+		stderr_logfile_backups: '10',
+		stderr_capture_maxbytes: '0',
+		stderr_events_enabled: 'false',
+		stderr_syslog: 'false',
+		environment: '',
+		serverurl: 'AUTO'
+	};
 
 	if (modalType === 'log') {
 		onMount(() => {
@@ -36,15 +67,15 @@
 				}
 			};
 		});
+		afterUpdate(() => {
+			if (scroll) {
+				scrollToBottom(modal);
+			}
+		});
 	}
 	const scrollToBottom = async (node) => {
 		node.scroll({ top: node.scrollHeight });
 	};
-	afterUpdate(() => {
-		if (scroll) {
-			scrollToBottom(modal);
-		}
-	});
 
 	const handle_keydown = (e) => {
 		if (e.key === 'Escape') {
@@ -131,64 +162,372 @@
 	</div>
 {:else if modalType === 'detail'}
 	<div class="modal-background" on:click={close} />
-	<div class="modal px-10 py-6	" role="dialog" aria-modal="true" bind:this={modal}>
-		<div class=" pb-5 flex justify-end">
+	<div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
+		<div class="sticky top-0 bg-orange-200 py-5 flex items-center justify-between px-10">
+			<h1 class="font-bold text-xl">Process detail</h1>
 			<CloseButton on:event={close} />
 		</div>
 		<hr class="pb-5" />
-		Description: {content.description}
-		<br />
-		Exit status: {content.exitstatus}
-		<br />
-		Group: {content.group}
-		<br />
-		Log file: {content.logfile}
-		<br />
-		Name: {content.name}
-		<br />
-		Pid: {content.pid}
-		<br />
-		Spawnerr: {content.spawnerr}
-		<br />
-		Start: {content.start}
-		<br />
-		State: {content.state}
-		<br />
-		State name: {content.statename}
-		<br />
-		Error log file: {content.stderr_logfile}
-		<br />
-		Out log file: {content.stdout_logfile}
-		<br />
-		Stop: {content.stop}
-		<br />
+		<div class="p-10 flex flex-col space-y-5">
+			Description: {content.description}
+			<br />
+			Exit status: {content.exitstatus}
+			<br />
+			Group: {content.group}
+			<br />
+			Log file: {content.logfile}
+			<br />
+			Name: {content.name}
+			<br />
+			Pid: {content.pid}
+			<br />
+			Spawnerr: {content.spawnerr}
+			<br />
+			Start: {content.start}
+			<br />
+			State: {content.state}
+			<br />
+			State name: {content.statename}
+			<br />
+			Error log file: {content.stderr_logfile}
+			<br />
+			Out log file: {content.stdout_logfile}
+			<br />
+			Stop: {content.stop}
+			<br />
+		</div>
 		<hr class="mt-5" />
 		<!-- svelte-ignore a11y-autofocus -->
 	</div>
 {:else if modalType === 'addProcess'}
 	<div class="modal-background" on:click={close} />
-	<div class="modal px-10 py-8" role="dialog" aria-modal="true" bind:this={modal}>
-		<div class="pb-5 flex justify-between">
-			<h1>Add new process</h1>
+	<div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
+		<div class="sticky top-0 bg-orange-200 py-5 flex items-center justify-between px-10">
+			<h1 class="font-bold text-xl">Add new process</h1>
 			<CloseButton on:event={close} />
 		</div>
-		<hr />
-		<div class=" pt-5 flex flex-col space-y-5">
+		<div class="p-10 flex flex-col space-y-5">
 			<Input
-				bind:inputValue={processName}
+				bind:inputValue={conf.process_name}
 				inputLabel="Process Name"
 				inputPlaceholder="Name of the process"
 			/>
 			<Input
-				bind:inputValue={command}
+				bind:inputValue={conf.command}
 				inputLabel="Command"
-				inputPlaceholder="full/path/to/process"
+				inputPlaceholder="Command to run"
 			/>
+			<div class="flex justify-center">
+				<ToolTip title={required ? 'Hide non-required config' : 'Show non-required config'}>
+					<ArrowButton
+						direction={required ? 'up' : 'down'}
+						on:event={() => {
+							required = !required;
+						}}
+					/></ToolTip
+				>
+			</div>
+			{#if required}
+				<Input
+					bind:inputValue={conf.numprocs}
+					inputLabel="Numbprocs"
+					inputPlaceholder="Instances of the process to run"
+				/>
+				<Input
+					bind:inputValue={conf.umask}
+					inputLabel="Umask"
+					inputPlaceholder="Umask of the process"
+				/>
+				<Input
+					bind:inputValue={conf.numprocs_start}
+					inputLabel="Numprocs_start"
+					inputPlaceholder="Offset integer used to compute the number at which process_num starts"
+				/>
+				<Input
+					bind:inputValue={conf.priority}
+					inputLabel="Priority"
+					inputPlaceholder="Start and shutdown order of the process"
+				/>
+				<Input
+					bind:inputValue={conf.autostart}
+					inputLabel="Autostart"
+					inputPlaceholder="Autostart the process"
+				/>
+				<Input
+					bind:inputValue={conf.autorestart}
+					inputLabel="Autorestart"
+					inputPlaceholder="Autorestart the process"
+				/>
+				<Input
+					bind:inputValue={conf.startsecs}
+					inputLabel="Startsecs"
+					inputPlaceholder="Number of seconds to wait before running the process"
+				/>
+				<Input
+					bind:inputValue={conf.startretries}
+					inputLabel="Startretries"
+					inputPlaceholder="Number of retries to attempt to start the process"
+				/>
+				<Input
+					bind:inputValue={conf.exitcodes}
+					inputLabel="Exitcodes"
+					inputPlaceholder="List of exit codes that will be use with auto restart"
+				/>
+				<Input
+					bind:inputValue={conf.stopsignal}
+					inputLabel="Stopsignal"
+					inputPlaceholder="Signal used to stop the process"
+				/>
+				<Input
+					bind:inputValue={conf.stopwaitsecs}
+					inputLabel="Stopwaitsecs"
+					inputPlaceholder="Number of seconds to wait before killing the process"
+				/>
+				<Input
+					bind:inputValue={conf.stopasgroup}
+					inputLabel="Stopasgroup"
+					inputPlaceholder="Send stop signal to the process group"
+				/>
+				<Input
+					bind:inputValue={conf.killasgroup}
+					inputLabel="Killasgroup"
+					inputPlaceholder="Send kill signal to the process group"
+				/>
+				<Input
+					bind:inputValue={conf.redirect_stderr}
+					inputLabel="Redirect_stderr"
+					inputPlaceholder="Redirect stderr to stdout"
+				/>
+				<Input
+					bind:inputValue={conf.stdout_logfile_maxbytes}
+					inputLabel="Stdout_logfile_maxbytes"
+					inputPlaceholder="Max size of the stdout log file"
+				/>
+				<Input
+					bind:inputValue={conf.stdout_logfile_backups}
+					inputLabel="Stdout_logfile_backups"
+					inputPlaceholder="Number of stdout log files to keep"
+				/>
+				<Input
+					bind:inputValue={conf.stdout_capture_maxbytes}
+					inputLabel="Stdout_capture_maxbytes"
+					inputPlaceholder="Max size of the stdout capture"
+				/>
+				<Input
+					bind:inputValue={conf.stdout_events_enabled}
+					inputLabel="Stdout_events_enabled"
+					inputPlaceholder="Enable stdout events"
+				/>
+				<Input
+					bind:inputValue={conf.stdout_syslog}
+					inputLabel="Stdout_syslog"
+					inputPlaceholder="Send stdout to syslog"
+				/>
+				<Input
+					bind:inputValue={conf.stderr_logfile_maxbytes}
+					inputLabel="Stderr_logfile_maxbytes"
+					inputPlaceholder="Max size of the stderr log file"
+				/>
+				<Input
+					bind:inputValue={conf.stderr_logfile_backups}
+					inputLabel="Stderr_logfile_backups"
+					inputPlaceholder="Number of stderr log files to keep"
+				/>
+				<Input
+					bind:inputValue={conf.stderr_capture_maxbytes}
+					inputLabel="Stderr_capture_maxbytes"
+					inputPlaceholder="Max size of the stderr capture"
+				/>
+				<Input
+					bind:inputValue={conf.stderr_events_enabled}
+					inputLabel="Stderr_events_enabled"
+					inputPlaceholder="Enable stderr events"
+				/>
+				<Input
+					bind:inputValue={conf.stderr_syslog}
+					inputLabel="Stderr_syslog"
+					inputPlaceholder="Send stderr to syslog"
+				/>
+				<Input bind:inputValue={conf.environment} inputLabel="Environment" inputPlaceholder="" />
+				<Input
+					bind:inputValue={conf.serverurl}
+					inputLabel="Serverurl"
+					inputPlaceholder="Server url for the process"
+				/>
+			{/if}
 			<div class="pt-5 place-self-center">
 				<ToolTip title="Add process config">
 					<AddButton
 						on:event={() => {
-							addNewProcessConf(processName, command);
+							addNewProcessConf(conf);
+						}}
+					/>
+				</ToolTip>
+			</div>
+		</div>
+		<!-- svelte-ignore a11y-autofocus -->
+	</div>
+{:else if modalType === 'editProcess'}
+	<div class="modal-background" on:click={close} />
+	<div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
+		<div class="sticky top-0 bg-orange-200 py-5 flex items-center justify-between px-10">
+			<h1 class="font-bold text-xl">Edit process.name process</h1>
+			<CloseButton on:event={close} />
+		</div>
+		<div class="p-10 flex flex-col space-y-5">
+			<Input
+				bind:inputValue={conf.process_name}
+				inputLabel="Process Name"
+				inputPlaceholder="Name of the process"
+			/>
+			<Input
+				bind:inputValue={conf.command}
+				inputLabel="Command"
+				inputPlaceholder="Command to run"
+			/>
+			<div class="flex justify-center">
+				<ToolTip title={required ? 'Hide non-required config' : 'Show non-required config'}>
+					<ArrowButton
+						direction={required ? 'up' : 'down'}
+						on:event={() => {
+							required = !required;
+						}}
+					/></ToolTip
+				>
+			</div>
+			{#if required}
+				<Input
+					bind:inputValue={conf.numprocs}
+					inputLabel="Numbprocs"
+					inputPlaceholder="Instances of the process to run"
+				/>
+				<Input
+					bind:inputValue={conf.umask}
+					inputLabel="Umask"
+					inputPlaceholder="Umask of the process"
+				/>
+				<Input
+					bind:inputValue={conf.numprocs_start}
+					inputLabel="Numprocs_start"
+					inputPlaceholder="Offset integer used to compute the number at which process_num starts"
+				/>
+				<Input
+					bind:inputValue={conf.priority}
+					inputLabel="Priority"
+					inputPlaceholder="Start and shutdown order of the process"
+				/>
+				<Input
+					bind:inputValue={conf.autostart}
+					inputLabel="Autostart"
+					inputPlaceholder="Autostart the process"
+				/>
+				<Input
+					bind:inputValue={conf.autorestart}
+					inputLabel="Autorestart"
+					inputPlaceholder="Autorestart the process"
+				/>
+				<Input
+					bind:inputValue={conf.startsecs}
+					inputLabel="Startsecs"
+					inputPlaceholder="Number of seconds to wait before running the process"
+				/>
+				<Input
+					bind:inputValue={conf.startretries}
+					inputLabel="Startretries"
+					inputPlaceholder="Number of retries to attempt to start the process"
+				/>
+				<Input
+					bind:inputValue={conf.exitcodes}
+					inputLabel="Exitcodes"
+					inputPlaceholder="List of exit codes that will be use with auto restart"
+				/>
+				<Input
+					bind:inputValue={conf.stopsignal}
+					inputLabel="Stopsignal"
+					inputPlaceholder="Signal used to stop the process"
+				/>
+				<Input
+					bind:inputValue={conf.stopwaitsecs}
+					inputLabel="Stopwaitsecs"
+					inputPlaceholder="Number of seconds to wait before killing the process"
+				/>
+				<Input
+					bind:inputValue={conf.stopasgroup}
+					inputLabel="Stopasgroup"
+					inputPlaceholder="Send stop signal to the process group"
+				/>
+				<Input
+					bind:inputValue={conf.killasgroup}
+					inputLabel="Killasgroup"
+					inputPlaceholder="Send kill signal to the process group"
+				/>
+				<Input
+					bind:inputValue={conf.redirect_stderr}
+					inputLabel="Redirect_stderr"
+					inputPlaceholder="Redirect stderr to stdout"
+				/>
+				<Input
+					bind:inputValue={conf.stdout_logfile_maxbytes}
+					inputLabel="Stdout_logfile_maxbytes"
+					inputPlaceholder="Max size of the stdout log file"
+				/>
+				<Input
+					bind:inputValue={conf.stdout_logfile_backups}
+					inputLabel="Stdout_logfile_backups"
+					inputPlaceholder="Number of stdout log files to keep"
+				/>
+				<Input
+					bind:inputValue={conf.stdout_capture_maxbytes}
+					inputLabel="Stdout_capture_maxbytes"
+					inputPlaceholder="Max size of the stdout capture"
+				/>
+				<Input
+					bind:inputValue={conf.stdout_events_enabled}
+					inputLabel="Stdout_events_enabled"
+					inputPlaceholder="Enable stdout events"
+				/>
+				<Input
+					bind:inputValue={conf.stdout_syslog}
+					inputLabel="Stdout_syslog"
+					inputPlaceholder="Send stdout to syslog"
+				/>
+				<Input
+					bind:inputValue={conf.stderr_logfile_maxbytes}
+					inputLabel="Stderr_logfile_maxbytes"
+					inputPlaceholder="Max size of the stderr log file"
+				/>
+				<Input
+					bind:inputValue={conf.stderr_logfile_backups}
+					inputLabel="Stderr_logfile_backups"
+					inputPlaceholder="Number of stderr log files to keep"
+				/>
+				<Input
+					bind:inputValue={conf.stderr_capture_maxbytes}
+					inputLabel="Stderr_capture_maxbytes"
+					inputPlaceholder="Max size of the stderr capture"
+				/>
+				<Input
+					bind:inputValue={conf.stderr_events_enabled}
+					inputLabel="Stderr_events_enabled"
+					inputPlaceholder="Enable stderr events"
+				/>
+				<Input
+					bind:inputValue={conf.stderr_syslog}
+					inputLabel="Stderr_syslog"
+					inputPlaceholder="Send stderr to syslog"
+				/>
+				<Input bind:inputValue={conf.environment} inputLabel="Environment" inputPlaceholder="" />
+				<Input
+					bind:inputValue={conf.serverurl}
+					inputLabel="Serverurl"
+					inputPlaceholder="Server url for the process"
+				/>
+			{/if}
+			<div class="pt-5 place-self-center">
+				<ToolTip title="Add process config">
+					<AddButton
+						on:event={() => {
+							addNewProcessConf(conf);
 						}}
 					/>
 				</ToolTip>
