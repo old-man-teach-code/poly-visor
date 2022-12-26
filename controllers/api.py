@@ -1,6 +1,6 @@
 from flask_cors import CORS
 from controllers.processes import get_all_processes_model
-from controllers.supervisor import get_supervisor
+from controllers.supervisor import get_supervisor, renderConfig
 from controllers.system import get_system
 from controllers.utils import get_date
 from flask import jsonify, Blueprint
@@ -45,4 +45,16 @@ except Exception as e:
     #logging the exception to a test.log file in the storage/logs folder
     app_api.logger_api.debug(e)
     
+
+# render the config file
+try:
+    @app_api.route('/config/render/<process_name>', methods=['GET'])
+    def render_config(process_name):
+
+        result = renderConfig(process_name)
+        
+        return jsonify(result)
+except Exception as e:
+    app_api.logger_api.debug(e)
+
 

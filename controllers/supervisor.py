@@ -97,6 +97,7 @@ def get_purpose():
     }
 # Create config file for supervisor and check if file exist
 
+
 def createConfig(
         process_name, 
         command, 
@@ -169,6 +170,8 @@ def createConfig(
         return True
 
 # create updateConfig function to update the config file based on the key
+
+
 def modifyConfig(process_name, action, key, value=''):
     if (os.path.isfile('/var/supervisor/conf.d/' + process_name + '.ini')):
         config = configparser.ConfigParser()
@@ -185,14 +188,13 @@ def modifyConfig(process_name, action, key, value=''):
         return False
 
 
-
-
 # render config file
 def renderConfig(process_name):
     if (os.path.isfile('/var/supervisor/conf.d/' + process_name + '.ini')):
-        # with open('/var/supervisor/conf.d/' + process_name + '.ini', 'r') as f:
-        #     # read each line and spilt each line after space
-        #     config = f.read().splitlines()
-        return send_file('/var/supervisor/conf.d/' + process_name + '.ini', mimetype='text/plain')
+        # return the .ini file with dictionary format and omit the [program:process_name] header
+        config = configparser.ConfigParser()
+        config.read('/var/supervisor/conf.d/' + process_name + '.ini')
+        return dict(config.items('program:' + process_name))
+
     else:
         return 'File not found'
