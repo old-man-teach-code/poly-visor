@@ -168,7 +168,6 @@ def createConfig(
         reread_and_update()
         return True
 
-
 # create updateConfig function to update the config file based on the key
 def modifyConfig(process_name, action, key, value=''):
     if (os.path.isfile('/var/supervisor/conf.d/' + process_name + '.ini')):
