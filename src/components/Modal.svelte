@@ -11,13 +11,14 @@
 	import AddButton from './Buttons/AddButton.svelte';
 	import { addNewProcessConf } from '../store/action';
 	import ArrowButton from './Buttons/ArrowButton.svelte';
+	import {renderProcessConf} from '../store/action';
 
 	const dispatch = createEventDispatcher();
 	const close = () => dispatch('close');
 	export let content: String;
 	export let modalType: String;
 	export let stream: String;
-	export let name: String;
+	export let name: string;
 	let modal: HTMLElement;
 	let scroll = true;
 	let logState: Boolean = true;
@@ -54,6 +55,7 @@
 		stderr_syslog: 'false',
 		environment: '',
 		serverurl: 'AUTO',
+		directory: '/tmp'
 	};
 
 	if (modalType === 'log') {
@@ -72,6 +74,13 @@
 				scrollToBottom(modal);
 			}
 		});
+	}else if(modalType === 'editProcess'){
+		//map the return of renderObjectConf to conf
+		renderProcessConf(name).then((data) => {
+			conf = data;
+			conf.process_name = name;
+		});
+		
 	}
 	const scrollToBottom = async (node) => {
 		node.scroll({ top: node.scrollHeight });
@@ -371,15 +380,10 @@
 	<div class="modal-background" on:click={close} />
 	<div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
 		<div class="sticky top-0 bg-orange-200 py-5 flex items-center justify-between px-10">
-			<h1 class="font-bold text-xl">Edit process.name process</h1>
+			<h1 class="font-bold text-xl">Edit <span class="text-orange-400">{conf.process_name} </span>process</h1>
 			<CloseButton on:event={close} />
 		</div>
 		<div class="p-10 flex flex-col space-y-5">
-			<Input
-				bind:inputValue={conf.process_name}
-				inputLabel="Process Name"
-				inputPlaceholder="Name of the process"
-			/>
 			<Input
 				bind:inputValue={conf.command}
 				inputLabel="Command"

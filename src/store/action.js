@@ -69,7 +69,6 @@ export async function stopAllProcess() {
 }
 
 export async function addNewProcessConf(conf) {
-    //post json to api
     console.log(conf)
     const res = await fetch('http://127.0.0.1:5000/config/create', {
         method: 'POST',
@@ -83,5 +82,8 @@ export async function addNewProcessConf(conf) {
     return message;
 }
 
-// export async function renderProcessConf(name) {
-//     const res = await fetch(`http://
+export async function renderProcessConf(name){
+    const res = await fetch(`http://127.0.0.1:5000/config/render/${name}`);
+    const data = await res.json();
+    return data;
+}
