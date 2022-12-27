@@ -42,7 +42,7 @@
 
 <div class="w-full h-screen px-10">
 	<h1 class="pt-5 text-2xl font-semibold">Processes</h1>
-	<div class="border-2 bg-white w-full min-w-fit h-fit h-5/6 rounded-md mt-10 grid">
+	<div class="border-2 bg-white w-full min-w-fit min-h-fit rounded-md mt-10 grid">
 		<div class="flex flex-col">
 			<div class="flex justify-between pt-8">
 				<h3 class="pl-10 font-bold">All Processes</h3>
