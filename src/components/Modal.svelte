@@ -53,7 +53,7 @@
 		stderr_events_enabled: 'false',
 		stderr_syslog: 'false',
 		environment: '',
-		serverurl: 'AUTO'
+		serverurl: 'AUTO',
 	};
 
 	if (modalType === 'log') {
