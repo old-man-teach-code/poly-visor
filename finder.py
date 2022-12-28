@@ -153,9 +153,14 @@ def start_getList_stats(seconds):
 
 # split the config path from the supervisor config file
 def split_config_path():
+    
     path = get_proc_config_path().replace(" ", "").replace(
         "\t", "").replace("*.ini", "").split("\n")
-    return path[1]
+    if len(path) == 1:
+        return path[0]
+    else :
+        return path[1]    
+
 
 # get the error and out log file path
 def get_std_log_path(path, stream, name):

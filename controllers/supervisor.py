@@ -3,6 +3,7 @@ import sys
 import os
 import configparser
 from flask import send_file
+from finder import split_config_path
 
 # Get PARENT path of project to import modules
 current = os.path.dirname(os.path.realpath(__file__))
@@ -101,6 +102,7 @@ def get_purpose():
 def createConfig(
         process_name, 
         command, 
+        process_name_exp='%(program_name)s_%(process_num)02d',
         numprocs=1, 
         umask='022', 
         numprocs_start=0, 
@@ -128,12 +130,13 @@ def createConfig(
         environment='', 
         serverurl='AUTO', 
         directory='/tmp'):
-    # if (os.path.isfile('/var/supervisor/conf.d/' + process_name + '.ini')):
+    # if (os.path.isfile(split_config_path() + process_name + '.ini')):
     #     return False
     # else:
         config = configparser.ConfigParser()
         config['program:' + process_name] = {
             'command': command,
+            'process_name': process_name_exp,
             'numprocs': numprocs,
             'umask': umask,
             'numprocs_start': numprocs_start,
@@ -164,7 +167,7 @@ def createConfig(
             'serverurl': serverurl,
             'directory': directory
         }
-        with open('/var/supervisor/conf.d/' + process_name + '.ini', 'w') as config_file:
+        with open(split_config_path() + process_name + '.ini', 'w') as config_file:
             config.write(config_file)
         reread_and_update()
         return True
@@ -173,14 +176,14 @@ def createConfig(
 
 
 def modifyConfig(process_name, action, key, value=''):
-    if (os.path.isfile('/var/supervisor/conf.d/' + process_name + '.ini')):
+    if (os.path.isfile(split_config_path() + process_name + '.ini')):
         config = configparser.ConfigParser()
-        config.read('/var/supervisor/conf.d/' + process_name + '.ini')
+        config.read(split_config_path() + process_name + '.ini')
         if action == 'update':
             config['program:' + process_name][key] = value
         elif action == 'delete':
             del config['program:' + process_name][key]
-        with open('/var/supervisor/conf.d/' + process_name + '.ini', 'w') as config_file:
+        with open(split_config_path() + process_name + '.ini', 'w') as config_file:
             config.write(config_file)
         reread_and_update()
         return True
@@ -190,10 +193,10 @@ def modifyConfig(process_name, action, key, value=''):
 
 # render config file
 def renderConfig(process_name):
-    if (os.path.isfile('/var/supervisor/conf.d/' + process_name + '.ini')):
+    if (os.path.isfile(split_config_path() + process_name + '.ini')):
         # return the .ini file with dictionary format and omit the [program:process_name] header
         config = configparser.ConfigParser()
-        config.read('/var/supervisor/conf.d/' + process_name + '.ini')
+        config.read(split_config_path() + process_name + '.ini')
         return dict(config.items('program:' + process_name))
 
     else:
