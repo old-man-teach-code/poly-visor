@@ -63,3 +63,8 @@ class Supervisor:
     @property
     def update_config_model(name):
         return server.supervisor.addProcessGroup(name)
+
+    #  get config info of supervisor
+    @property
+    def get_config_info_model(self):
+        return server.supervisor.getAllConfigInfo()

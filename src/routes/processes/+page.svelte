@@ -133,7 +133,7 @@
 													error={false}
 													on:event={() => {
 														showModal = 'Log';
-														logName = process.name;
+														logName = process.group;
 														logStream = 'out';
 													}}
 												/></ToolTip
@@ -143,7 +143,7 @@
 													error
 													on:event={() => {
 														showModal = 'Log';
-														logName = process.name;
+														logName = process.group;
 														logStream = 'err';
 													}}
 												/></ToolTip
@@ -161,7 +161,8 @@
 												<EditButton
 													on:event={() => {
 														showModal = 'editProcess';
-														logName = process.name;
+														
+														logName = process.group;
 													}}
 												/>
 											</ToolTip>

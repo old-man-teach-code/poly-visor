@@ -27,7 +27,7 @@
 	const processLog = writable('');
 
 	let conf = {
-		process_name: '',
+		process_full_name: '',
 		command: '',
 		numprocs: '1',
 		umask: '022',
@@ -78,7 +78,7 @@
 		//map the return of renderObjectConf to conf
 		renderProcessConf(name).then((data) => {
 			conf = data;
-			conf.process_name = name;
+			conf.process_full_name = name;
 		});
 		
 	}
@@ -217,7 +217,7 @@
 		</div>
 		<div class="p-10 flex flex-col space-y-5">
 			<Input
-				bind:inputValue={conf.process_name}
+				bind:inputValue={conf.process_full_name}
 				inputLabel="Process Name"
 				inputPlaceholder="Name of the process"
 			/>
@@ -380,7 +380,7 @@
 	<div class="modal-background" on:click={close} />
 	<div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
 		<div class="sticky top-0 bg-orange-200 py-5 flex items-center justify-between px-10">
-			<h1 class="font-bold text-xl">Edit <span class="text-orange-400">{conf.process_name} </span>process</h1>
+			<h1 class="font-bold text-xl">Edit <span class="text-orange-400">{conf.process_full_name} </span>process</h1>
 			<CloseButton on:event={close} />
 		</div>
 		<div class="p-10 flex flex-col space-y-5">

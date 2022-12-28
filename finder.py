@@ -5,11 +5,13 @@ from collections import OrderedDict
 import threading
 from time import sleep
 
-isThen_Secs=True
-cpuList=[None] * 10
-memoryList=[None] * 10
+isThen_Secs = True
+cpuList = [None] * 10
+memoryList = [None] * 10
 
-#To get multiple value in config file
+# To get multiple value in config file
+
+
 class MultiOrderedDict(OrderedDict):
     def __setitem__(self, key, value):
         if isinstance(value, list) and key in self:
@@ -18,6 +20,8 @@ class MultiOrderedDict(OrderedDict):
             super().__setitem__(key, value)
 
 # Get pid supervisord by name in linux with shell
+
+
 def get_pid():
     result = runShell("pgrep supervisord")
     result = result.split()
@@ -27,7 +31,7 @@ def get_pid():
 # Get config file path of Supervisord when it running on machine
 def configPath():
     pid = get_pid()
-    result = runShell("ps -p "+pid+" -o args") 
+    result = runShell("ps -p "+pid+" -o args")
     path = ""
     s = re.findall(r'(\/.*?\.[\w:]+)', result)
     try:
@@ -46,6 +50,8 @@ def configPath():
     return path
 
 # Get include process config files path
+
+
 def get_proc_config_path():
     config = configparser.RawConfigParser(
         dict_type=MultiOrderedDict, strict=False)
@@ -61,10 +67,9 @@ def serverURL():
         dict_type=MultiOrderedDict, strict=False)
     parser_file.read(configPath())
     sup_url = parser_file.get("inet_http_server", "port")
-    if ";"in sup_url:
-        char_index=sup_url.find(";")
-        sup_url=sup_url[0:char_index]
-
+    if ";" in sup_url:
+        char_index = sup_url.find(";")
+        sup_url = sup_url[0:char_index]
 
     # if("localhost" in sup_url):
     #     return str(sup_url)
@@ -73,7 +78,7 @@ def serverURL():
     #     return str(url)
 
     # if localhost is in serverurl, replace it with blank
-   
+
         sup_url = sup_url.replace("localhost", "")
     return sup_url
 
@@ -91,12 +96,16 @@ def path_sup_logfile():
     return path
 
 # Run shell command and return output
+
+
 def runShell(command):
     stream = os.popen(command)
     output = stream.read()
     return output
 
 # Check supervisord is running as Root, return True, or False
+
+
 def check_supervisor_isRunning_asRoot():
     output = runShell("ps -p "+get_pid()+" -o user | tail -n 1")
     result = output.replace("\n", "")
@@ -104,57 +113,63 @@ def check_supervisor_isRunning_asRoot():
         return True
     return False
 
-#Get list CPU stats and Memory by number of "sec" seconds
+# Get list CPU stats and Memory by number of "sec" seconds
+
+
 def get_list_stats_cpu_mem(sec):
-    #modify isThen_Secs and cpuList variable
+    # modify isThen_Secs and cpuList variable
     global isThen_Secs
     global cpuList
     while True:
-        if isThen_Secs==True:
-            #get cpu stats
-            Cpu_output = runShell("""top -bn 1  | grep '^%Cpu' | tail -n 1 | awk '{print $2"%"}'""")
+        if isThen_Secs == True:
+            # get cpu stats
+            Cpu_output = runShell(
+                """top -bn 1  | grep '^%Cpu' | tail -n 1 | awk '{print $2"%"}'""")
             result = Cpu_output.replace("\n", "")
-            result = result.replace("%","")
-            result = result.replace(",",".")
-            if len(cpuList)>=10:
+            result = result.replace("%", "")
+            result = result.replace(",", ".")
+            if len(cpuList) >= 10:
                 cpuList.pop(0)
             cpuList.append(float(result))
-            #get memory stats
-            Mem_output= runShell("""free -g -h -t | grep Mem | awk '{printf "%.2f\\n",(($3/$2) * 100)}'""")
-            if len(memoryList)>=10:
+            # get memory stats
+            Mem_output = runShell(
+                """free -g -h -t | grep Mem | awk '{printf "%.2f\\n",(($3/$2) * 100)}'""")
+            if len(memoryList) >= 10:
                 memoryList.pop(0)
-            Mem_output = Mem_output.replace("\n","")
-            Mem_output = Mem_output.replace(",",".")
+            Mem_output = Mem_output.replace("\n", "")
+            Mem_output = Mem_output.replace(",", ".")
             memoryList.append(float(Mem_output))
-            isThen_Secs=False
+            isThen_Secs = False
             sleep(sec)
-        elif isThen_Secs==False:
-            isThen_Secs=True
+        elif isThen_Secs == False:
+            isThen_Secs = True
 
-#Run func get_list_stats_cpu_mem with thread
+# Run func get_list_stats_cpu_mem with thread
+
+
 def start_getList_stats(seconds):
-    thr1 = threading.Thread(target=get_list_stats_cpu_mem,args=(seconds,))
+    thr1 = threading.Thread(target=get_list_stats_cpu_mem, args=(seconds,))
     thr1.start()
 
-#split the config path from the supervisor config file
+# split the config path from the supervisor config file
 def split_config_path():
-    path = get_proc_config_path()
-    path = path.replace(" ", "")
-    path = path.replace("\t", "")
-    path = path.replace("*.ini", "")
-    path = path.split("\n")
-    if '/etc/supervisor/conf.d/' in path:
-        path.remove('/etc/supervisor/conf.d/')
-    return path[0]    
+    
+    path = get_proc_config_path().replace(" ", "").replace(
+        "\t", "").replace("*.ini", "").split("\n")
+    if len(path) == 1:
+        return path[0]
+    else :
+        return path[1]    
+
 
 # get the error and out log file path
-def get_std_log_path(path, stream,name):
+def get_std_log_path(path, stream, name):
     config = configparser.RawConfigParser(
         dict_type=MultiOrderedDict, strict=False)
     config.read(path)
     if stream == 'out':
         result = config.get("program:"+name, "stdout_logfile")
-    else :
-        result = config.get("program:"+name, "stderr_logfile")    
-    
+    else:
+        result = config.get("program:"+name, "stderr_logfile")
+
     return result
