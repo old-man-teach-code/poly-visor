@@ -3,6 +3,7 @@ import sys
 import os
 import configparser
 from flask import send_file
+from models.modelSupervisor import Supervisor
 from finder import split_config_path
 
 # Get PARENT path of project to import modules
@@ -68,6 +69,9 @@ def update_config(process_name):
 
 # reread and update by supervisorctl command
 
+def get_config_info():
+    a = Supervisor()
+    return a.get_config_info_model
 
 def reread_and_update():
     commandReread = 'supervisorctl reread'
@@ -76,8 +80,7 @@ def reread_and_update():
     os.system(commandUpdate)
 
 
-# return all purpose of program settings in .ini file
-def get_purpose():
+
     purpose = {
         'command': 'The command that will be run when this program is started',
         'numprocs': 'Supervisor will start as many instances of this program as named by numprocs',
@@ -97,12 +100,10 @@ def get_purpose():
 
     }
 # Create config file for supervisor and check if file exist
-
-
 def createConfig(
-        process_name, 
+        process_full_name, 
         command, 
-        process_name_exp='%(program_name)s_%(process_num)02d',
+        process_name='%(program_name)s_%(process_num)02d',
         numprocs=1, 
         umask='022', 
         numprocs_start=0, 
@@ -130,13 +131,14 @@ def createConfig(
         environment='', 
         serverurl='AUTO', 
         directory='/tmp'):
-    # if (os.path.isfile(split_config_path() + process_name + '.ini')):
+    # if (os.path.isfile(split_config_path() + process_full_name + '.ini')):
     #     return False
     # else:
-        config = configparser.ConfigParser()
-        config['program:' + process_name] = {
+        config = configparser.ConfigParser(interpolation= None)
+        process_full_name = process_full_name.split('_')[0]
+        config['program:' + process_full_name] = {
             'command': command,
-            'process_name': process_name_exp,
+            'process_name': process_name,
             'numprocs': numprocs,
             'umask': umask,
             'numprocs_start': numprocs_start,
@@ -152,12 +154,12 @@ def createConfig(
             'killasgroup': killasgroup,
             'redirect_stderr': redirect_stderr,
             'stdout_logfile_maxbytes': stdout_logfile_maxbytes,
-            'stdout_logfile': '/var/log/' + process_name + '.out.log',
+            'stdout_logfile': '/var/log/' + process_full_name + '.out.log',
             'stdout_logfile_backups': stdout_logfile_backups,
             'stdout_capture_maxbytes': stdout_capture_maxbytes,
             'stdout_events_enabled': stdout_events_enabled,
             'stdout_syslog': stdout_syslog,
-            'stderr_logfile': '/var/log/' + process_name + '.err.log',
+            'stderr_logfile': '/var/log/' + process_full_name + '.err.log',
             'stderr_logfile_maxbytes': stderr_logfile_maxbytes,
             'stderr_logfile_backups': stderr_logfile_backups,
             'stderr_capture_maxbytes': stderr_capture_maxbytes,
@@ -167,35 +169,19 @@ def createConfig(
             'serverurl': serverurl,
             'directory': directory
         }
-        with open(split_config_path() + process_name + '.ini', 'w') as config_file:
+        with open(split_config_path() + process_full_name + '.ini', 'w') as config_file:
             config.write(config_file)
         reread_and_update()
         return True
 
-# create updateConfig function to update the config file based on the key
-
-
-def modifyConfig(process_name, action, key, value=''):
-    if (os.path.isfile(split_config_path() + process_name + '.ini')):
-        config = configparser.ConfigParser()
-        config.read(split_config_path() + process_name + '.ini')
-        if action == 'update':
-            config['program:' + process_name][key] = value
-        elif action == 'delete':
-            del config['program:' + process_name][key]
-        with open(split_config_path() + process_name + '.ini', 'w') as config_file:
-            config.write(config_file)
-        reread_and_update()
-        return True
-    else:
-        return False
 
 
 # render config file
 def renderConfig(process_name):
+    # remove the part after the '_' in the process_name and both the '_' 
     if (os.path.isfile(split_config_path() + process_name + '.ini')):
         # return the .ini file with dictionary format and omit the [program:process_name] header
-        config = configparser.ConfigParser()
+        config = configparser.ConfigParser(interpolation=None)
         config.read(split_config_path() + process_name + '.ini')
         return dict(config.items('program:' + process_name))
 
