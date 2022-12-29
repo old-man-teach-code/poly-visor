@@ -150,7 +150,6 @@ except Exception as e:
     app_routes.logger_routes.debug(e)
 
 
-
 # tail the /var/log/demo.out.log on the browser
 try:
     @app_routes.route('/process/<stream>/<name>', methods=['GET'])
@@ -210,35 +209,35 @@ try:
         directory = data['directory']
 
         result = createConfig(
-            process_full_name = process_full_name,
-            command = command,
-            numprocs = numprocs,
-            umask = umask,
-            numprocs_start = numprocs_start,
-            priority = priority,
-            autostart = autostart,
-            autorestart = autorestart,
-            startsecs = startsecs,
-            startretries = startretries,
-            exitcodes = exitcodes,
-            stopsignal = stopsignal,
-            stopwaitsecs = stopwaitsecs,
-            stopasgroup = stopasgroup,
-            killasgroup = killasgroup,
-            redirect_stderr = redirect_stderr,
-            stdout_logfile_maxbytes = stdout_logfile_maxbytes,
-            stdout_logfile_backups = stdout_logfile_backups,
-            stdout_capture_maxbytes = stdout_capture_maxbytes,
-            stdout_events_enabled = stdout_events_enabled,
-            stdout_syslog = stdout_syslog,
-            stderr_logfile_maxbytes = stderr_logfile_maxbytes,
-            stderr_logfile_backups = stderr_logfile_backups,
-            stderr_capture_maxbytes = stderr_capture_maxbytes,
-            stderr_events_enabled = stderr_events_enabled,
-            stderr_syslog = stderr_syslog,
-            environment = environment,
-            serverurl = serverurl,
-            directory = directory)
+            process_full_name=process_full_name,
+            command=command,
+            numprocs=numprocs,
+            umask=umask,
+            numprocs_start=numprocs_start,
+            priority=priority,
+            autostart=autostart,
+            autorestart=autorestart,
+            startsecs=startsecs,
+            startretries=startretries,
+            exitcodes=exitcodes,
+            stopsignal=stopsignal,
+            stopwaitsecs=stopwaitsecs,
+            stopasgroup=stopasgroup,
+            killasgroup=killasgroup,
+            redirect_stderr=redirect_stderr,
+            stdout_logfile_maxbytes=stdout_logfile_maxbytes,
+            stdout_logfile_backups=stdout_logfile_backups,
+            stdout_capture_maxbytes=stdout_capture_maxbytes,
+            stdout_events_enabled=stdout_events_enabled,
+            stdout_syslog=stdout_syslog,
+            stderr_logfile_maxbytes=stderr_logfile_maxbytes,
+            stderr_logfile_backups=stderr_logfile_backups,
+            stderr_capture_maxbytes=stderr_capture_maxbytes,
+            stderr_events_enabled=stderr_events_enabled,
+            stderr_syslog=stderr_syslog,
+            environment=environment,
+            serverurl=serverurl,
+            directory=directory)
         if (result):
             return jsonify({'message': 'Config file created successfully'})
         else:
@@ -246,30 +245,12 @@ try:
 except Exception as e:
     app_routes.logger_routes.debug(e)
 
-# create update the config file by using POST method
-try:
-    @app_routes.route('/config/modify', methods=['POST'])
-    def modify_config_post():
-        data = request.get_json()
-        process_name = data['process_name']
-        action = data['action']
-        key = data['key']
-        value = data['value']
-
-        result = modifyConfig(process_name, action, key, value)
-        if (result):
-            return jsonify({'message': 'Config file updated successfully'})
-        else:
-            return jsonify({'message': 'Config file update failed'})
-except Exception as e:
-    app_routes.logger_routes.debug(e)
 
 # Set affinity list in CPU
 try:
     @app_routes.route('/cpu/set_affinity/<pid>/<core_index>', methods=['GET'])
     def set_process_core_index_route(pid, core_index):
         result = set_Process_Core_Index(pid, core_index)
-        print(result)
-        return jsonify(result)
+        return jsonify({'result': result})
 except Exception as e:
     app_routes.logger_routes.debug(e)

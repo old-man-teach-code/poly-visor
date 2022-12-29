@@ -129,6 +129,6 @@ def get_process_affinity_CPU(pid):
         return output
 
 def set_process_affinity_CPU(pid,core_index):
-    output = runShell("taskset -cp "+str(core_index)+" "+str(pid))
+    output = runShell("sudo taskset -cp "+str(core_index)+" "+str(pid))
     if("new" in output):
         return True 
