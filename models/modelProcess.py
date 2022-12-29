@@ -125,7 +125,7 @@ def get_process_affinity_CPU(pid):
         if("failed" in output):
             return False
         char_index= output.find(":")
-        output=output[char_index+2::]
+        output=output[char_index+2::].replace('\n','')
         return output
 
 def set_process_affinity_CPU(pid,core_index):
