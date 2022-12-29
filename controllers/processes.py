@@ -66,13 +66,13 @@ def clear_all_process_log_model():
 def auto_clear_log_process_model(name, limit):
     return True
 
-# View current affinity list in CPU, Return canbe range(0-5), single number, or many numbers(3,6,7) unless error
+# View current affinity list in CPU, Return can be range(0-5), single number, or many numbers(3,6,7) unless error
 def process_Core_Index(pid):
     result = get_process_affinity_CPU(pid)
     if(result.find("failed")!=-1):
         return False
     return result
 
-# Set affinity list in CPU, Return True unless error, parameter core_index SHOULD be STRING, value canbe "3,4,9" or "4-12"
+# Set affinity list in CPU, Return True unless error, parameter core_index SHOULD be STRING, value can be "3,4,9" or "4-12"
 def set_Process_Core_Index(pid, core_index):
     return set_process_affinity_CPU(pid,core_index)
