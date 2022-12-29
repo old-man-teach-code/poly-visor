@@ -15,7 +15,7 @@
 </script>
 
 <div>
-	<div on:mouseover={handleMouseOver} on:mouseout={handleMouseOut}>
+	<div on:mouseover={handleMouseOver} on:mouseout={handleMouseOut} class="flex flex-wrap">
 		<slot />
 	</div>
 	<span

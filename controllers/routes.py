@@ -1,12 +1,11 @@
 
 import json
-import os
 from time import sleep
 
 from flask_cors import CORS
 from finder import get_std_log_path, split_config_path
-from controllers.processes import clear_all_process_log_model, clear_process_log_model, read_stdOut_process_model, start_all_processes_model, start_process_by_name_model, start_process_group_model, stop_all_processes_model, stop_process_by_name_model, stop_process_group_model, tail_stdErr_logFile_model, tail_stdOut_logFile_model
-from controllers.supervisor import createConfig, modifyConfig, renderConfig, restart_supervisor_model, shutdown_supervisor_model
+from controllers.processes import start_all_processes_model, start_process_by_name_model, start_process_group_model, stop_all_processes_model, stop_process_by_name_model, stop_process_group_model
+from controllers.supervisor import createConfig, restart_supervisor_model, shutdown_supervisor_model
 from flask import jsonify, Blueprint, Response, request
 import base64
 
@@ -150,14 +149,6 @@ try:
 except Exception as e:
     app_routes.logger_routes.debug(e)
 
-# render the config file
-try:
-    @app_routes.route('/config/render/<process_name>', methods=['GET'])
-    def render_config(process_name):
-        result = renderConfig(process_name)
-        return result
-except Exception as e:
-    app_routes.logger_routes.debug(e)
 
 
 # tail the /var/log/demo.out.log on the browser
@@ -188,7 +179,7 @@ try:
     @app_routes.route('/config/create', methods=['POST'])
     def create_config_post():
         data = request.get_json()
-        process_name = data['process_name']
+        process_full_name = data['process_full_name']
         command = data['command']
         numprocs = data['numprocs']
         umask = data['umask']
@@ -197,7 +188,7 @@ try:
         autostart = data['autostart']
         autorestart = data['autorestart']
         startsecs = data['startsecs']
-        startentries = data['startentries']
+        startretries = data['startretries']
         exitcodes = data['exitcodes']
         stopsignal = data['stopsignal']
         stopwaitsecs = data['stopwaitsecs']
@@ -219,7 +210,7 @@ try:
         directory = data['directory']
 
         result = createConfig(
-            process_name = process_name,
+            process_full_name = process_full_name,
             command = command,
             numprocs = numprocs,
             umask = umask,
@@ -228,7 +219,7 @@ try:
             autostart = autostart,
             autorestart = autorestart,
             startsecs = startsecs,
-            startentries = startentries,
+            startretries = startretries,
             exitcodes = exitcodes,
             stopsignal = stopsignal,
             stopwaitsecs = stopwaitsecs,

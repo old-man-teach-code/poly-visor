@@ -14,6 +14,8 @@
 	import AddButton from '../../components/Buttons/AddButton.svelte';
 	import Selector from '../../components/Selector.svelte';
 	import TextInput from '../../components/TextInput.svelte';
+	import DropListButton from '../../components/Buttons/DropListButton.svelte';
+	import EditButton from '../../components/Buttons/EditButton.svelte';
 
 	let values: Object;
 	let showModal = 'close';
@@ -22,7 +24,10 @@
 	let logStream: String;
 	let filter = new Array();
 	let search: string;
+	let rowPerPage: number = 5;
 	let tableRows;
+	let paginationPage: number;
+	let tableDrop: boolean;
 
 	$: if (search) {
 		tableRows = $processes.filter(
@@ -37,9 +42,9 @@
 
 <div class="w-full h-screen px-10">
 	<h1 class="pt-5 text-2xl font-semibold">Processes</h1>
-	<div class="border-2 bg-white w-full h-5/6 min-h-fit rounded-md mt-10 grid">
+	<div class="border-2 bg-white w-full min-w-fit min-h-fit rounded-md mt-10 grid">
 		<div class="flex flex-col">
-			<div class="flex justify-between pb-5 pt-10">
+			<div class="flex justify-between pt-8">
 				<h3 class="pl-10 font-bold">All Processes</h3>
 				<div class="flex items-center">
 					<ToolTip title="Add new process">
@@ -63,14 +68,28 @@
 				<div class="pl-5 pb-5 w-1/4">
 					<TextInput inputPlaceholder="Search" bind:inputValue={search} />
 				</div>
-				<Selector
-					bind:result={filter}
-					title="Status"
-					options={['RUNNING', 'STARTING', 'BACKOFF', 'STOPPED', 'FATAL']}
-				/>
+				<div class="flex flex-row space-x-10 items-center">
+					{#if paginationPage == 0}
+						<ToolTip title={tableDrop ? 'Show less rows' : 'Show all rows'}>
+							<DropListButton
+								direction={tableDrop ? 'up' : 'down'}
+								on:event={() => {
+									tableDrop = !tableDrop;
+									rowPerPage = tableDrop ? $processes.length : 5;
+								}}
+							/>
+						</ToolTip>
+					{/if}
+
+					<Selector
+						bind:result={filter}
+						title="Status"
+						options={['RUNNING', 'STARTING', 'BACKOFF', 'STOPPED', 'FATAL']}
+					/>
+				</div>
 			</div>
 			<div class="overflow-auto flex flex-col items-center">
-				<table class="min-w-full w-full table-auto">
+				<table class="min-w-full w-full table-fixed	">
 					<thead>
 						<tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
 							<th class="py-3 px-6 text-left">Process name</th>
@@ -79,7 +98,7 @@
 							<th class="py-3 px-6 text-center">Actions</th>
 						</tr>
 					</thead>
-					<tbody class="text-gray-600 text-sm font-light">
+					<tbody class="text-gray-600 overflow-scroll text-sm font-light">
 						{#if values}
 							{#each values as process}
 								<tr class="border-b border-gray-200 hover:bg-gray-100">
@@ -99,7 +118,7 @@
 										>
 									</td>
 									<td class="py-3 px-6 text-center">
-										<div class="flex item-center justify-center">
+										<div class="flex item-center justify-center space-x-1">
 											{#if process.statename != 'STOPPED'}
 												<ToolTip title="Stop this process">
 													<StopButton spin on:event={() => stopProcess(process.name)} />
@@ -114,7 +133,7 @@
 													error={false}
 													on:event={() => {
 														showModal = 'Log';
-														logName = process.name;
+														logName = process.group;
 														logStream = 'out';
 													}}
 												/></ToolTip
@@ -124,7 +143,7 @@
 													error
 													on:event={() => {
 														showModal = 'Log';
-														logName = process.name;
+														logName = process.group;
 														logStream = 'err';
 													}}
 												/></ToolTip
@@ -135,6 +154,15 @@
 													on:event={() => {
 														showModal = 'Detail';
 														modalContent = process;
+													}}
+												/>
+											</ToolTip>
+											<ToolTip title="Edit process config">
+												<EditButton
+													on:event={() => {
+														showModal = 'editProcess';
+														
+														logName = process.group;
 													}}
 												/>
 											</ToolTip>
@@ -172,12 +200,25 @@
 							name=""
 							on:close={() => (showModal = 'close')}
 						/>
+					{:else if showModal == 'editProcess'}
+						<Modal
+							content=""
+							modalType="editProcess"
+							stream=""
+							name={logName}
+							on:close={() => (showModal = 'close')}
+						/>
 					{/if}
 				{/if}
 			</div>
 		</div>
-		<div class="self-end pb-10">
-			<Pagination rows={tableRows} perPage={5} bind:trimmedRows={values} />
+		<div class="self-end pb-10 flex flex-col">
+			<Pagination
+				rows={tableRows}
+				perPage={rowPerPage}
+				bind:trimmedRows={values}
+				bind:currentPage={paginationPage}
+			/>
 		</div>
 	</div>
 </div>
