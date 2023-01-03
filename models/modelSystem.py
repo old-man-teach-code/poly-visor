@@ -17,6 +17,7 @@ class System:
         result = result.replace("us,", "")
         result = result.replace(":","")
         result = result.replace(",",".")
+        result = result.replace("cpu","")
         result = dict(zip(result.split()[::2], result.split()[1::2]))
         #Convert dict value from string to float
         try:
