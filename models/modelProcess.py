@@ -39,7 +39,10 @@ class Process:
         self.stderr_logfile = stderr_logfile
         self.pid = pid
         self.description = description
-        self.core_index = get_process_affinity_CPU(self.pid)
+        if self.pid :
+            self.core_index = get_process_affinity_CPU(self.pid)
+        else:
+            self.core_index = None    
         
 
     @classmethod
