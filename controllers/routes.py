@@ -4,7 +4,7 @@ from time import sleep
 
 from flask_cors import CORS
 from finder import get_std_log_path, split_config_path
-from controllers.processes import set_Process_Core_Index, start_all_processes_model, start_process_by_name_model, start_process_group_model, stop_all_processes_model, stop_process_by_name_model, stop_process_group_model
+from controllers.processes import process_Core_Index, set_Process_Core_Index, start_all_processes_model, start_process_by_name_model, start_process_group_model, stop_all_processes_model, stop_process_by_name_model, stop_process_group_model
 from controllers.supervisor import createConfig, restart_supervisor_model, shutdown_supervisor_model
 from flask import jsonify, Blueprint, Response, request
 import base64
@@ -245,7 +245,15 @@ try:
 except Exception as e:
     app_routes.logger_routes.debug(e)
 
-
+# Get affinity list 
+try:
+    @app_routes.route('/cpu/get_affinity/<pid>', methods=['GET'])
+    def get_process_core_index_route(pid):
+        result = process_Core_Index(pid)
+        return jsonify({'core_index': result})
+except Exception as e:
+    app_routes.logger_routes.debug(e)
+    
 # Set affinity list in CPU
 try:
     @app_routes.route('/cpu/set_affinity/<pid>/<core_index>', methods=['GET'])
