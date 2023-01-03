@@ -23,6 +23,7 @@ class Process:
     stdout_logfile = ""
     stderr_logfile = ""
     pid = 0
+    core_index = ""
 
     def __init__(self, name, group,  start, stop, state, statename, spawnerr, exitstatus, logfile, stdout_logfile, stderr_logfile, pid, description):
         self.name = name
@@ -38,12 +39,17 @@ class Process:
         self.stderr_logfile = stderr_logfile
         self.pid = pid
         self.description = description
+        self.core_index = get_process_affinity_CPU(self.pid)
+        
 
     @classmethod
     def getAllProcessInfo(self):
+        
+
         # get all process info from supervisor and return a list of Process objects
         processInfo = server.supervisor.getAllProcessInfo()
-
+        # append get process afinity CPU to processInfo
+        
         processList = []
         for process in processInfo:
             processList.append(Process(
@@ -59,7 +65,9 @@ class Process:
                 process['stdout_logfile'],
                 process['stderr_logfile'],
                 process['pid'],
-                process['description']))
+                process['description'],
+                ))
+            
                 
         return processList
 
