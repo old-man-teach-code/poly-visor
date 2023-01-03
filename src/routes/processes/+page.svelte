@@ -114,22 +114,22 @@
 										</div>
 									</td>
 									<td class="py-3 px-6 text-center">
-										<span>{process.core_index}</span>
-									</td>
-									<td class="py-3 px-6 text-center">
 										<span class="{process.stateColor} py-1 px-3 rounded-full text-xs"
 											>{process.statename}</span
 										>
 									</td>
 									<td class="py-3 px-6 text-center">
+										<span>{process.core_index}</span>
+									</td>
+									<td class="py-3 px-6 text-center">
 										<div class="flex item-center justify-center space-x-1">
 											{#if process.statename != 'STOPPED'}
 												<ToolTip title="Stop this process">
-													<StopButton spin on:event={() => stopProcess(process.name)} />
+													<StopButton spin on:event={() => stopProcess((process.group)+":"+(process.name))} />
 												</ToolTip>
 											{:else}
 												<ToolTip title="Start this process">
-													<StartButton spin on:event={() => startProcess(process.name)} />
+													<StartButton spin on:event={() => startProcess((process.group)+":"+(process.name))} />
 												</ToolTip>
 											{/if}
 											<ToolTip title="View process log"
