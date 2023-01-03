@@ -1,16 +1,9 @@
 //ChartJS import
-import {
-    Chart,
-    LineElement,
-    PointElement,
-    LineController,
-    CategoryScale,
-    LinearScale,
-    Filler,
-    Legend,
-    Title,
-    Tooltip,
-} from 'chart.js';
+// import chartjs from 'chart.js';
+import { Chart, LineElement, PointElement, LineController, CategoryScale, LinearScale, Filler, Legend, Title, Tooltip } from 'chart.js';
+// import chartjs from 'chart.js/auto';
+// const { Chart, LineElement, PointElement, LineController, CategoryScale, LinearScale, Filler, Legend, Title, Tooltip } = chartjs;
+
 
 Chart.register(
     LineElement,
