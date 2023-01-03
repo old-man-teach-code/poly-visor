@@ -1,5 +1,5 @@
 from flask_cors import CORS
-from controllers.processes import get_all_processes_model
+from controllers.processes import get_all_processes_model, process_Core_Index
 from controllers.supervisor import get_config_info, get_supervisor, renderConfig
 from controllers.system import get_system
 from controllers.utils import get_date
@@ -64,5 +64,14 @@ try:
     def render_all_config():
         result = get_config_info()
         return jsonify(result)
+except Exception as e:
+    app_api.logger_api.debug(e)
+
+# View current affinity list in CPU
+try:
+    @app_api.route('/api/affinity/<pid>', methods=['GET'])
+    def process_Core_Index_api(pid):
+        result = process_Core_Index(pid)
+        return jsonify({'core_index': result})
 except Exception as e:
     app_api.logger_api.debug(e)

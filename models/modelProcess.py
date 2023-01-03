@@ -6,6 +6,7 @@ parent = os.path.dirname(current)
 # insert into PYTHONPATH
 sys.path.insert(1, parent)
 from models.modelSupervisor import server
+from finder import runShell
 
 
 class Process:
@@ -114,3 +115,20 @@ def clear_process_log(name):
 # clear all process log
 def clear_all_process_log():
     return server.supervisor.clearAllProcessLogs()
+
+# View current affinity list in CPU, Return canbe range(0-5), single number, or many numbers(3,6,7) Return FALSE if error
+def get_process_affinity_CPU(pid):
+    if str(pid).isnumeric()==False:
+        return False
+    else:
+        output = runShell("taskset -cp "+str(pid))
+        if("failed" in output):
+            return False
+        char_index= output.find(":")
+        output=output[char_index+2::].replace('\n','')
+        return output
+
+def set_process_affinity_CPU(pid,core_index):
+    output = runShell("sudo taskset -cp "+str(core_index)+" "+str(pid))
+    if("new" in output):
+        return True 

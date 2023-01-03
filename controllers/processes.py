@@ -5,7 +5,7 @@ current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 # insert into PYTHONPATH
 sys.path.insert(1, parent)
-from models.modelProcess import Process, clear_all_process_log, read_stdErr_logFile, read_stdOut_logFile, startAllProcesses, startProcessByName, startProcessGroup, stopAllProcesses, stopProcessByName, clear_process_log, stopProcessGroup, tail_stdErr_logFile, tail_stdOut_logFile
+from models.modelProcess import Process, clear_all_process_log, read_stdErr_logFile, read_stdOut_logFile, startAllProcesses, startProcessByName, startProcessGroup, stopAllProcesses, stopProcessByName, clear_process_log, stopProcessGroup, tail_stdErr_logFile, tail_stdOut_logFile, get_process_affinity_CPU,set_process_affinity_CPU
 
 #get all processes info
 def get_all_processes_model():
@@ -54,21 +54,6 @@ def tail_stdOut_logFile_model(name, offset, length):
 def tail_stdErr_logFile_model(name, offset, length):
     return tail_stdErr_logFile(name, offset, length)
 
-# assign core to process by using taskset
-def assign_core_to_process_model(name, core):
-    # check core is number
-    if not core.isdigit():
-        return False
-    # get pid
-    # check pid is number    
-    pid = Process.getProcessPidByName(name)
-    if not pid.isdigit():
-        return False
-    # assign core to process
-    command = "taskset -p -c " + core + " " + pid
-    os.system(command)
-    return True
-
 # clear process log with name
 def clear_process_log_model(name):
     return clear_process_log(name)
@@ -79,5 +64,15 @@ def clear_all_process_log_model():
 
 # auto clear log of process after a limited amount of bytes
 def auto_clear_log_process_model(name, limit):
-    
     return True
+
+# View current affinity list in CPU, Return can be range(0-5), single number, or many numbers(3,6,7) unless error
+def process_Core_Index(pid):
+    result = get_process_affinity_CPU(pid)
+    if(result.find("failed")!=-1):
+        return False
+    return result
+
+# Set affinity list in CPU, Return True unless error, parameter core_index SHOULD be STRING, value can be "3,4,9" or "4-12"
+def set_Process_Core_Index(pid, core_index):
+    return set_process_affinity_CPU(pid,core_index)
