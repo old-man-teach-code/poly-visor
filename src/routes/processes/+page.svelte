@@ -95,6 +95,7 @@
 							<th class="py-3 px-6 text-left">Process name</th>
 							<th class="py-3 px-6 text-left">Description</th>
 							<th class="py-3 px-6 text-center">Status</th>
+							<th class="py-3 px-6 text-center">Taskset</th>
 							<th class="py-3 px-6 text-center">Actions</th>
 						</tr>
 					</thead>
@@ -102,7 +103,7 @@
 						{#if values}
 							{#each values as process}
 								<tr class="border-b border-gray-200 hover:bg-gray-100">
-									<td class="py-3 px-6 text-left whitespace-nowrap">
+									<td class="py-3 px-6 text-left">
 										<div class="flex items-center">
 											<span class="font-medium">{process.name}</span>
 										</div>
@@ -111,6 +112,9 @@
 										<div class="flex items-center">
 											<span>{process.description}</span>
 										</div>
+									</td>
+									<td class="py-3 px-6 text-center">
+										<span>{process.core_index}</span>
 									</td>
 									<td class="py-3 px-6 text-center">
 										<span class="{process.stateColor} py-1 px-3 rounded-full text-xs"
@@ -161,7 +165,7 @@
 												<EditButton
 													on:event={() => {
 														showModal = 'editProcess';
-														
+
 														logName = process.group;
 													}}
 												/>

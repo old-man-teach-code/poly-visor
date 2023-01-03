@@ -245,15 +245,6 @@ try:
 except Exception as e:
     app_routes.logger_routes.debug(e)
 
-# Get affinity list 
-try:
-    @app_routes.route('/cpu/get_affinity/<pid>', methods=['GET'])
-    def get_process_core_index_route(pid):
-        result = process_Core_Index(pid)
-        return jsonify({'core_index': result})
-except Exception as e:
-    app_routes.logger_routes.debug(e)
-    
 # Set affinity list in CPU
 try:
     @app_routes.route('/cpu/set_affinity/<pid>/<core_index>', methods=['GET'])
