@@ -45,7 +45,8 @@ const fetchAll = async () => {
             stderr_logfile: data.stderr_logfile,
             stdout_logfile: data.stdout_logfile,
             stop: data.stop,
-            stateColor: (((data.statename == "RUNNING") || (data.statename == "STARTING")) ? ('bg-green-300') : (data.statname == "BACKOFF") ? ('bg-yellow-300') : ('bg-red-300'))
+            stateColor: (((data.statename == "RUNNING") || (data.statename == "STARTING")) ? ('bg-green-300') : (data.statname == "BACKOFF") ? ('bg-yellow-300') : ('bg-red-300')),
+            core_index: data.core_index
         }));
         processes.set(loadedProcesses);
 
