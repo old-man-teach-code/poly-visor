@@ -12,7 +12,9 @@
 	}
 </script>
 
-<div class="border-2 bg-white w-28 h-28 grid place-content-center {coreColor} rounded-full">
-	<div>Core {coreName}</div>
-	<div>{coreValue}%</div>
+<div class="flex justify-center items-center border-2 bg-white w-28 h-28 {coreColor} rounded-full">
+	<div class="w-fit h-fit text-center">
+		<p>Core {coreName}</p>
+		<p>{coreValue}%</p>
+	</div>
 </div>

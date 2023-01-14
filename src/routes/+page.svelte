@@ -15,6 +15,7 @@
 	let textCores;
 	let chartState = true;
 
+
 	//Initial data for ChartJS
 	let data = {
 		type: 'line',
@@ -131,27 +132,33 @@
 	}
 </script>
 
-<div class="w-full h-screen px-10">
-	<h1 class=" py-5 text-2xl font-semibold">Overview</h1>
-	<div class="grid text-center justify-items-center gap-4 grid-cols-4 grid-rows-4">
-		<Card color={textCpu} content="{$system.cpu}%" title="Cpu Usage" on:event={chartCpu} />
-		<Card color={textRam} content="{$system.memory}%" title="Ram Usage" on:event={chartRam} />
-		<Card color={textCores} content={$cpuCount} title="Number of cores" on:event={chartCores} />
-		<a class="w-full" href="/processes">
+<div class="w-full h-screen px-10 space-y-5">
+	<h1 class="text-2xl font-semibold pt-5">Overview</h1>
+	<div class="space-y-5">
+		<div class="flex flex-row space-x-5">
+			<Card color={textCpu} content="{$system.cpu}%" title="Cpu Usage" on:event={chartCpu} />
+			<Card color={textRam} content="{$system.memory}%" title="Ram Usage" on:event={chartRam} />
+			<Card color={textCores} content={$cpuCount} title="Number of cores" on:event={chartCores} />
+			<a class="w-full" href="/processes">
 			<Card
 			content="{$count}/{Object.keys($processes).length}"
 			color="null"
 			title="Running processes"
 			/>	
 		</a>
+		</div>
 		{#if chartState}
-			<div class="border-2 bg-white w-3/4 rounded-md row-span-3 col-span-4">
+		<div class="w-full flex justify-center">
+			<div class="w-3/4 h-3/4 min-w-fit border-2 bg-white rounded-md flex justify-center">
 				<canvas class="p-2" use:chartJS={data} id="myChart" />
 			</div>
+		</div>
 		{:else}
+		<div class="grid grid-cols-4 justify-items-center place-content-center gap-10">
 			{#each Object.entries($system.cores) as [key, value]}
-				<CpuCore coreName={key} coreValue={value} />
+			<CpuCore coreName={key} coreValue={value} />
 			{/each}
+		</div>
 		{/if}
 	</div>
 </div>
