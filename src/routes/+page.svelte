@@ -137,14 +137,13 @@
 		<Card color={textCpu} content="{$system.cpu}%" title="Cpu Usage" on:event={chartCpu} />
 		<Card color={textRam} content="{$system.memory}%" title="Ram Usage" on:event={chartRam} />
 		<Card color={textCores} content={$cpuCount} title="Number of cores" on:event={chartCores} />
-		<Card
+		<a class="w-full" href="/processes">
+			<Card
 			content="{$count}/{Object.keys($processes).length}"
 			color="null"
 			title="Running processes"
-			on:event={() => {
-				window.location.replace('/processes');
-			}}
-		/>
+			/>	
+		</a>
 		{#if chartState}
 			<div class="border-2 bg-white w-3/4 rounded-md row-span-3 col-span-4">
 				<canvas class="p-2" use:chartJS={data} id="myChart" />
