@@ -48,7 +48,7 @@
 	<div class="h-px bg-gray-600 mt-48" />
 	<div>
 		<a
-			href="#setting"
+			href=""
 			class="text-white justify-center pr-14 text-sm py-5 flex hover:bg-gray-600 {setting
 				? 'bg-gray-600'
 				: 'bg-sidebar'}}"
