@@ -64,4 +64,4 @@ const fetchAll = async () => {
 // //First time calling api when the page loads
 fetchAll();
 // //fetch api every 2 seconds
-setInterval(fetchAll, 2000);
+setInterval(fetchAll, 1000);
