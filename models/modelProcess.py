@@ -5,8 +5,8 @@ current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 # insert into PYTHONPATH
 sys.path.insert(1, parent)
-from models.modelSupervisor import server
-from finder import runShell
+from polyvisor.models.modelSupervisor import server
+from polyvisor.finder import runShell
 
 
 class Process:

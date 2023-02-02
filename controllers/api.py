@@ -1,8 +1,8 @@
 from flask_cors import CORS
-from controllers.processes import get_all_processes_model, process_Core_Index
-from controllers.supervisor import get_config_info, get_supervisor, renderConfig
-from controllers.system import get_system
-from controllers.utils import get_date
+from polyvisor.controllers.processes import get_all_processes_model, process_Core_Index
+from polyvisor.controllers.supervisor import get_config_info, get_supervisor, renderConfig
+from polyvisor.controllers.system import get_system
+from polyvisor.controllers.utils import get_date
 from flask import jsonify, Blueprint
 import logging
 

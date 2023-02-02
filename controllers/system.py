@@ -1,4 +1,4 @@
-from models.modelSystem import System
+from polyvisor.models.modelSystem import System
 
 # get System object from modelSystem
 def get_system():
