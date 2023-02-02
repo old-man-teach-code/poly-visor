@@ -67,7 +67,7 @@
 		options: {
 			fill: true,
 			responsive: true,
-			maintainAspectRatio: true,
+			maintainAspectRatio: false,
 			plugins: {
 				legend: {
 					position: 'top'
@@ -134,7 +134,7 @@
 
 <div class="w-full h-screen px-10 space-y-5">
 	<h1 class="text-2xl font-semibold pt-5">Overview</h1>
-	<div class="space-y-5">
+	<div class="space-y-5 h-3/4">
 		<div class="flex flex-row space-x-5">
 			<Card color={textCpu} content="{$system.cpu}%" title="Cpu Usage" on:event={chartCpu} />
 			<Card color={textRam} content="{$system.memory}%" title="Ram Usage" on:event={chartRam} />
@@ -148,8 +148,8 @@
 		</a>
 		</div>
 		{#if chartState}
-		<div class="w-full flex justify-center">
-			<div class="w-3/4 h-3/4 min-w-fit border-2 bg-white rounded-md flex justify-center">
+		<div class="h-full flex justify-center">
+			<div class="w-3/4 h-3/4 relative border-2 bg-white rounded-md flex justify-center">
 				<canvas class="p-2" use:chartJS={data} id="myChart" />
 			</div>
 		</div>
