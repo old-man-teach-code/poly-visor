@@ -3,10 +3,10 @@ import json
 from time import sleep
 
 from flask_cors import CORS
-from finder import get_std_log_path, split_config_path
-from controllers.processes import process_Core_Index, set_Process_Core_Index, start_all_processes_model, start_process_by_name_model, start_process_group_model, stop_all_processes_model, stop_process_by_name_model, stop_process_group_model
-from controllers.supervisor import createConfig, restart_supervisor_model, shutdown_supervisor_model
-from flask import jsonify, Blueprint, Response, request
+from polyvisor.finder import get_std_log_path, split_config_path
+from polyvisor.controllers.processes import process_Core_Index, set_Process_Core_Index, start_all_processes_model, start_process_by_name_model, start_process_group_model, stop_all_processes_model, stop_process_by_name_model, stop_process_group_model
+from polyvisor.controllers.supervisor import createConfig, restart_supervisor_model, shutdown_supervisor_model
+from flask import jsonify, Blueprint, Response, request,send_from_directory
 import base64
 
 
@@ -17,6 +17,20 @@ app_routes = Blueprint('app_routes', __name__)
 logger_routes = logging.getLogger(__name__)
 
 CORS(app_routes)
+
+@app_routes.route("/")
+def index():
+    #return render_template('./build',"index.html")
+    return send_from_directory('./build',"index.html")
+
+@app_routes.route("/processes")
+def proc():
+    #return render_template('./build',"index.html")
+    return send_from_directory('./build',"processes.html")
+
+@app_routes.route("/<path:path>")
+def base(path):
+    return send_from_directory('./build', path)
 
 # restart supervisor
 try:
