@@ -3,8 +3,8 @@ import sys
 import os
 import configparser
 from flask import send_file
-from models.modelSupervisor import Supervisor
-from finder import split_config_path
+from polyvisor.models.modelSupervisor import Supervisor
+from polyvisor.finder import split_config_path
 
 # Get PARENT path of project to import modules
 current = os.path.dirname(os.path.realpath(__file__))
