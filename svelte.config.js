@@ -11,8 +11,8 @@ const config = {
 	  ],
 	kit: {
 		adapter: adapter({
-			pages: 'build',
-			assets: 'build',
+			pages: 'templates',
+			assets: 'static',
 			fallback: null,
 			precompress: false,
 			strict: true
