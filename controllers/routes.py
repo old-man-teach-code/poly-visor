@@ -172,6 +172,32 @@ try:
 except Exception as e:
     app_routes.logger_routes.debug(e)
 
+# Another solution for tail log
+# try:
+#     @app_routes.route('/process/<stream>/<name>', methods=['GET'])
+#     def process_log_tail(stream, name):
+#         if stream == "out":
+#             tail = tail_stdOut_logFile_model
+#         else:
+#             tail = tail_stdErr_logFile_model
+
+#         def event_stream():
+#             i, offset, length = 0, 0, 2 ** 12
+#             while True:
+#                 data = tail(name, offset, length)
+#                 log, offset, overflow = data
+#                 # don't care about overflow in first log message
+#                 if overflow and i:
+#                     length = min(length * 2, 2 ** 14)
+#                 else:
+#                     data = json.dumps(dict(message=log, size=offset))
+#                     yield "data: {}\n\n".format(data)
+#                 sleep(1)
+#                 i += 1
+
+#         return Response(event_stream(), mimetype="text/event-stream")
+# except Exception as e:
+#     app_routes.logger_routes.debug(e)
 
 # create the config file by using POST method
 try:
