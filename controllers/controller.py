@@ -1,5 +1,5 @@
-from models.modelProcess import Process
-from models.modelSupervisor import Supervisor
+from polyvisor.models.modelProcess import Process
+from polyvisor.models.modelSupervisor import Supervisor
 # return a list of Process objects with all the attributes
 def process_AllInfo():
     return Process.getAllProcessInfo()
