@@ -23,6 +23,7 @@
 	let scroll = true;
 	let logState: Boolean = true;
 	let logStore: string;
+	let eventSource: EventSource;
 	let required: Boolean = false;
 	const processLog = writable('');
 
@@ -60,7 +61,7 @@
 
 	if (modalType === 'log') {
 		onMount(() => {
-			let eventSource = new EventSource(`http://127.0.0.1:5000/process/${stream}/${name}`);
+			eventSource = new EventSource(`http://127.0.0.1:5000/process/${stream}/${name}`);
 			eventSource.onmessage = (event) => {
 				let dataProcesses = JSON.parse(event.data);
 				logStore += dataProcesses.message;
@@ -119,7 +120,10 @@
 
 <svelte:window on:keydown={handle_keydown} />
 {#if modalType === 'log'}
-	<div class="modal-background" on:click={close} />
+	<div class="modal-background" on:click={()=>{
+		close();
+		eventSource.close();
+	}} />
 	<div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
 		<div class="sticky top-0 bg-orange-200 py-5 flex items-center justify-between">
 			<div class="pl-8">
@@ -157,7 +161,11 @@
 			</ToolTip>
 			<div class="pr-5">
 				<ToolTip title="Close log">
-					<CloseButton on:event={close} />
+					<CloseButton on:event={()=> {
+							close();
+							eventSource.close()
+						
+						}} />
 				</ToolTip>
 			</div>
 		</div>
