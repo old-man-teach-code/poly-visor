@@ -5,7 +5,7 @@ import sys
 current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 sys.path.insert(1,parent)
-from finder import runShell
+from polyvisor.finder import runShell
 class System:
 
     def __init__(self):

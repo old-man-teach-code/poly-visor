@@ -3,8 +3,8 @@ import sys
 import os
 import configparser
 from flask import send_file
-from models.modelSupervisor import Supervisor
-from finder import split_config_path
+from polyvisor.models.modelSupervisor import Supervisor
+from polyvisor.finder import split_config_path
 
 # Get PARENT path of project to import modules
 current = os.path.dirname(os.path.realpath(__file__))
@@ -118,6 +118,8 @@ def createConfig(
         stopasgroup='false', 
         killasgroup='false', 
         redirect_stderr='false', 
+        stdout_logfile='AUTO',
+        stderr_logfile='AUTO',
         stdout_logfile_maxbytes='50MB', 
         stdout_logfile_backups=10, 
         stdout_capture_maxbytes=0, 
@@ -154,12 +156,12 @@ def createConfig(
             'killasgroup': killasgroup,
             'redirect_stderr': redirect_stderr,
             'stdout_logfile_maxbytes': stdout_logfile_maxbytes,
-            'stdout_logfile': '/var/log/' + process_full_name + '.out.log',
+            'stdout_logfile': stdout_logfile,
             'stdout_logfile_backups': stdout_logfile_backups,
             'stdout_capture_maxbytes': stdout_capture_maxbytes,
             'stdout_events_enabled': stdout_events_enabled,
             'stdout_syslog': stdout_syslog,
-            'stderr_logfile': '/var/log/' + process_full_name + '.err.log',
+            'stderr_logfile': stderr_logfile,
             'stderr_logfile_maxbytes': stderr_logfile_maxbytes,
             'stderr_logfile_backups': stderr_logfile_backups,
             'stderr_capture_maxbytes': stderr_capture_maxbytes,

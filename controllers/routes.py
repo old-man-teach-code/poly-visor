@@ -3,10 +3,10 @@ import json
 from time import sleep
 
 from flask_cors import CORS
-from finder import get_std_log_path, split_config_path
-from controllers.processes import process_Core_Index, set_Process_Core_Index, start_all_processes_model, start_process_by_name_model, start_process_group_model, stop_all_processes_model, stop_process_by_name_model, stop_process_group_model
-from controllers.supervisor import createConfig, restart_supervisor_model, shutdown_supervisor_model
-from flask import jsonify, Blueprint, Response, request
+from polyvisor.finder import get_std_log_path, split_config_path
+from polyvisor.controllers.processes import process_Core_Index, set_Process_Core_Index, start_all_processes_model, start_process_by_name_model, start_process_group_model, stop_all_processes_model, stop_process_by_name_model, stop_process_group_model
+from polyvisor.controllers.supervisor import createConfig, restart_supervisor_model, shutdown_supervisor_model
+from flask import jsonify, Blueprint, Response, request,send_from_directory
 import base64
 
 
@@ -17,6 +17,20 @@ app_routes = Blueprint('app_routes', __name__)
 logger_routes = logging.getLogger(__name__)
 
 CORS(app_routes)
+
+@app_routes.route("/")
+def index():
+    #return render_template('./build',"index.html")
+    return send_from_directory('./build',"index.html")
+
+@app_routes.route("/processes")
+def proc():
+    #return render_template('./build',"index.html")
+    return send_from_directory('./build',"processes.html")
+
+@app_routes.route("/<path:path>")
+def base(path):
+    return send_from_directory('./build', path)
 
 # restart supervisor
 try:
@@ -151,27 +165,53 @@ except Exception as e:
 
 
 # tail the /var/log/demo.out.log on the browser
+# try:
+#     @app_routes.route('/process/<stream>/<name>', methods=['GET'])
+#     def stream(stream, name):
+#         def generate():
+#             config_path = split_config_path() + name + ".ini"
+#             log_path = get_std_log_path(config_path, stream, name)
+#             # reading the log file from the end
+#             with open(log_path, 'r') as f:
+#                 f.seek(0, 2)
+#                 while True:
+#                     line = f.readline()
+#                     if not line:
+#                         sleep(1)
+#                         continue
+#                     message = json.dumps(dict(message=line))
+#                     yield "data: {}\n\n".format(message)
+
+#         return Response(generate(), mimetype='text/event-stream')
+# except Exception as e:
+#     app_routes.logger_routes.debug(e)
+
+# Another solution for tail log
 try:
     @app_routes.route('/process/<stream>/<name>', methods=['GET'])
-    def stream(stream, name):
-        def generate():
-            config_path = split_config_path() + name + ".ini"
-            log_path = get_std_log_path(config_path, stream, name)
-            # reading the log file from the end
-            with open(log_path, 'r') as f:
-                f.seek(0, 2)
-                while True:
-                    line = f.readline()
-                    if not line:
-                        sleep(1)
-                        continue
-                    message = json.dumps(dict(message=line))
-                    yield "data: {}\n\n".format(message)
+    def process_log_tail(stream, name):
+        if stream == "out":
+            tail = tail_stdOut_logFile_model
+        else:
+            tail = tail_stdErr_logFile_model
 
-        return Response(generate(), mimetype='text/event-stream')
+        def event_stream():
+            i, offset, length = 0, 0, 2 ** 12
+            while True:
+                data = tail(name, offset, length)
+                log, offset, overflow = data
+                # don't care about overflow in first log message
+                if overflow and i:
+                    length = min(length * 2, 2 ** 14)
+                else:
+                    data = json.dumps(dict(message=log, size=offset))
+                    yield "data: {}\n\n".format(data)
+                sleep(1)
+                i += 1
+
+        return Response(event_stream(), mimetype="text/event-stream")
 except Exception as e:
     app_routes.logger_routes.debug(e)
-
 
 # create the config file by using POST method
 try:
