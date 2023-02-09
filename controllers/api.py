@@ -11,8 +11,7 @@ app_api = Blueprint('app_api', __name__)
 CORS(app_api)
 # configure logger again for api after routes logger
 logger_api = logging.getLogger(__name__)
-logging.basicConfig(filename='storage/logs/' + get_date() + '/api_&_routes.log',
-                    level=logging.DEBUG, format='%(asctime)s %(levelname)s %(name)s %(message)s')
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(name)s %(message)s')
 
 # get all processes and return a json object
 try:
