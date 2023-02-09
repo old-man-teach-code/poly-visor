@@ -6,7 +6,7 @@ from flask_cors import CORS
 from polyvisor.finder import get_std_log_path, split_config_path
 from polyvisor.controllers.processes import process_Core_Index, set_Process_Core_Index, start_all_processes_model, start_process_by_name_model, start_process_group_model, stop_all_processes_model, stop_process_by_name_model, stop_process_group_model
 from polyvisor.controllers.supervisor import createConfig, restart_supervisor_model, shutdown_supervisor_model
-from flask import jsonify, Blueprint, Response, request,send_from_directory
+from flask import jsonify, Blueprint, Response, request, send_from_directory
 import base64
 
 
@@ -18,19 +18,23 @@ logger_routes = logging.getLogger(__name__)
 
 CORS(app_routes)
 
+
 @app_routes.route("/")
 def index():
-    #return render_template('./build',"index.html")
-    return send_from_directory('./build',"index.html")
+    # return render_template('./build',"index.html")
+    return send_from_directory('./build', "index.html")
+
 
 @app_routes.route("/processes")
 def proc():
-    #return render_template('./build',"index.html")
-    return send_from_directory('./build',"processes.html")
+    # return render_template('./build',"index.html")
+    return send_from_directory('./build', "processes.html")
+
 
 @app_routes.route("/<path:path>")
 def base(path):
     return send_from_directory('./build', path)
+
 
 # restart supervisor
 try:
@@ -146,20 +150,6 @@ try:
             return jsonify({'message': 'Config file created successfully'})
         else:
             return jsonify({'message': 'Config file creation failed'})
-except Exception as e:
-    app_routes.logger_routes.debug(e)
-
-# update the config file
-try:
-    @app_routes.route('/config/modify/<process_name>/<action>/<key>/', defaults={'value': ''}, methods=['GET'])
-    @app_routes.route('/config/modify/<process_name>/<action>/<key>/<value>', methods=['GET'])
-    def modify_config(process_name, action, key, value):
-        value = base64.b64decode(value).decode('utf-8')
-        result = modifyConfig(process_name, action, key, value)
-        if (result):
-            return jsonify({'message': 'Config file updated successfully'})
-        else:
-            return jsonify({'message': 'Config file update failed'})
 except Exception as e:
     app_routes.logger_routes.debug(e)
 
@@ -279,9 +269,9 @@ try:
             serverurl=serverurl,
             directory=directory)
         if (result):
-            return jsonify({'message': 'Config file created successfully'})
+            return jsonify({'status': 'true'})
         else:
-            return jsonify({'message': 'Config file creation failed'})
+            return jsonify({'status': 'false'})
 except Exception as e:
     app_routes.logger_routes.debug(e)
 
