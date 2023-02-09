@@ -57,7 +57,10 @@
 		stderr_syslog: 'false',
 		environment: '',
 		serverurl: 'AUTO',
-		directory: '/tmp'
+		directory: '/tmp',
+		stdout_logfile:'AUTO',
+		stderr_logfile:'AUTO',
+		edit:false
 	};
 
 	if (modalType === 'log') {
@@ -81,6 +84,7 @@
 		renderProcessConf(name).then((data) => {
 			conf = data;
 			conf.process_full_name = name;
+			conf.edit = true;
 		});
 		
 	}
@@ -372,6 +376,16 @@
 					inputLabel="Serverurl"
 					inputPlaceholder="Server url for the process"
 				/>
+				<!-- <Input
+					bind:inputValue={conf.stdout_logfile}
+					inputLabel="Stdout_logfile"
+					inputPlaceholder="Log file location"
+				/>
+				<Input
+					bind:inputValue={conf.stderr_logfile}
+					inputLabel="Stderr_logfile"
+					inputPlaceholder="Error log file location"
+				/> -->
 			{/if}
 			<div class="pt-5 place-self-center">
 				<ToolTip title="Add process config">
@@ -535,6 +549,16 @@
 					inputLabel="Serverurl"
 					inputPlaceholder="Server url for the process"
 				/>
+				<!-- <Input
+					bind:inputValue={conf.stdout_logfile}
+					inputLabel="Stdout_logfile"
+					inputPlaceholder="Log file location"
+				/>
+				<Input
+					bind:inputValue={conf.stderr_logfile}
+					inputLabel="Stderr_logfile"
+					inputPlaceholder="Error log file location"
+				/> -->
 			{/if}
 			<div class="pt-5 place-self-center">
 				<ToolTip title="Edit process config">

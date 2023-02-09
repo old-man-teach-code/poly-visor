@@ -102,7 +102,7 @@
 					<tbody class="h-full text-gray-600 overflow-scroll text-sm font-light">
 						{#if values}
 							{#each values as process}
-								<tr class="h-24 border-b border-gray-200 hover:bg-gray-100">
+								<tr class="h-20 border-b border-gray-200 hover:bg-gray-100">
 									<td class="py-3 px-6 text-left">
 										<div class="flex items-center">
 											<span class="font-medium">{process.name}</span>

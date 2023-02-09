@@ -153,55 +153,43 @@ try:
 except Exception as e:
     app_routes.logger_routes.debug(e)
 
-
-# tail the /var/log/demo.out.log on the browser
-# try:
-#     @app_routes.route('/process/<stream>/<name>', methods=['GET'])
-#     def stream(stream, name):
-#         def generate():
-#             config_path = split_config_path() + name + ".ini"
-#             log_path = get_std_log_path(config_path, stream, name)
-#             # reading the log file from the end
-#             with open(log_path, 'r') as f:
-#                 f.seek(0, 2)
-#                 while True:
-#                     line = f.readline()
-#                     if not line:
-#                         sleep(1)
-#                         continue
-#                     message = json.dumps(dict(message=line))
-#                     yield "data: {}\n\n".format(message)
-
-#         return Response(generate(), mimetype='text/event-stream')
-# except Exception as e:
-#     app_routes.logger_routes.debug(e)
-
-# Another solution for tail log
+# update the config file
 try:
-    @app_routes.route('/process/<stream>/<name>', methods=['GET'])
-    def process_log_tail(stream, name):
-        if stream == "out":
-            tail = tail_stdOut_logFile_model
+    @app_routes.route('/config/modify/<process_name>/<action>/<key>/', defaults={'value': ''}, methods=['GET'])
+    @app_routes.route('/config/modify/<process_name>/<action>/<key>/<value>', methods=['GET'])
+    def modify_config(process_name, action, key, value):
+        value = base64.b64decode(value).decode('utf-8')
+        result = modifyConfig(process_name, action, key, value)
+        if (result):
+            return jsonify({'message': 'Config file updated successfully'})
         else:
-            tail = tail_stdErr_logFile_model
-
-        def event_stream():
-            i, offset, length = 0, 0, 2 ** 12
-            while True:
-                data = tail(name, offset, length)
-                log, offset, overflow = data
-                # don't care about overflow in first log message
-                if overflow and i:
-                    length = min(length * 2, 2 ** 14)
-                else:
-                    data = json.dumps(dict(message=log, size=offset))
-                    yield "data: {}\n\n".format(data)
-                sleep(1)
-                i += 1
-
-        return Response(event_stream(), mimetype="text/event-stream")
+            return jsonify({'message': 'Config file update failed'})
 except Exception as e:
     app_routes.logger_routes.debug(e)
+
+
+# tail the /var/log/demo.out.log on the browser
+try:
+    @app_routes.route('/process/<stream>/<name>', methods=['GET'])
+    def stream(stream, name):
+        def generate():
+            config_path = split_config_path() + name + ".ini"
+            log_path = get_std_log_path(config_path, stream, name)
+            # reading the log file from the end
+            with open(log_path, 'r') as f:
+                f.seek(0, 2)
+                while True:
+                    line = f.readline()
+                    if not line:
+                        sleep(1)
+                        continue
+                    message = json.dumps(dict(message=line))
+                    yield "data: {}\n\n".format(message)
+
+        return Response(generate(), mimetype='text/event-stream')
+except Exception as e:
+    app_routes.logger_routes.debug(e)
+
 
 # create the config file by using POST method
 try:
@@ -225,12 +213,10 @@ try:
         killasgroup = data['killasgroup']
         redirect_stderr = data['redirect_stderr']
         stdout_logfile_maxbytes = data['stdout_logfile_maxbytes']
-        stdout_logfile=data['stdout_logfile']
         stdout_logfile_backups = data['stdout_logfile_backups']
         stdout_capture_maxbytes = data['stdout_capture_maxbytes']
         stdout_events_enabled = data['stdout_events_enabled']
         stdout_syslog = data['stdout_syslog']
-        stderr_logfile=data['stderr_logfile']
         stderr_logfile_maxbytes = data['stderr_logfile_maxbytes']
         stderr_logfile_backups = data['stderr_logfile_backups']
         stderr_capture_maxbytes = data['stderr_capture_maxbytes']
@@ -239,6 +225,7 @@ try:
         environment = data['environment']
         serverurl = data['serverurl']
         directory = data['directory']
+        edit = data['edit']
 
         result = createConfig(
             process_full_name=process_full_name,
@@ -260,10 +247,8 @@ try:
             stdout_logfile_maxbytes=stdout_logfile_maxbytes,
             stdout_logfile_backups=stdout_logfile_backups,
             stdout_capture_maxbytes=stdout_capture_maxbytes,
-            stdout_logfile=stdout_logfile,
             stdout_events_enabled=stdout_events_enabled,
             stdout_syslog=stdout_syslog,
-            stderr_logfile=stderr_logfile,
             stderr_logfile_maxbytes=stderr_logfile_maxbytes,
             stderr_logfile_backups=stderr_logfile_backups,
             stderr_capture_maxbytes=stderr_capture_maxbytes,
@@ -273,92 +258,30 @@ try:
             serverurl=serverurl,
             directory=directory)
         if (result):
-            return jsonify({'status': 'true'})
+            if (edit):
+                return jsonify({'message': 'Config file updated successfully'})
+            else:
+                return jsonify({'message': 'Config file created successfully'})
         else:
-            return jsonify({'status': 'false'})
+            if (edit):
+                return jsonify({'message': 'Config file update failed'})
+            else:
+                return jsonify({'message': 'Config file creation failed'})
 except Exception as e:
     app_routes.logger_routes.debug(e)
 
-# edit the config file by process name
-try:
-    @app_routes.route('/config/edit', methods=['POST'])
-    def edit_config_post():
-        data = request.get_json()
-        process_full_name = data['process_full_name']
-        command = data['command']
-        numprocs = data['numprocs']
-        umask = data['umask']
-        numprocs_start = data['numprocs_start']
-        priority = data['priority']
-        autostart = data['autostart']
-        autorestart = data['autorestart']
-        startsecs = data['startsecs']
-        startretries = data['startretries']
-        exitcodes = data['exitcodes']
-        stopsignal = data['stopsignal']
-        stopwaitsecs = data['stopwaitsecs']
-        stopasgroup = data['stopasgroup']
-        killasgroup = data['killasgroup']
-        redirect_stderr = data['redirect_stderr']
-        stdout_logfile_maxbytes = data['stdout_logfile_maxbytes']
-        stdout_logfile=data['stdout_logfile']
-        stdout_logfile_backups = data['stdout_logfile_backups']
-        stdout_capture_maxbytes = data['stdout_capture_maxbytes']
-        stdout_events_enabled = data['stdout_events_enabled']
-        stdout_syslog = data['stdout_syslog']
-        stderr_logfile=data['stderr_logfile']
-        stderr_logfile_maxbytes = data['stderr_logfile_maxbytes']
-        stderr_logfile_backups = data['stderr_logfile_backups']
-        stderr_capture_maxbytes = data['stderr_capture_maxbytes']
-        stderr_events_enabled = data['stderr_events_enabled']
-        stderr_syslog = data['stderr_syslog']
-        environment = data['environment']
-        serverurl = data['serverurl']
-        directory = data['directory']
-
-        result = createConfig(
-            process_full_name=process_full_name,
-            command=command,
-            numprocs=numprocs,
-            umask=umask,
-            numprocs_start=numprocs_start,
-            priority=priority,
-            autostart=autostart,
-            autorestart=autorestart,
-            startsecs=startsecs,
-            startretries=startretries,
-            exitcodes=exitcodes,
-            stopsignal=stopsignal,
-            stopwaitsecs=stopwaitsecs,
-            stopasgroup=stopasgroup,
-            killasgroup=killasgroup,
-            redirect_stderr=redirect_stderr,
-            stdout_logfile_maxbytes=stdout_logfile_maxbytes,
-            stdout_logfile_backups=stdout_logfile_backups,
-            stdout_capture_maxbytes=stdout_capture_maxbytes,
-            stdout_logfile=stdout_logfile,
-            stdout_events_enabled=stdout_events_enabled,
-            stdout_syslog=stdout_syslog,
-            stderr_logfile=stderr_logfile,
-            stderr_logfile_maxbytes=stderr_logfile_maxbytes,
-            stderr_logfile_backups=stderr_logfile_backups,
-            stderr_capture_maxbytes=stderr_capture_maxbytes,
-            stderr_events_enabled=stderr_events_enabled,
-            stderr_syslog=stderr_syslog,
-            environment=environment,
-            serverurl=serverurl,
-            directory=directory)
-        if (result):
-            return jsonify({'message': 'Config file edited successfully'})
-        else:
-            return jsonify({'message': 'Config file edited failed'})
-except Exception as e:
-    app_routes.logger_routes.debug(e)
 # Set affinity list in CPU
 try:
     @app_routes.route('/cpu/set_affinity/<pid>/<core_index>', methods=['GET'])
     def set_process_core_index_route(pid, core_index):
         result = set_Process_Core_Index(pid, core_index)
         return jsonify({'result': result})
+except Exception as e:
+    app_routes.logger_routes.debug(e)
+
+try:
+    @app_routes.route('/test', methods=['GET'])
+    def test():
+        return 'aasdasdas'
 except Exception as e:
     app_routes.logger_routes.debug(e)
