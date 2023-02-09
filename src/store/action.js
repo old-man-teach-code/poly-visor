@@ -71,32 +71,10 @@ export async function addNewProcessConf(conf) {
         body: JSON.stringify(conf)
     });
     const message = await res.json();
-    if(message.status){
-        alert('Process created successfully');
-    }else{
-        alert('Process creation failed');
-    }
+    alert(message.message)
     return message;
 }
 
-export async function editProcessConf(conf) {
-    console.log(conf)
-    const res = await fetch('http://127.0.0.1:5000/config/create', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(conf)
-    });
-    const message = await res.json();
-    console.log(message);
-    if(message.status){
-        alert('Process edited successfully');
-    }else{
-        alert('Process edit failed');
-    }
-    return message;
-}
 
 export async function renderProcessConf(name){
     const res = await fetch(`http://127.0.0.1:5000/config/render/${name}`);
