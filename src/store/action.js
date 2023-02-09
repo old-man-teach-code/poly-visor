@@ -89,12 +89,7 @@ export async function editProcessConf(conf) {
         body: JSON.stringify(conf)
     });
     const message = await res.json();
-    console.log(message);
-    if(message.status){
-        alert('Process edited successfully');
-    }else{
-        alert('Process edit failed');
-    }
+    alert(message.message)
     return message;
 }
 

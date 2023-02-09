@@ -12,6 +12,7 @@
 	import { addNewProcessConf } from '../store/action';
 	import ArrowButton from './Buttons/ArrowButton.svelte';
 	import {renderProcessConf} from '../store/action';
+	import EditButton from './Buttons/EditButton.svelte';
 
 	const dispatch = createEventDispatcher();
 	const close = () => dispatch('close');
@@ -536,8 +537,8 @@
 				/>
 			{/if}
 			<div class="pt-5 place-self-center">
-				<ToolTip title="Add process config">
-					<AddButton
+				<ToolTip title="Edit process config">
+					<EditButton
 						on:event={() => {
 							addNewProcessConf(conf);
 						}}
