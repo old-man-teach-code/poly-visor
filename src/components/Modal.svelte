@@ -376,16 +376,6 @@
 					inputLabel="Serverurl"
 					inputPlaceholder="Server url for the process"
 				/>
-				<!-- <Input
-					bind:inputValue={conf.stdout_logfile}
-					inputLabel="Stdout_logfile"
-					inputPlaceholder="Log file location"
-				/>
-				<Input
-					bind:inputValue={conf.stderr_logfile}
-					inputLabel="Stderr_logfile"
-					inputPlaceholder="Error log file location"
-				/> -->
 			{/if}
 			<div class="pt-5 place-self-center">
 				<ToolTip title="Add process config">
@@ -549,7 +539,7 @@
 					inputLabel="Serverurl"
 					inputPlaceholder="Server url for the process"
 				/>
-				<!-- <Input
+				<Input
 					bind:inputValue={conf.stdout_logfile}
 					inputLabel="Stdout_logfile"
 					inputPlaceholder="Log file location"
@@ -558,7 +548,7 @@
 					bind:inputValue={conf.stderr_logfile}
 					inputLabel="Stderr_logfile"
 					inputPlaceholder="Error log file location"
-				/> -->
+				/>
 			{/if}
 			<div class="pt-5 place-self-center">
 				<ToolTip title="Edit process config">
