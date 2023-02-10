@@ -45,8 +45,8 @@
 			>
 		</li>
 	</ul>
-	<div class="h-px bg-gray-600 mt-48" />
-	<div>
+	<!-- <div class="h-px bg-gray-600 mt-48" /> -->
+	<!-- <div>
 		<a
 			href=""
 			class="text-white justify-center pr-14 text-sm py-5 flex hover:bg-gray-600 {setting
@@ -54,5 +54,5 @@
 				: 'bg-sidebar'}}"
 			><img class=" mr-2 w-5 h-5" src="/images/setting.png" alt="" />Setting</a
 		>
-	</div>
+	</div> -->
 </div>

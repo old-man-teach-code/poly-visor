@@ -75,6 +75,7 @@ export async function addNewProcessConf(conf) {
     return message;
 }
 
+
 export async function renderProcessConf(name){
     const res = await fetch(`http://127.0.0.1:5000/config/render/${name}`);
     const data = await res.json();

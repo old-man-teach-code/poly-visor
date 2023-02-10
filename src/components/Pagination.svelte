@@ -20,13 +20,17 @@
 {#if totalRows && totalRows > perPage}
 	<div class="flex justify-center">
 		{#if currentPage > 0}
-			<ArrowButton direction="left" on:event={() => (currentPage -= 1)} />
+			<div class="absolute mr-52">
+				<ArrowButton direction="left" on:event={() => (currentPage -= 1)} />
+			</div>
 		{/if}
 
 		<span class="sr-only">Load previous {perPage} rows</span>
 		<p class="px-52">{start + 1} - {end + 1} of {totalRows}</p>
 		{#if currentPage < totalPages - 1}
-			<ArrowButton direction="right" on:event={() => (currentPage += 1)} />
+			<div class="absolute ml-52">
+				<ArrowButton direction="right" on:event={() => (currentPage += 1)} />
+			</div>
 		{/if}
 		<span class="sr-only">Load next {perPage} rows</span>
 	</div>

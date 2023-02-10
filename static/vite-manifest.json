@@ -7,12 +7,6 @@
     "file": "_app/immutable/assets/_layout-f26112b6.css",
     "src": "src/routes/+layout.css"
   },
-<<<<<<< HEAD
-  "node_modules/@sveltejs/kit/src/runtime/components/error.svelte": {
-    "file": "_app/immutable/components/error.svelte-d285e30b.js",
-    "src": "node_modules/@sveltejs/kit/src/runtime/components/error.svelte",
-    "isEntry": true,
-=======
   "_stores-a59e3a9c.js": {
     "file": "_app/immutable/chunks/stores-a59e3a9c.js",
     "imports": [
@@ -27,7 +21,6 @@
     "file": "_app/immutable/chunks/2-d42cb26f.js",
     "src": ".svelte-kit/generated/nodes/2.js",
     "isDynamicEntry": true,
->>>>>>> 7f34956d7136ed484ce55dd2593dbb9a083c7f16
     "imports": [
       "src/routes/+page.svelte"
     ]
