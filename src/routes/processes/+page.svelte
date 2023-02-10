@@ -42,7 +42,7 @@
 
 <div class="w-full h-screen px-10">
 	<h1 class="pt-5 text-2xl font-semibold">Processes</h1>
-	<div class="min-h-[85%] border-2 bg-white w-full min-w-fit rounded-md mt-10 grid">
+	<div class="h-[85%] border-2 bg-white w-full min-w-fit rounded-md mt-10 grid">
 		<div class="flex flex-col min-h-full">
 			<div class="flex justify-between pt-8">
 				<h3 class="pl-10 font-bold">All Processes</h3>
@@ -102,7 +102,7 @@
 					<tbody class="h-full text-gray-600 overflow-scroll text-sm font-light">
 						{#if values}
 							{#each values as process}
-								<tr class="h-20 border-b border-gray-200 hover:bg-gray-100">
+								<tr class="h-16 border-b border-gray-200 hover:bg-gray-100">
 									<td class="py-3 px-6 text-left">
 										<div class="flex items-center">
 											<span class="font-medium">{process.name}</span>
@@ -137,7 +137,7 @@
 													error={false}
 													on:event={() => {
 														showModal = 'Log';
-														logName = process.group;
+														logName = process.group +":"+ process.name;
 														logStream = 'out';
 													}}
 												/></ToolTip
@@ -147,7 +147,7 @@
 													error
 													on:event={() => {
 														showModal = 'Log';
-														logName = process.group;
+														logName = process.group +":"+ process.name;
 														logStream = 'err';
 													}}
 												/></ToolTip

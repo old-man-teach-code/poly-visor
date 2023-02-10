@@ -23,7 +23,6 @@
 	let modal: HTMLElement;
 	let scroll = true;
 	let logState: Boolean = true;
-	let logStore: string;
 	let eventSource: EventSource;
 	let required: Boolean = false;
 	const processLog = writable('');
@@ -68,9 +67,8 @@
 			eventSource = new EventSource(`http://127.0.0.1:5000/process/${stream}/${name}`);
 			eventSource.onmessage = (event) => {
 				let dataProcesses = JSON.parse(event.data);
-				logStore += dataProcesses.message;
 				if (logState) {
-					processLog.update((n) => logStore);
+					processLog.update((n) => dataProcesses.message);
 				}
 			};
 		});
@@ -160,7 +158,7 @@
 			<ToolTip title="Clear process log">
 				<ClearLogButton
 					on:event={() => {
-						logStore = '';
+						processLog.set('');
 					}}
 				/>
 			</ToolTip>
@@ -581,6 +579,7 @@
 
 <style>
 	.modal-background {
+		z-index: 10;
 		position: fixed;
 		top: 0;
 		left: 0;
@@ -590,6 +589,7 @@
 	}
 
 	.modal {
+		z-index: 10;
 		position: absolute;
 		left: 50%;
 		top: 50%;

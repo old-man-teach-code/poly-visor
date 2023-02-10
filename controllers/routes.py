@@ -4,7 +4,7 @@ from time import sleep
 
 from flask_cors import CORS
 from polyvisor.finder import get_std_log_path, split_config_path
-from polyvisor.controllers.processes import process_Core_Index, set_Process_Core_Index, start_all_processes_model, start_process_by_name_model, start_process_group_model, stop_all_processes_model, stop_process_by_name_model, stop_process_group_model
+from polyvisor.controllers.processes import tail_stdErr_logFile_model, tail_stdOut_logFile_model, process_Core_Index, set_Process_Core_Index, start_all_processes_model, start_process_by_name_model, start_process_group_model, stop_all_processes_model, stop_process_by_name_model, stop_process_group_model
 from polyvisor.controllers.supervisor import createConfig, restart_supervisor_model, shutdown_supervisor_model
 from flask import jsonify, Blueprint, Response, request, send_from_directory
 import base64
@@ -215,7 +215,7 @@ try:
         return Response(event_stream(), mimetype="text/event-stream")
 except Exception as e:
     app_routes.logger_routes.debug(e)
-    
+
 # create the config file by using POST method
 try:
     @app_routes.route('/config/create', methods=['POST'])
