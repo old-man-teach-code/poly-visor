@@ -23,6 +23,7 @@
 	let modal: HTMLElement;
 	let scroll = true;
 	let logState: Boolean = true;
+	let logStore: string;
 	let eventSource: EventSource;
 	let required: Boolean = false;
 	const processLog = writable('');
@@ -380,6 +381,16 @@
 					inputLabel="Serverurl"
 					inputPlaceholder="Server url for the process"
 				/>
+				<Input
+				bind:inputValue={conf.stdout_logfile}
+				inputLabel="Stdout_logfile"
+				inputPlaceholder="Log file location"
+			/>
+			<Input
+				bind:inputValue={conf.stderr_logfile}
+				inputLabel="Stderr_logfile"
+				inputPlaceholder="Error log file location"
+			/>
 			{/if}
 			<div class="pt-5 place-self-center">
 				{#if modalType === 'addProcess'}
@@ -403,178 +414,6 @@
 		</div>
 		<!-- svelte-ignore a11y-autofocus -->
 	</div>
-<!-- {:else if modalType === 'editProcess'}
-	<div class="modal-background" on:click={close} />
-	<div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
-		<div class="sticky top-0 bg-orange-200 py-5 flex items-center justify-between px-10">
-			<h1 class="font-bold text-xl">Edit <span class="text-orange-400">{conf.process_full_name} </span>process</h1>
-			<CloseButton on:event={close} />
-		</div>
-		<div class="p-10 flex flex-col space-y-5">
-			<Input
-				bind:inputValue={conf.command}
-				inputLabel="Command"
-				inputPlaceholder="Command to run"
-			/>
-			<div class="flex justify-center">
-				<ToolTip title={required ? 'Hide non-required config' : 'Show non-required config'}>
-					<ArrowButton
-						direction={required ? 'up' : 'down'}
-						on:event={() => {
-							required = !required;
-						}}
-					/></ToolTip
-				>
-			</div>
-			{#if required}
-				<Input
-					bind:inputValue={conf.numprocs}
-					inputLabel="Numbprocs"
-					inputPlaceholder="Instances of the process to run"
-				/>
-				<Input
-					bind:inputValue={conf.umask}
-					inputLabel="Umask"
-					inputPlaceholder="Umask of the process"
-				/>
-				<Input
-					bind:inputValue={conf.numprocs_start}
-					inputLabel="Numprocs_start"
-					inputPlaceholder="Offset integer used to compute the number at which process_num starts"
-				/>
-				<Input
-					bind:inputValue={conf.priority}
-					inputLabel="Priority"
-					inputPlaceholder="Start and shutdown order of the process"
-				/>
-				<Input
-					bind:inputValue={conf.autostart}
-					inputLabel="Autostart"
-					inputPlaceholder="Autostart the process"
-				/>
-				<Input
-					bind:inputValue={conf.autorestart}
-					inputLabel="Autorestart"
-					inputPlaceholder="Autorestart the process"
-				/>
-				<Input
-					bind:inputValue={conf.startsecs}
-					inputLabel="Startsecs"
-					inputPlaceholder="Number of seconds to wait before running the process"
-				/>
-				<Input
-					bind:inputValue={conf.startretries}
-					inputLabel="Startretries"
-					inputPlaceholder="Number of retries to attempt to start the process"
-				/>
-				<Input
-					bind:inputValue={conf.exitcodes}
-					inputLabel="Exitcodes"
-					inputPlaceholder="List of exit codes that will be use with auto restart"
-				/>
-				<Input
-					bind:inputValue={conf.stopsignal}
-					inputLabel="Stopsignal"
-					inputPlaceholder="Signal used to stop the process"
-				/>
-				<Input
-					bind:inputValue={conf.stopwaitsecs}
-					inputLabel="Stopwaitsecs"
-					inputPlaceholder="Number of seconds to wait before killing the process"
-				/>
-				<Input
-					bind:inputValue={conf.stopasgroup}
-					inputLabel="Stopasgroup"
-					inputPlaceholder="Send stop signal to the process group"
-				/>
-				<Input
-					bind:inputValue={conf.killasgroup}
-					inputLabel="Killasgroup"
-					inputPlaceholder="Send kill signal to the process group"
-				/>
-				<Input
-					bind:inputValue={conf.redirect_stderr}
-					inputLabel="Redirect_stderr"
-					inputPlaceholder="Redirect stderr to stdout"
-				/>
-				<Input
-					bind:inputValue={conf.stdout_logfile_maxbytes}
-					inputLabel="Stdout_logfile_maxbytes"
-					inputPlaceholder="Max size of the stdout log file"
-				/>
-				<Input
-					bind:inputValue={conf.stdout_logfile_backups}
-					inputLabel="Stdout_logfile_backups"
-					inputPlaceholder="Number of stdout log files to keep"
-				/>
-				<Input
-					bind:inputValue={conf.stdout_capture_maxbytes}
-					inputLabel="Stdout_capture_maxbytes"
-					inputPlaceholder="Max size of the stdout capture"
-				/>
-				<Input
-					bind:inputValue={conf.stdout_events_enabled}
-					inputLabel="Stdout_events_enabled"
-					inputPlaceholder="Enable stdout events"
-				/>
-				<Input
-					bind:inputValue={conf.stdout_syslog}
-					inputLabel="Stdout_syslog"
-					inputPlaceholder="Send stdout to syslog"
-				/>
-				<Input
-					bind:inputValue={conf.stderr_logfile_maxbytes}
-					inputLabel="Stderr_logfile_maxbytes"
-					inputPlaceholder="Max size of the stderr log file"
-				/>
-				<Input
-					bind:inputValue={conf.stderr_logfile_backups}
-					inputLabel="Stderr_logfile_backups"
-					inputPlaceholder="Number of stderr log files to keep"
-				/>
-				<Input
-					bind:inputValue={conf.stderr_capture_maxbytes}
-					inputLabel="Stderr_capture_maxbytes"
-					inputPlaceholder="Max size of the stderr capture"
-				/>
-				<Input
-					bind:inputValue={conf.stderr_events_enabled}
-					inputLabel="Stderr_events_enabled"
-					inputPlaceholder="Enable stderr events"
-				/>
-				<Input
-					bind:inputValue={conf.stderr_syslog}
-					inputLabel="Stderr_syslog"
-					inputPlaceholder="Send stderr to syslog"
-				/>
-				<Input bind:inputValue={conf.environment} inputLabel="Environment" inputPlaceholder="" />
-				<Input
-					bind:inputValue={conf.serverurl}
-					inputLabel="Serverurl"
-					inputPlaceholder="Server url for the process"
-				/>
-				<Input
-					bind:inputValue={conf.stdout_logfile}
-					inputLabel="Stdout_logfile"
-					inputPlaceholder="Log file location"
-				/>
-				<Input
-					bind:inputValue={conf.stderr_logfile}
-					inputLabel="Stderr_logfile"
-					inputPlaceholder="Error log file location"
-				/>
-			{/if}
-			<div class="pt-5 place-self-center">
-				<ToolTip title="Edit process config">
-					<EditButton
-						on:event={() => {
-							addNewProcessConf(conf);
-						}}
-					/>
-				</ToolTip>
-			</div>
-		</div>
-	</div> -->
 {/if}
 
 <style>
@@ -589,7 +428,6 @@
 	}
 
 	.modal {
-		z-index: 10;
 		position: absolute;
 		left: 50%;
 		top: 50%;
