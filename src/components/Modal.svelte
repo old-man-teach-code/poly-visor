@@ -221,19 +221,25 @@
 		<hr class="mt-5" />
 		<!-- svelte-ignore a11y-autofocus -->
 	</div>
-{:else if modalType === 'addProcess'}
+{:else if modalType === 'addProcess' || modalType === 'editProcess'}
 	<div class="modal-background" on:click={close} />
 	<div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
 		<div class="sticky top-0 bg-orange-200 py-5 flex items-center justify-between px-10">
-			<h1 class="font-bold text-xl">Add new process</h1>
+			{#if modalType === 'addProcess'}
+				<h1 class="font-bold text-xl">Add new process</h1>
+			{:else if modalType === 'editProcess'}
+				<h1 class="font-bold text-xl">Edit <span class="text-orange-400">{conf.process_full_name} </span>process</h1>
+			{/if}
 			<CloseButton on:event={close} />
 		</div>
 		<div class="p-10 flex flex-col space-y-5">
-			<Input
-				bind:inputValue={conf.process_full_name}
-				inputLabel="Process Name"
-				inputPlaceholder="Name of the process"
-			/>
+			{#if modalType === 'addProcess'}
+				<Input
+					bind:inputValue={conf.process_full_name}
+					inputLabel="Process Name"
+					inputPlaceholder="Name of the process"
+				/>
+			{/if}
 			<Input
 				bind:inputValue={conf.command}
 				inputLabel="Command"
@@ -378,18 +384,28 @@
 				/>
 			{/if}
 			<div class="pt-5 place-self-center">
-				<ToolTip title="Add process config">
-					<AddButton
-						on:event={() => {
-							addNewProcessConf(conf);
-						}}
-					/>
-				</ToolTip>
+				{#if modalType === 'addProcess'}
+					<ToolTip title="Add process config">
+						<AddButton
+							on:event={() => {
+								addNewProcessConf(conf);
+							}}
+						/>
+					</ToolTip>
+				{:else if modalType === 'editProcess'}
+					<ToolTip title="Edit process config">
+						<EditButton
+							on:event={() => {
+								addNewProcessConf(conf);
+							}}
+						/>
+					</ToolTip>
+				{/if}
 			</div>
 		</div>
 		<!-- svelte-ignore a11y-autofocus -->
 	</div>
-{:else if modalType === 'editProcess'}
+<!-- {:else if modalType === 'editProcess'}
 	<div class="modal-background" on:click={close} />
 	<div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
 		<div class="sticky top-0 bg-orange-200 py-5 flex items-center justify-between px-10">
@@ -560,8 +576,7 @@
 				</ToolTip>
 			</div>
 		</div>
-		<!-- svelte-ignore a11y-autofocus -->
-	</div>
+	</div> -->
 {/if}
 
 <style>
