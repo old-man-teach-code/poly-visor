@@ -42,8 +42,8 @@
 
 <div class="w-full h-screen px-10">
 	<h1 class="pt-5 text-2xl font-semibold">Processes</h1>
-	<div class="border-2 bg-white w-full min-w-fit min-h-fit rounded-md mt-10 grid">
-		<div class="flex flex-col">
+	<div class="h-[85%] border-2 bg-white w-full min-w-fit rounded-md mt-10 grid">
+		<div class="flex flex-col min-h-full">
 			<div class="flex justify-between pt-8">
 				<h3 class="pl-10 font-bold">All Processes</h3>
 				<div class="flex items-center">
@@ -89,7 +89,7 @@
 				</div>
 			</div>
 			<div class="overflow-auto flex flex-col items-center">
-				<table class="min-w-full w-full table-fixed	">
+				<table class="min-w-full w-full table-fixed">
 					<thead>
 						<tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
 							<th class="py-3 px-6 text-left">Process name</th>
@@ -99,10 +99,10 @@
 							<th class="py-3 px-6 text-center">Actions</th>
 						</tr>
 					</thead>
-					<tbody class="text-gray-600 overflow-scroll text-sm font-light">
+					<tbody class="h-full text-gray-600 overflow-scroll text-sm font-light">
 						{#if values}
 							{#each values as process}
-								<tr class="border-b border-gray-200 hover:bg-gray-100">
+								<tr class="h-16 border-b border-gray-200 hover:bg-gray-100">
 									<td class="py-3 px-6 text-left">
 										<div class="flex items-center">
 											<span class="font-medium">{process.name}</span>
@@ -137,7 +137,7 @@
 													error={false}
 													on:event={() => {
 														showModal = 'Log';
-														logName = process.group;
+														logName = process.group +":"+ process.name;
 														logStream = 'out';
 													}}
 												/></ToolTip
@@ -147,7 +147,7 @@
 													error
 													on:event={() => {
 														showModal = 'Log';
-														logName = process.group;
+														logName = process.group +":"+ process.name;
 														logStream = 'err';
 													}}
 												/></ToolTip

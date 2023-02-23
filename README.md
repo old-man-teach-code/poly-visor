@@ -1,10 +1,19 @@
-# create-svelte
+# Poly-visor
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+A centralized supervisor web-based UI
 
-## Creating a project
+* Lightweight plugin
+* Processes status always up to date
+* Reactivity through asynchronous actions
+* Works on supervisord
+* Observe the resources of comuter through charts
+* Allow user to create and edit configuration file via web page (permission required)
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Installation and configuration
+
+This version has only been tested on Linux OS.
+
+### Web server
 
 ```bash
 # create a new project in the current directory
