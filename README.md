@@ -40,7 +40,7 @@ supervisord -c /route/to/conf/supervisord.conf
 
 ### Development
 
-## Development mode
+# Development mode
 In development mode. The rpcinterface must not be included in the configuration file
 
 ```bash
@@ -52,7 +52,7 @@ npm run dev
 flask run
 ```
 
-## Build and install
+# Build and install
 ```bash
 # Build the front-end via npm
 npm run build
