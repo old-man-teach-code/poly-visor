@@ -9,39 +9,54 @@ A centralized supervisor web-based UI
 * Observe the resources of comuter through charts
 * Allow user to create and edit configuration file via web page (permission required)
 
-## Installation and configuration
+## Installation
 
 This version has only been tested on Linux OS.
+
+To install polyvisor. The following steps need to be followed exactly.
 
 ### Web server
 
 ```bash
-# create a new project in the current directory
-npm create svelte@latest
+# Clone the repository from git
+git clone https://github.com/poly-laboratory/poly-visor.git
+cd poly-visor
 
-# create a new project in my-app
-npm create svelte@latest my-app
+# Install npm dependencies for front-end and build to production
+npm install
+npm run build
+
+# Install poly-visor via pip
+pip install .
+
+# Add the following line to supervisord config file
+[rpcinterface:polyvisor]
+supervisor.rpcinterface_factory = polyvisor.rpc:make_rpc_interfacce
+bind=5000
+
+#run supervisord along with polyvisor via supervisord.conf
+supervisord -c /route/to/conf/supervisord.conf
 ```
 
-## Developing
+### Development
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Development mode
+In development mode. The rpcinterface must not be included in the configuration file
 
 ```bash
+# Run the front-end in development mode:
 npm run dev
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+
+# The back-end can be run with the following command
+flask run
 ```
 
-## Building
-
-To create a production version of your app:
-
+## Build and install
 ```bash
+# Build the front-end via npm
 npm run build
+
+# Re-install your built files
+pip install .
 ```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
