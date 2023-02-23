@@ -16,28 +16,31 @@ This version has only been tested on Linux OS.
 To install polyvisor. The following steps need to be followed exactly.
 
 ### Web server
+Clone the repository from git
 ```bash
-# Clone the repository from git
 git clone https://github.com/poly-laboratory/poly-visor.git
 cd poly-visor
-
-# Install npm dependencies for front-end and build to production
+```
+Install npm dependencies for front-end and build to production
+```bash
 npm install
 npm run build
-
-# Install poly-visor via pip
-pip install .
-
-# Add the following line to supervisord config file
 ```
+
+Install poly-visor via pip
+```bash
+pip install .
+```
+
+Add the following line to supervisord config file
 ```ini
 [rpcinterface:polyvisor]
 supervisor.rpcinterface_factory = polyvisor.rpc:make_rpc_interfacce
 bind=5000
 ```
 
+Run supervisord along with polyvisor via supervisord.conf
 ```bash
-# Run supervisord along with polyvisor via supervisord.conf
 supervisord -c /route/to/conf/supervisord.conf
 ```
 
@@ -45,12 +48,14 @@ supervisord -c /route/to/conf/supervisord.conf
 
 ## Development mode
 In development mode. The rpcinterface must not be included in the configuration file
+
+Run the front-end in development mode:
 ```bash
-# Run the front-end in development mode:
 npm run dev
+```
 
-
-# The back-end can be run with the following command
+The back-end can be run with the following command
+```bash
 flask run
 ```
 
