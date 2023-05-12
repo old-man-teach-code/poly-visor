@@ -20,5 +20,5 @@ def make_rpc_interface(supervisord,**config):
     
 
 def run_server(bind):   
-    http_server = WSGIServer(("127.0.0.1", bind), app)
+    http_server = WSGIServer(("localhost", bind), app)
     http_server.serve_forever()

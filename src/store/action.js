@@ -41,29 +41,29 @@ export function destroyChart() {
 
 //call start process api
 export async function startProcess(name) {
-    const res = await fetch(`http://127.0.0.1:5000/process/start/${name}`);
+    const res = await fetch(`http://localhost:5000/process/start/${name}`);
     const message = await res.json();
     return message;
 }
 export async function stopProcess(name) {
-    const res = await fetch(`http://127.0.0.1:5000/process/stop/${name}`);
+    const res = await fetch(`http://localhost:5000/process/stop/${name}`);
     const message = await res.json();
     return message;
 }
 export async function startAllProcess() {
-    const res = await fetch('http://127.0.0.1:5000/processes/start');
+    const res = await fetch('http://localhost:5000/processes/start');
     const message = await res.json();
     return message;
 }
 export async function stopAllProcess() {
-    const res = await fetch('http://127.0.0.1:5000/processes/stop');
+    const res = await fetch('http://localhost:5000/processes/stop');
     const message = await res.json();
     return message;
 }
 
 export async function addNewProcessConf(conf) {
     console.log(conf)
-    const res = await fetch('http://127.0.0.1:5000/config/create', {
+    const res = await fetch('http://localhost:5000/config/create', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -77,7 +77,7 @@ export async function addNewProcessConf(conf) {
 
 
 export async function renderProcessConf(name){
-    const res = await fetch(`http://127.0.0.1:5000/config/render/${name}`);
+    const res = await fetch(`http://localhost:5000/config/render/${name}`);
     const data = await res.json();
     return data;
 }
