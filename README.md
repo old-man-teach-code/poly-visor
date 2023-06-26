@@ -1,38 +1,69 @@
-# create-svelte
+# Poly-visor
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+A centralized supervisor web-based UI using SvelteKit and FLASK
 
-## Creating a project
+* Lightweight plugin
+* Processes status always up to date
+* Reactivity through asynchronous actions
+* Works on supervisord
+* Observe the resources of comuter through charts visualized using ChartJS
+* Allow user to create and edit configuration file via web page (permission required)
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Installation
 
+This version has only been tested on Linux OS.
+
+To install polyvisor. The following steps need to be followed exactly.
+
+### Web server
+Clone the repository from git
 ```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
+git clone https://github.com/poly-laboratory/poly-visor.git
+cd poly-visor
 ```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
+Install npm dependencies for front-end and build to production
 ```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
+npm install
 npm run build
 ```
 
-You can preview the production build with `npm run preview`.
+Install poly-visor via pip
+```bash
+pip install .
+```
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+Add the following line to supervisord config file
+```ini
+[rpcinterface:polyvisor]
+supervisor.rpcinterface_factory = polyvisor.rpc:make_rpc_interfacce
+bind=5000
+```
+
+Run supervisord along with polyvisor via supervisord.conf
+```bash
+supervisord -c /route/to/conf/supervisord.conf
+```
+
+# Development
+
+## Development mode
+In development mode. The rpcinterface must not be included in the configuration file
+
+Run the front-end in development mode:
+```bash
+npm run dev
+```
+
+The back-end can be run with the following command
+```bash
+flask run
+```
+
+## Build and install
+```bash
+# Build the front-end via npm
+npm run build
+
+# Re-install your built files
+pip install .
+```

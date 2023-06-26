@@ -11,8 +11,8 @@ const config = {
 	  ],
 	kit: {
 		adapter: adapter({
-			pages: 'build',
-			assets: 'build',
+			pages: 'polyvisor/build',
+			assets: 'polyvisor/build',
 			fallback: null,
 			precompress: false,
 			strict: true

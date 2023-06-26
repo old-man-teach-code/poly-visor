@@ -21,7 +21,8 @@
 <!-- Side bar -->
 <div class="bg-sidebar w-56 h-screen fixed overflow-auto">
 	<div class="inline-flex justify-center py-5 w-full">
-		<img class="w-8 h-8" src="/images/logo.png" alt="" />
+		
+	<img class="w-8 h-8" src="/images/logo.png" alt="" />
 		<h1 class="ml-3 text-text-logo text-xl">Poly-Visor</h1>
 	</div>
 	<ul class="pt-5">
