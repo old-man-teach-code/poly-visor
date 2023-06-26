@@ -13,7 +13,7 @@ export const ramChart = writable(Array(31));
 const fetchAll = async () => {
     try {
         // fetching system data
-        const resSystem = await fetch('http://127.0.0.1:5000/api/system');
+        const resSystem = await fetch('http://localhost:5000/api/system');
         const dataSystem = await resSystem.json();
         let cpus = dataSystem.machineSpec.CPUs;
         cpuCount.set(cpus);
@@ -29,7 +29,7 @@ const fetchAll = async () => {
             return items
         })
         // fetching processes data
-        const resProcesses = await fetch('http://127.0.0.1:5000/api/processes');
+        const resProcesses = await fetch('http://localhost:5000/api/processes');
         const dataProcesses = await resProcesses.json();
         const loadedProcesses = dataProcesses.map((data) => ({
             description: data.description,

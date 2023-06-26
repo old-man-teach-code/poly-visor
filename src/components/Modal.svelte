@@ -65,7 +65,7 @@
 
 	if (modalType === 'log') {
 		onMount(() => {
-			eventSource = new EventSource(`http://127.0.0.1:5000/process/${stream}/${name}`);
+			eventSource = new EventSource(`http://localhost:5000/process/${stream}/${name}`);
 			eventSource.onmessage = (event) => {
 				let dataProcesses = JSON.parse(event.data);
 				if (logState) {
