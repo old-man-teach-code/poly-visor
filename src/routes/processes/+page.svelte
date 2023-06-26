@@ -89,7 +89,7 @@
 				</div>
 			</div>
 			<div class="overflow-auto flex flex-col items-center">
-				<table class="min-w-full w-full table-fixed">
+				<table class=" w-full table-auto">
 					<thead>
 						<tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
 							<th class="py-3 px-6 text-left">Process name</th>
@@ -125,11 +125,17 @@
 										<div class="flex item-center justify-center space-x-1">
 											{#if process.statename != 'STOPPED'}
 												<ToolTip title="Stop this process">
-													<StopButton spin on:event={() => stopProcess((process.group)+":"+(process.name))} />
+													<StopButton
+														spin
+														on:event={() => stopProcess(process.group + ':' + process.name)}
+													/>
 												</ToolTip>
 											{:else}
 												<ToolTip title="Start this process">
-													<StartButton spin on:event={() => startProcess((process.group)+":"+(process.name))} />
+													<StartButton
+														spin
+														on:event={() => startProcess(process.group + ':' + process.name)}
+													/>
 												</ToolTip>
 											{/if}
 											<ToolTip title="View process log"
@@ -137,7 +143,7 @@
 													error={false}
 													on:event={() => {
 														showModal = 'Log';
-														logName = process.group +":"+ process.name;
+														logName = process.group + ':' + process.name;
 														logStream = 'out';
 													}}
 												/></ToolTip
@@ -147,7 +153,7 @@
 													error
 													on:event={() => {
 														showModal = 'Log';
-														logName = process.group +":"+ process.name;
+														logName = process.group + ':' + process.name;
 														logStream = 'err';
 													}}
 												/></ToolTip

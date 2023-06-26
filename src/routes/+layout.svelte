@@ -5,7 +5,7 @@
 
 <!-- Import sidebar -->
 <Sidebar />
-<div class="pl-56">
+<div class="sm:pl-56">
 	<slot />
 </div>
 
