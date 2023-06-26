@@ -14,7 +14,7 @@
 
 <div class="flex justify-center items-center border-2 bg-white w-28 h-28 {coreColor} rounded-full">
 	<div class="w-fit h-fit text-center">
-		<p>Core {coreName}</p>
+		<p>{coreName}</p>
 		<p>{coreValue}%</p>
 	</div>
 </div>

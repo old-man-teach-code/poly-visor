@@ -129,22 +129,54 @@
 	$: if ($cpuChart) {
 		data = data;
 	}
+
+	let open = true;
+	let innerWidth;
+	$: if (innerWidth > 768) {
+		open = true;
+	}
 </script>
 
+<svelte:window bind:innerWidth />
 <div class="w-full h-screen px-10 space-y-5">
 	<h1 class="text-2xl font-semibold pt-5">Overview</h1>
 	<div class="space-y-5 h-3/4">
-		<div class="grid grid-cols-4 max-sm:grid-cols-1 max-md:grid-cols-2 gap-5">
-			<Card color={textCpu} content="{$system.cpu}%" title="Cpu Usage" on:event={chartCpu} />
-			<Card color={textRam} content="{$system.memory}%" title="Ram Usage" on:event={chartRam} />
-			<Card color={textCores} content={$cpuCount} title="Number of cores" on:event={chartCores} />
-			<a class="w-full" href="/processes">
-				<Card
-					content="{$count}/{Object.keys($processes).length}"
-					color="null"
-					title="Running processes"
-				/>
-			</a>
+		<div class="bg-[#FF8C32] flex justify-between px-3 rounded-md py-1 sm:hidden">
+			<p class="text-lg text-white">Detail</p>
+			<button
+				class="text-white"
+				on:click={() => {
+					open = !open;
+				}}
+				><svg
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke-width="1.5"
+					stroke="currentColor"
+					class="w-6 h-6 transition-all duration-300 {open ? '' : 'rotate-180'}"
+				>
+					<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+				</svg>
+			</button>
+		</div>
+		<div
+			class="grid {open
+				? '[grid-template-rows:1fr] max-sm:border-gray-300 max-sm:bg-white max-sm:border-2 max-sm:rounded-md'
+				: '[grid-template-rows:0fr] opacity-0'} transition-all duration-300 p-4"
+		>
+			<div class="grid grid-cols-4 max-sm:grid-cols-1 max-md:grid-cols-2 gap-5 min-h-0">
+				<Card color={textCpu} content="{$system.cpu}%" title="Cpu Usage" on:event={chartCpu} />
+				<Card color={textRam} content="{$system.memory}%" title="Ram Usage" on:event={chartRam} />
+				<Card color={textCores} content={$cpuCount} title="Number of cores" on:event={chartCores} />
+				<a class="w-full" href="/processes">
+					<Card
+						content="{$count}/{Object.keys($processes).length}"
+						color="null"
+						title="Running processes"
+					/>
+				</a>
+			</div>
 		</div>
 		{#if chartState}
 			<div class="h-full flex justify-center">
@@ -155,7 +187,9 @@
 				</div>
 			</div>
 		{:else}
-			<div class="grid grid-cols-4 justify-items-center place-content-center gap-10">
+			<div
+				class="grid grid-cols-4 max-md:grid-cols-2 justify-items-center place-content-center gap-10"
+			>
 				{#each Object.entries($system.cores) as [key, value]}
 					<CpuCore coreName={key} coreValue={value} />
 				{/each}
