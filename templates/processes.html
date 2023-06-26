@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<link rel="icon" href="./favicon.png" />
+	<meta name="viewport" content="width=device-width" />
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<meta http-equiv="content-security-policy" content="">
+		<link href="./_app/immutable/assets/_layout-f26112b6.css" rel="stylesheet">
+		<link href="./_app/immutable/assets/_page-ba74bee8.css" rel="stylesheet">
+		<link rel="modulepreload" href="./_app/immutable/start-cf72b209.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/index-ac87a35a.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/singletons-dbedea1d.js">
+		<link rel="modulepreload" href="./_app/immutable/components/pages/_layout.svelte-191cbdd7.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/stores-a59e3a9c.js">
+		<link rel="modulepreload" href="./_app/immutable/modules/pages/_layout.js-9cbb603b.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/_layout-da46b06b.js">
+		<link rel="modulepreload" href="./_app/immutable/components/pages/processes/_page.svelte-bdf54094.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/action-091f4336.js">
+</head>
+
+<body>
+	<div>
+
+
+
+
+<div class="bg-sidebar w-56 h-screen fixed overflow-auto"><div class="inline-flex justify-center py-5 w-full"><img class="w-8 h-8" src="/images/logo.png" alt="">
+		<h1 class="ml-3 text-text-logo text-xl">Poly-Visor</h1></div>
+	<ul class="pt-5"><li class="text-center"><a href="/" class="text-white text-sm py-5 pr-8 justify-center flex hover:bg-gray-600 bg-sidebar"><img class="mr-2 w-5 h-5" src="/images/graph.png" alt="">
+				<p>Overview</p></a></li>
+		<li><a href="/processes" class="text-white text-sm pr-8 justify-center py-5 flex hover:bg-gray-600 bg-gray-600"><img class="mr-2 w-5 h-5" src="/images/process.png" alt="">Processes</a></li></ul>
+	<div class="h-px bg-gray-600 mt-48"></div>
+	<div><a href="" class="text-white justify-center pr-14 text-sm py-5 flex hover:bg-gray-600 bg-sidebar}"><img class="mr-2 w-5 h-5" src="/images/setting.png" alt="">Setting</a></div></div>
+<div class="pl-56"><div class="w-full h-screen px-10"><h1 class="pt-5 text-2xl font-semibold">Processes</h1>
+	<div class="border-2 bg-white w-full min-w-fit min-h-fit rounded-md mt-10 grid"><div class="flex flex-col"><div class="flex justify-between pt-8"><h3 class="pl-10 font-bold">All Processes</h3>
+				<div class="flex items-center"><div><div class="flex flex-wrap"><button><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 text-emerald-400"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"></path></svg>
+	</button></div>
+	<span class="undefined absolute text-center border border-solid border-gray-300 shadow-sm bg-white rounded px-1 text-gray-600 z-[1]">Add new process</span></div></div>
+				<div class="flex items-center pr-24"><div><div class="flex flex-wrap"><button><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="text-green-400 hover:text-orange-400 w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"></path></svg>
+		</button></div>
+	<span class="undefined absolute text-center border border-solid border-gray-300 shadow-sm bg-white rounded px-1 text-gray-600 z-[1]">Start all processes</span></div>
+					<div><div class="flex flex-wrap"><button><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="text-red-400 hover:text-orange-400 w-8 h-8"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z"></path></svg>
+		</button></div>
+	<span class="undefined absolute text-center border border-solid border-gray-300 shadow-sm bg-white rounded px-1 text-gray-600 z-[1]">Stop all processes</span></div></div></div>
+			<div class="flex justify-between"><div class="pl-5 pb-5 w-1/4"><div>
+	<div class="mt-1"><input type="text" name="text" id="text" class="w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm" placeholder="Search"></div></div></div>
+				<div class="flex flex-row space-x-10 items-center">
+
+					<div class="flex justify-end pr-24 ">
+	<button type="button" class="group inline-flex items-center justify-center text-sm font-medium text-gray-700 hover:text-gray-900" aria-expanded="false"><span>Status</span>
+
+		<span class="ml-1.5 rounded bg-gray-200 py-0.5 px-1.5 text-xs font-semibold tabular-nums text-gray-700">0</span>
+		
+		<svg class="rotate-0 -mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"></path></svg></button>
+	<div class="transform opacity-0 scale-95 -translate-x-full invisible absolute z-10 mt-2 origin-top-right rounded-md bg-white p-4 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none"><form class="space-y-4"><div class="flex items-center"><input id="RUNNING" name="RUNNING" value="RUNNING" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-orange-500 focus:ring-orange-400">
+					<label for="RUNNING" class="ml-3 whitespace-nowrap pr-6 text-sm font-medium text-gray-900">RUNNING</label>
+				</div><div class="flex items-center"><input id="STARTING" name="STARTING" value="STARTING" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-orange-500 focus:ring-orange-400">
+					<label for="STARTING" class="ml-3 whitespace-nowrap pr-6 text-sm font-medium text-gray-900">STARTING</label>
+				</div><div class="flex items-center"><input id="BACKOFF" name="BACKOFF" value="BACKOFF" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-orange-500 focus:ring-orange-400">
+					<label for="BACKOFF" class="ml-3 whitespace-nowrap pr-6 text-sm font-medium text-gray-900">BACKOFF</label>
+				</div><div class="flex items-center"><input id="STOPPED" name="STOPPED" value="STOPPED" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-orange-500 focus:ring-orange-400">
+					<label for="STOPPED" class="ml-3 whitespace-nowrap pr-6 text-sm font-medium text-gray-900">STOPPED</label>
+				</div><div class="flex items-center"><input id="FATAL" name="FATAL" value="FATAL" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-orange-500 focus:ring-orange-400">
+					<label for="FATAL" class="ml-3 whitespace-nowrap pr-6 text-sm font-medium text-gray-900">FATAL</label>
+				</div></form></div></div></div></div>
+			<div class="overflow-auto flex flex-col items-center"><table class="min-w-full w-full table-fixed "><thead><tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal"><th class="py-3 px-6 text-left">Process name</th>
+							<th class="py-3 px-6 text-left">Description</th>
+							<th class="py-3 px-6 text-center">Status</th>
+							<th class="py-3 px-6 text-center">Taskset</th>
+							<th class="py-3 px-6 text-center">Actions</th></tr></thead>
+					<tbody class="text-gray-600 overflow-scroll text-sm font-light"></tbody></table>
+
+				</div></div>
+		<div class="self-end pb-10 flex flex-col"></div></div></div>
+</div>
+
+
+		<script type="module" data-sveltekit-hydrate="1uakev2">
+			import { start } from "./_app/immutable/start-cf72b209.js";
+
+			start({
+				env: {},
+				paths: {"base":"","assets":""},
+				target: document.querySelector('[data-sveltekit-hydrate="1uakev2"]').parentNode,
+				version: "1675303427459",
+				hydrate: {
+					node_ids: [0, 3],
+					data: [null,null],
+					form: null
+				}
+			});
+		</script>
+	</div>
+</body>
+
+</html>
