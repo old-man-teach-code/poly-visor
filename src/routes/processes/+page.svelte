@@ -40,7 +40,7 @@
 	}
 </script>
 
-<div class="w-full h-screen px-10">
+<div class="w-full px-10">
 	<h1 class="pt-5 text-2xl font-semibold">Processes</h1>
 	<div class="h-[85%] border-2 bg-white w-full min-w-fit rounded-md mt-10 grid">
 		<div class="flex flex-col min-h-full">
@@ -99,7 +99,7 @@
 							<th class="py-3 px-6 text-center">Actions</th>
 						</tr>
 					</thead>
-					<tbody class="h-full text-gray-600 overflow-scroll text-sm font-light">
+					<tbody class="h-full text-gray-600 text-sm font-light">
 						{#if values}
 							{#each values as process}
 								<tr class="h-16 border-b border-gray-200 hover:bg-gray-100">
