@@ -10,7 +10,7 @@
 </script>
 
 <button
-	class="hover:text-2xl border-2 bg-white w-full h-32 rounded-md {color}"
+	class="sm:hover:text-2xl border-2 bg-white w-full h-32 max-md:h-24 rounded-md min-h-fit {color}"
 	on:click={handleEvent}
 >
 	<h1 class="text-xl">{title}</h1>
