@@ -10,26 +10,30 @@ export const cpuChart = writable(Array(31));
 export const ramChart = writable(Array(31));
 
 //fetch api
-const fetchAll = async () => {
-    try {
+const fetchAll = async () =>
+{
+    try
+    {
         // fetching system data
-        const resSystem = await fetch('http://localhost:5000/api/system');
+        const resSystem = await fetch('/api/system');
         const dataSystem = await resSystem.json();
         let cpus = dataSystem.machineSpec.CPUs;
         cpuCount.set(cpus);
         system.set(dataSystem);
-        cpuChart.update(items => {
+        cpuChart.update(items =>
+        {
             items.shift();
             items.push(dataSystem.cpu);
             return items
         })
-        ramChart.update(items => {
+        ramChart.update(items =>
+        {
             items.shift();
             items.push(dataSystem.memory);
             return items
         })
         // fetching processes data
-        const resProcesses = await fetch('http://localhost:5000/api/processes');
+        const resProcesses = await fetch('/api/processes');
         const dataProcesses = await resProcesses.json();
         const loadedProcesses = dataProcesses.map((data) => ({
             description: data.description,
@@ -51,13 +55,16 @@ const fetchAll = async () => {
         processes.set(loadedProcesses);
 
         count.set(0);
-        for (let process of dataProcesses) {
-            if (process.state == 20) {
+        for (let process of dataProcesses)
+        {
+            if (process.state == 20)
+            {
                 count.update(n => n + 1);
             }
         }
 
-    } catch (err) {
+    } catch (err)
+    {
         console.log(err);
     }
 }

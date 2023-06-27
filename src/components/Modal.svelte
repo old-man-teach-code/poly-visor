@@ -11,7 +11,7 @@
 	import AddButton from './Buttons/AddButton.svelte';
 	import { addNewProcessConf } from '../store/action';
 	import ArrowButton from './Buttons/ArrowButton.svelte';
-	import {renderProcessConf} from '../store/action';
+	import { renderProcessConf } from '../store/action';
 	import EditButton from './Buttons/EditButton.svelte';
 
 	const dispatch = createEventDispatcher();
@@ -58,14 +58,14 @@
 		environment: '',
 		serverurl: 'AUTO',
 		directory: '/tmp',
-		stdout_logfile:'AUTO',
-		stderr_logfile:'AUTO',
-		edit:false
+		stdout_logfile: 'AUTO',
+		stderr_logfile: 'AUTO',
+		edit: false
 	};
 
 	if (modalType === 'log') {
 		onMount(() => {
-			eventSource = new EventSource(`http://localhost:5000/process/${stream}/${name}`);
+			eventSource = new EventSource(`/process/${stream}/${name}`);
 			eventSource.onmessage = (event) => {
 				let dataProcesses = JSON.parse(event.data);
 				if (logState) {
@@ -78,14 +78,13 @@
 				scrollToBottom(modal);
 			}
 		});
-	}else if(modalType === 'editProcess'){
+	} else if (modalType === 'editProcess') {
 		//map the return of renderObjectConf to conf
 		renderProcessConf(name).then((data) => {
 			conf = data;
 			conf.process_full_name = name;
 			conf.edit = true;
 		});
-		
 	}
 	const scrollToBottom = async (node) => {
 		node.scroll({ top: node.scrollHeight });
@@ -124,10 +123,13 @@
 
 <svelte:window on:keydown={handle_keydown} />
 {#if modalType === 'log'}
-	<div class="modal-background" on:click={()=>{
-		close();
-		eventSource.close();
-	}} />
+	<div
+		class="modal-background"
+		on:click={() => {
+			close();
+			eventSource.close();
+		}}
+	/>
 	<div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
 		<div class="sticky top-0 bg-orange-200 py-5 flex items-center justify-between">
 			<div class="pl-8">
@@ -165,11 +167,12 @@
 			</ToolTip>
 			<div class="pr-5">
 				<ToolTip title="Close log">
-					<CloseButton on:event={()=> {
+					<CloseButton
+						on:event={() => {
 							close();
-							eventSource.close()
-						
-						}} />
+							eventSource.close();
+						}}
+					/>
 				</ToolTip>
 			</div>
 		</div>
@@ -227,7 +230,9 @@
 			{#if modalType === 'addProcess'}
 				<h1 class="font-bold text-xl">Add new process</h1>
 			{:else if modalType === 'editProcess'}
-				<h1 class="font-bold text-xl">Edit <span class="text-orange-400">{conf.process_full_name} </span>process</h1>
+				<h1 class="font-bold text-xl">
+					Edit <span class="text-orange-400">{conf.process_full_name} </span>process
+				</h1>
 			{/if}
 			<CloseButton on:event={close} />
 		</div>
@@ -382,15 +387,15 @@
 					inputPlaceholder="Server url for the process"
 				/>
 				<Input
-				bind:inputValue={conf.stdout_logfile}
-				inputLabel="Stdout_logfile"
-				inputPlaceholder="Log file location"
-			/>
-			<Input
-				bind:inputValue={conf.stderr_logfile}
-				inputLabel="Stderr_logfile"
-				inputPlaceholder="Error log file location"
-			/>
+					bind:inputValue={conf.stdout_logfile}
+					inputLabel="Stdout_logfile"
+					inputPlaceholder="Log file location"
+				/>
+				<Input
+					bind:inputValue={conf.stderr_logfile}
+					inputLabel="Stderr_logfile"
+					inputPlaceholder="Error log file location"
+				/>
 			{/if}
 			<div class="pt-5 place-self-center">
 				{#if modalType === 'addProcess'}
