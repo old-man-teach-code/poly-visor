@@ -40,9 +40,9 @@
 	}
 </script>
 
-<div class="w-full h-screen px-10">
+<div class="w-full px-10">
 	<h1 class="pt-5 text-2xl font-semibold">Processes</h1>
-	<div class="min-h-[85%] border-2 bg-white w-full min-w-fit rounded-md mt-10 grid">
+	<div class="h-[85%] border-2 bg-white w-full min-w-fit rounded-md mt-10 grid">
 		<div class="flex flex-col min-h-full">
 			<div class="flex justify-between pt-8">
 				<h3 class="pl-10 font-bold">All Processes</h3>
@@ -89,7 +89,7 @@
 				</div>
 			</div>
 			<div class="overflow-auto flex flex-col items-center">
-				<table class="min-w-full w-full table-fixed">
+				<table class=" w-full table-auto">
 					<thead>
 						<tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
 							<th class="py-3 px-6 text-left">Process name</th>
@@ -99,10 +99,10 @@
 							<th class="py-3 px-6 text-center">Actions</th>
 						</tr>
 					</thead>
-					<tbody class="h-full text-gray-600 overflow-scroll text-sm font-light">
+					<tbody class="h-full text-gray-600 text-sm font-light">
 						{#if values}
 							{#each values as process}
-								<tr class="h-20 border-b border-gray-200 hover:bg-gray-100">
+								<tr class="h-16 border-b border-gray-200 hover:bg-gray-100">
 									<td class="py-3 px-6 text-left">
 										<div class="flex items-center">
 											<span class="font-medium">{process.name}</span>
@@ -125,11 +125,17 @@
 										<div class="flex item-center justify-center space-x-1">
 											{#if process.statename != 'STOPPED'}
 												<ToolTip title="Stop this process">
-													<StopButton spin on:event={() => stopProcess((process.group)+":"+(process.name))} />
+													<StopButton
+														spin
+														on:event={() => stopProcess(process.group + ':' + process.name)}
+													/>
 												</ToolTip>
 											{:else}
 												<ToolTip title="Start this process">
-													<StartButton spin on:event={() => startProcess((process.group)+":"+(process.name))} />
+													<StartButton
+														spin
+														on:event={() => startProcess(process.group + ':' + process.name)}
+													/>
 												</ToolTip>
 											{/if}
 											<ToolTip title="View process log"
@@ -137,7 +143,7 @@
 													error={false}
 													on:event={() => {
 														showModal = 'Log';
-														logName = process.group;
+														logName = process.group + ':' + process.name;
 														logStream = 'out';
 													}}
 												/></ToolTip
@@ -147,7 +153,7 @@
 													error
 													on:event={() => {
 														showModal = 'Log';
-														logName = process.group;
+														logName = process.group + ':' + process.name;
 														logStream = 'err';
 													}}
 												/></ToolTip
