@@ -3,10 +3,6 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		
-		"start": "concurrently \"npm run fe\" \"npm run be\"",
-  		"fe": "npm run dev",
-  		"be": "flask run",
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
