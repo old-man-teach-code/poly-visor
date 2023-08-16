@@ -141,9 +141,7 @@ def get_process_affinity_CPU(pid):
         
         if ('-' or ',') in output:
             start, end = map(int, output.split('-'))
-            # return an array of CPU core index
-
-            return list(range(start, end + 1))
+            return '\n'.join(str(i) for i in range(start, end + 1))
         
         else:
             return output
