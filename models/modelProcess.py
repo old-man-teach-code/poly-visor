@@ -139,14 +139,15 @@ def get_process_affinity_CPU(pid):
         char_index= output.find(":")
         output=output[char_index+2::].replace('\n','')
         
-        if ('-' or ',') in output:
-            start, end = map(int, output.split('-'))
-            # return an array of CPU core index
-
-            return list(range(start, end + 1))
         
-        else:
-            return output
+        if '-' in output:
+            start, end = map(int, output.split('-'))
+            return list(range(start, end + 1))
+    
+        elif ',' in output:
+            return list(map(int, output.split(',')))
+    
+        return output
         
 
 def set_process_affinity_CPU(pid,core_index):
