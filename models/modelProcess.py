@@ -135,9 +135,19 @@ def get_process_affinity_CPU(pid):
         output = runShell("taskset -cp "+str(pid))
         if("failed" in output):
             return False
+        
         char_index= output.find(":")
         output=output[char_index+2::].replace('\n','')
-        return output
+        
+        if ('-' or ',') in output:
+            start, end = map(int, output.split('-'))
+            # return an array of CPU core index
+
+            return list(range(start, end + 1))
+        
+        else:
+            return output
+        
 
 def set_process_affinity_CPU(pid,core_index):
     output = runShell("sudo taskset -cp "+str(core_index)+" "+str(pid))
