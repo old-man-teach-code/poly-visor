@@ -35,7 +35,7 @@ pip install .
 Add the following line to supervisord config file
 ```ini
 [rpcinterface:polyvisor]
-supervisor.rpcinterface_factory = polyvisor.rpc:make_rpc_interfacce
+supervisor.rpcinterface_factory = polyvisor.rpc:make_rpc_interface
 bind=5000
 ```
 
