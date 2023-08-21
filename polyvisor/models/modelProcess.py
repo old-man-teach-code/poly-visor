@@ -144,7 +144,7 @@ def set_process_affinity_CPU(pid, core_index):
     command = ["sudo", "taskset", "-cp", str(core_index), str(pid)]
     # pop up a terminal to ask for password
     try:
-        subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         return True
     except subprocess.CalledProcessError as e:
         print("Error:", e.stderr)
