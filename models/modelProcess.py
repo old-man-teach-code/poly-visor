@@ -1,3 +1,4 @@
+import subprocess
 import sys
 import os
 # Get parent path of project to import modules
@@ -150,7 +151,16 @@ def get_process_affinity_CPU(pid):
         return output
         
 
-def set_process_affinity_CPU(pid,core_index):
-    output = runShell("sudo taskset -cp "+str(core_index)+" "+str(pid))
-    if("new" in output):
-        return True 
+def set_process_affinity_CPU(pid, core_index):
+    terminal_command = [
+        "pkexec",
+        "bash",
+        "-c",
+        "taskset -cp " + str(core_index) + " " + str(pid) 
+    ]
+    try:    
+        subprocess.run(terminal_command)
+        return True
+    except subprocess.CalledProcessError as e:
+        print("Error:", e.stderr)
+        return False
