@@ -1,3 +1,4 @@
+import subprocess
 import sys
 import os
 # Get parent path of project to import modules
@@ -139,7 +140,13 @@ def get_process_affinity_CPU(pid):
         output=output[char_index+2::].replace('\n','')
         return output
 
-def set_process_affinity_CPU(pid,core_index):
-    output = runShell("sudo taskset -cp "+str(core_index)+" "+str(pid))
-    if("new" in output):
-        return True 
+def set_process_affinity_CPU(pid, core_index):
+    command = ["sudo", "taskset", "-cp", str(core_index), str(pid)]
+    # pop up a terminal to ask for password
+    try:
+        subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return True
+    except subprocess.CalledProcessError as e:
+        print("Error:", e.stderr)
+        return False
+
