@@ -48,7 +48,7 @@ except Exception as e:
 
 # render the config file
 try:
-    @app_api.route('/config/render/<process_name>', methods=['GET'])
+    @app_api.route('/api/config/render/<process_name>', methods=['GET'])
     def render_config(process_name):
 
         result = renderConfig(process_name)
@@ -60,7 +60,7 @@ except Exception as e:
 
 # render config
 try:
-    @app_api.route('/config/render', methods=['GET'])
+    @app_api.route('/api/config/render', methods=['GET'])
     def render_all_config():
         result = get_config_info()
         return jsonify(result)
