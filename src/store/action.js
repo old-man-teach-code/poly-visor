@@ -46,25 +46,25 @@ export function destroyChart()
 //call start process api
 export async function startProcess(name)
 {
-    const res = await fetch(`/process/start/${name}`);
+    const res = await fetch(`/api/process/start/${name}`);
     const message = await res.json();
     return message;
 }
 export async function stopProcess(name)
 {
-    const res = await fetch(`/process/stop/${name}`);
+    const res = await fetch(`/api/process/stop/${name}`);
     const message = await res.json();
     return message;
 }
 export async function startAllProcess()
 {
-    const res = await fetch('/processes/start');
+    const res = await fetch('/api/processes/start');
     const message = await res.json();
     return message;
 }
 export async function stopAllProcess()
 {
-    const res = await fetch('/processes/stop');
+    const res = await fetch('/api/processes/stop');
     const message = await res.json();
     return message;
 }
@@ -72,7 +72,7 @@ export async function stopAllProcess()
 export async function addNewProcessConf(conf)
 {
     console.log(conf)
-    const res = await fetch('/config/create', {
+    const res = await fetch('/api/config/create', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -87,7 +87,7 @@ export async function addNewProcessConf(conf)
 
 export async function renderProcessConf(name)
 {
-    const res = await fetch(`/config/render/${name}`);
+    const res = await fetch(`/api/config/render/${name}`);
     const data = await res.json();
     return data;
 }

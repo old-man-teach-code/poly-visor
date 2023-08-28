@@ -1,9 +1,9 @@
-<script>
+<script lang="ts">
 	import ArrowButton from './Buttons/ArrowButton.svelte';
-	export let rows;
-	export let perPage;
+	export let rows:any;
+	export let perPage:number;
 	export let trimmedRows;
-	export let currentPage;
+	export let currentPage:number;
 
 	$: totalRows = rows.length;
 	$: currentPage = 0;

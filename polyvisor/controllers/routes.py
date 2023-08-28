@@ -48,7 +48,7 @@ try:
 
 except Exception as e:
     app_routes.logger_routes.debug(e)
-
+        
 # shutdown supervisor
 try:
     @app_routes.route('/supervisor/shutdown', methods=['GET'])

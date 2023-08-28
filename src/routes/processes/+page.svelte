@@ -17,26 +17,26 @@
 	import DropListButton from '../../components/Buttons/DropListButton.svelte';
 	import EditButton from '../../components/Buttons/EditButton.svelte';
 
-	let values: Object;
+	let values: any;
 	let showModal = 'close';
 	let modalContent: String;
-	let logName: String;
-	let logStream: String;
+	let logName: string;
+	let logStream: string;
 	let filter = new Array();
 	let search: string;
 	let rowPerPage: number = 5;
-	let tableRows;
+	let tableRows:any;
 	let paginationPage: number;
 	let tableDrop: boolean;
 
 	$: if (search) {
 		tableRows = $processes.filter(
-			(process) =>
+			(process:any) =>
 				filter.includes(process.statename) &&
 				process.name.toLowerCase().includes(search.toLocaleLowerCase())
 		);
 	} else {
-		tableRows = $processes.filter((process) => filter.includes(process.statename));
+		tableRows = $processes.filter((process:any) => filter.includes(process.statename));
 	}
 </script>
 
@@ -66,7 +66,7 @@
 			</div>
 			<div class="flex justify-between">
 				<div class="pl-5 pb-5 w-1/4">
-					<TextInput inputPlaceholder="Search" bind:inputValue={search} />
+					<TextInput inputLabel="" inputPlaceholder="Search" bind:inputValue={search} />
 				</div>
 				<div class="flex flex-row space-x-10 items-center">
 					{#if paginationPage == 0}

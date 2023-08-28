@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
 
-	export let options;
-	export let title;
+	export let options : any[];
+	export let title:string;
 	let statename = false;
-	export let result = [];
+	export let result:any[] = [];
 	onMount(() => {
 		result = options;
 	});

@@ -1,8 +1,8 @@
-<script>
-	export let coreName;
-	export let coreValue;
+<script lang="ts">
+	export let coreName:string;
+	export let coreValue:any;
 
-	let coreColor;
+	let coreColor:string;
 	$: if (coreValue <= 30.0) {
 		coreColor = 'bg-green-300';
 	} else if (coreValue <= 50) {
