@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { system } from '../store/supstore';
 	import { processes } from '../store/supstore';
 	import { count } from '../store/supstore';
@@ -9,10 +9,10 @@
 	import Card from '../components/Card.svelte';
 	import CpuCore from '../components/CpuCore.svelte';
 
-	let chart;
-	let textCpu = 'text-[#FF8C32]'; //initial text color for CPU as orange
-	let textRam;
-	let textCores;
+	let chart:any;
+	let textCpu :Boolean = true; //initial text color for CPU as orange
+	let textRam: Boolean;
+	let textCores: Boolean;
 	let chartState = true;
 
 	//Initial data for ChartJS
@@ -93,22 +93,22 @@
 			ds.data = $cpuChart;
 		});
 		data.options.plugins.title.text = 'Overall CPU usage';
-		textCpu = 'text-[#FF8C32]';
-		textRam = 'text-black';
-		textCores = 'text-black';
+		textCpu = true
+		textRam = false
+		textCores = false
 	} else if (chart == 'RAM %') {
 		data.data.datasets.forEach((ds) => {
 			ds.label = chart;
 			ds.data = $ramChart;
 		});
 		data.options.plugins.title.text = 'Overall RAM usage';
-		textCpu = 'text-black';
-		textRam = 'text-[#FF8C32]';
-		textCores = 'text-black';
+		textCpu = false
+		textRam = true
+		textCores = false
 	} else if (chart == 'Cores') {
-		textCpu = 'text-black';
-		textRam = 'text-black';
-		textCores = 'text-[#FF8C32]';
+		textCpu = false
+		textRam = false
+		textCores = true
 	}
 	//function for handling CPU's chart
 	function chartCpu() {
@@ -135,9 +135,9 @@
 	<h1 class="text-2xl font-semibold pt-5">Overview</h1>
 	<div class="space-y-5 h-3/4">
 		<div class="grid grid-cols-4 max-md:grid-cols-2 gap-5">
-			<Card color={textCpu} content="{$system.cpu}%" title="Cpu Usage" on:event={chartCpu} />
-			<Card color={textRam} content="{$system.memory}%" title="Ram Usage" on:event={chartRam} />
-			<Card color={textCores} content={$cpuCount} title="Number of cores" on:event={chartCores} />
+			<Card enabled={textCpu} content="{$system.cpu}%" title="Cpu Usage" on:event={chartCpu} />
+			<Card enabled={textRam} content="{$system.memory}%" title="Ram Usage" on:event={chartRam} />
+			<Card enabled={textCores} content={$cpuCount} title="Number of cores" on:event={chartCores} />
 			<a class="w-full" href="/processes">
 				<Card
 					content="{$count}/{Object.keys($processes).length}"

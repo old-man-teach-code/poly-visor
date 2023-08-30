@@ -136,17 +136,31 @@ def get_process_affinity_CPU(pid):
         output = runShell("taskset -cp "+str(pid))
         if("failed" in output):
             return False
+        
         char_index= output.find(":")
         output=output[char_index+2::].replace('\n','')
+        
+        
+        if '-' in output:
+            start, end = map(int, output.split('-'))
+            return list(range(start, end + 1))
+    
+        elif ',' in output:
+            return list(map(int, output.split(',')))
+    
         return output
+        
 
 def set_process_affinity_CPU(pid, core_index):
-    command = ["sudo", "taskset", "-cp", str(core_index), str(pid)]
-    # pop up a terminal to ask for password
-    try:
-        subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    terminal_command = [
+        "pkexec",
+        "bash",
+        "-c",
+        "taskset -cp " + str(core_index) + " " + str(pid) 
+    ]
+    try:    
+        subprocess.run(terminal_command)
         return True
     except subprocess.CalledProcessError as e:
         print("Error:", e.stderr)
         return False
-

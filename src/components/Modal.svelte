@@ -16,9 +16,9 @@
 
 	const dispatch = createEventDispatcher();
 	const close = () => dispatch('close');
-	export let content: String;
-	export let modalType: String;
-	export let stream: String;
+	export let content: any;
+	export let modalType: string;
+	export let stream: string;
 	export let name: string;
 	let modal: HTMLElement;
 	let scroll = true;
@@ -86,11 +86,11 @@
 			conf.edit = true;
 		});
 	}
-	const scrollToBottom = async (node) => {
+	const scrollToBottom = async (node:any) => {
 		node.scroll({ top: node.scrollHeight });
 	};
 
-	const handle_keydown = (e) => {
+	const handle_keydown = (e:any) => {
 		if (e.key === 'Escape') {
 			close();
 			return;
@@ -99,14 +99,15 @@
 		if (e.key === 'Tab') {
 			// trap focus
 			const nodes = modal.querySelectorAll('*');
-			const tabbable = Array.from(nodes).filter((n) => n.tabIndex >= 0);
+			const tabbable = Array.from(nodes).filter((n:any) => n.tabIndex >= 0);
 
+			// @ts-ignore
 			let index = tabbable.indexOf(document.activeElement);
 			if (index === -1 && e.shiftKey) index = 0;
 
 			index += tabbable.length + (e.shiftKey ? -1 : 1);
 			index %= tabbable.length;
-
+			// @ts-ignore
 			tabbable[index].focus();
 			e.preventDefault();
 		}
@@ -116,6 +117,7 @@
 
 	if (previously_focused) {
 		onDestroy(() => {
+			// @ts-ignore
 			previously_focused.focus();
 		});
 	}
@@ -124,6 +126,7 @@
 <svelte:window on:keydown={handle_keydown} />
 {#if modalType === 'log'}
 	<div
+
 		class="modal-background"
 		on:click={() => {
 			close();
