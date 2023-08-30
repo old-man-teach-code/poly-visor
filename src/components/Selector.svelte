@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
 
-	export let options;
-	export let title;
+	export let options : any[];
+	export let title:string;
 	let statename = false;
-	export let result = [];
+	export let result:any[] = [];
 	onMount(() => {
 		result = options;
 	});
@@ -37,7 +37,7 @@
 		<svg
 			class="{statename
 				? 'rotate-180'
-				: 'rotate-0'} -mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+				: 'rotate-0'} -mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500 transition-all duration-300"
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 20 20"
 			fill="currentColor"

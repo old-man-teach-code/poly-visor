@@ -6,10 +6,10 @@
 	onMount(() => {
 		tooltip = 'invisible';
 	});
-	function handleMouseOver(e) {
+	function handleMouseOver() {
 		tooltip = 'visible';
 	}
-	function handleMouseOut(e) {
+	function handleMouseOut() {
 		tooltip = 'invisible';
 	}
 </script>

@@ -20,5 +20,16 @@ def make_rpc_interface(supervisord,**config):
     
 
 def run_server(bind):   
-    http_server = WSGIServer(("127.0.0.1", bind), app)
+    http_server = WSGIServer(("localhost", bind), app)
     http_server.serve_forever()
+
+def get_ip():
+    import socket
+    # get ipv4 and ipv6 address of machine using socket module
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    ipv4 = s.getsockname()[0]
+    s.close()
+    return ipv4
+
+
