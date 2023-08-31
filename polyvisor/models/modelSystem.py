@@ -80,7 +80,7 @@ def stats():
 def cpu_Stats(time_Sec):
     if not str(time_Sec).isnumeric() or time_Sec<0.01:
         time_Sec=1;
-    cpu_List={}
+    cpu_List=[]
     prev_CPU_List= stats()
     time.sleep(time_Sec)
     now_CPU_List=stats()
@@ -92,8 +92,8 @@ def cpu_Stats(time_Sec):
         deltaUsage= now_CPU_List[x][2]-prev_CPU_List[x][2]
         per = (deltaUsage/deltaTotal)*100
         cpuValue=round(per,2)
-        cpu_List[x]=cpuValue
-    cpu_List.pop("cpu")
+        cpu_List.append(cpuValue)
+    #cpu_List.pop("cpu")
     return cpu_List
 
     # #Get CPU Stats for Chart
