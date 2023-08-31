@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { processes } from '../../store/supstore';
+	import { processes, system } from '../../store/supstore';
 	import Pagination from '../../components/Pagination.svelte';
 	import StartButton from '../../components/Buttons/StartButton.svelte';
 	import StopButton from '../../components/Buttons/StopButton.svelte';
@@ -25,18 +25,18 @@
 	let filter = new Array();
 	let search: string;
 	let rowPerPage: number = 5;
-	let tableRows:any;
+	let tableRows: any;
 	let paginationPage: number;
 	let tableDrop: boolean;
 
 	$: if (search) {
 		tableRows = $processes.filter(
-			(process:any) =>
+			(process: any) =>
 				filter.includes(process.statename) &&
 				process.name.toLowerCase().includes(search.toLocaleLowerCase())
 		);
 	} else {
-		tableRows = $processes.filter((process:any) => filter.includes(process.statename));
+		tableRows = $processes.filter((process: any) => filter.includes(process.statename));
 	}
 </script>
 
@@ -119,7 +119,11 @@
 										>
 									</td>
 									<td class="py-3 px-6 text-center">
-										<span>{process.core_index}</span>
+										<button class="bg-green-300 rounded-md px-3 py-1.5"
+											>{process.core_index ? process.core_index.length : 0} / {Object.keys(
+												$system.cores
+											).length}</button
+										>
 									</td>
 									<td class="py-3 px-6 text-center">
 										<div class="flex item-center justify-center space-x-1">
