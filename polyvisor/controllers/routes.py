@@ -38,7 +38,7 @@ def base(path):
 
 # restart supervisor
 try:
-    @app_routes.route('/supervisor/restart', methods=['GET'])
+    @app_routes.route('/api/supervisor/restart', methods=['GET'])
     def restart_supervisor():
         flag = restart_supervisor_model()
         if flag:
@@ -48,10 +48,10 @@ try:
 
 except Exception as e:
     app_routes.logger_routes.debug(e)
-        
+
 # shutdown supervisor
 try:
-    @app_routes.route('/supervisor/shutdown', methods=['GET'])
+    @app_routes.route('/api/supervisor/shutdown', methods=['GET'])
     def shutdown_supervisor():
         flag = shutdown_supervisor_model()
         if flag:
@@ -65,7 +65,7 @@ except Exception as e:
 
 # start all processes
 try:
-    @app_routes.route('/processes/start', methods=['GET'])
+    @app_routes.route('/api/processes/start', methods=['GET'])
     def start_processes():
         flag = start_all_processes_model()
         if flag:
@@ -78,7 +78,7 @@ except Exception as e:
 
 #  start process by name
 try:
-    @app_routes.route('/process/start/<name>', methods=['GET'])
+    @app_routes.route('/api/process/start/<name>', methods=['GET'])
     def start_process_by_name(name):
         flag = start_process_by_name_model(name)
         if flag:
@@ -91,7 +91,7 @@ except Exception as e:
 
 # stop all processes
 try:
-    @app_routes.route('/processes/stop', methods=['GET'])
+    @app_routes.route('/api/processes/stop', methods=['GET'])
     def stop_processes():
         flag = stop_all_processes_model()
         if flag:
@@ -104,7 +104,7 @@ except Exception as e:
 
 # stop process by name
 try:
-    @app_routes.route('/process/stop/<name>', methods=['GET'])
+    @app_routes.route('/api/process/stop/<name>', methods=['GET'])
     def stop_process_by_name(name):
         flag = stop_process_by_name_model(name)
         if flag:
@@ -117,7 +117,7 @@ except Exception as e:
 
 # start process group
 try:
-    @app_routes.route('/processes/start/group/<group>', methods=['GET'])
+    @app_routes.route('/api/processes/start/group/<group>', methods=['GET'])
     def start_process_group(group):
         flag = start_process_group_model(group)
         if flag:
@@ -129,7 +129,7 @@ except Exception as e:
 
 # stop process group
 try:
-    @app_routes.route('/processes/stop/group/<group>', methods=['GET'])
+    @app_routes.route('/api/processes/stop/group/<group>', methods=['GET'])
     def stop_process_group(group):
         flag = stop_process_group_model(group)
         if flag:
@@ -141,7 +141,7 @@ except Exception as e:
 
 #
 try:
-    @app_routes.route('/config/create/<process_name>/<command>', methods=['GET'])
+    @app_routes.route('/api/config/create/<process_name>/<command>', methods=['GET'])
     def create_config(process_name, command):
 
         command = base64.b64decode(command).decode('utf-8')
@@ -155,8 +155,8 @@ except Exception as e:
 
 # update the config file
 try:
-    @app_routes.route('/config/modify/<process_name>/<action>/<key>/', defaults={'value': ''}, methods=['GET'])
-    @app_routes.route('/config/modify/<process_name>/<action>/<key>/<value>', methods=['GET'])
+    @app_routes.route('/api/config/modify/<process_name>/<action>/<key>/', defaults={'value': ''}, methods=['GET'])
+    @app_routes.route('/api/config/modify/<process_name>/<action>/<key>/<value>', methods=['GET'])
     def modify_config(process_name, action, key, value):
         value = base64.b64decode(value).decode('utf-8')
         result = modifyConfig(process_name, action, key, value)
@@ -191,7 +191,7 @@ except Exception as e:
 #     app_routes.logger_routes.debug(e)
 
 try:
-    @app_routes.route('/process/<stream>/<name>', methods=['GET'])
+    @app_routes.route('/api/process/<stream>/<name>', methods=['GET'])
     def process_log_tail(stream, name):
         if stream == "out":
             tail = tail_stdOut_logFile_model
@@ -218,7 +218,7 @@ except Exception as e:
 
 # create the config file by using POST method
 try:
-    @app_routes.route('/config/create', methods=['POST'])
+    @app_routes.route('/api/config/create', methods=['POST'])
     def create_config_post():
         data = request.get_json()
         process_full_name = data['process_full_name']
@@ -297,7 +297,7 @@ except Exception as e:
 
 # Set affinity list in CPU
 try:
-    @app_routes.route('/cpu/set_affinity/<pid>/<core_index>', methods=['GET'])
+    @app_routes.route('/api/cpu/set_affinity/<pid>/<core_index>', methods=['GET'])
     def set_process_core_index_route(pid, core_index):
         result = set_Process_Core_Index(pid, core_index)
         return jsonify({'result': result})
