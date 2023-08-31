@@ -58,13 +58,12 @@ export async function startProcess(name) {
 	return fetch(`/api/process/start/${name}`)
 		.then((response) => response.json())
 		.then((data) => {
-			loading.set(false);
 			return data;
 		})
 		.catch((error) => {
 			console.error(error);
-			loading.set(false);
-		});
+		})
+		.finally(() => loading.set(false));
 }
 export async function stopProcess(name) {
 	if (get(loading)) return;
@@ -72,7 +71,7 @@ export async function stopProcess(name) {
 	const res = fetch(`/api/process/stop/${name}`)
 		.then((message) => message.json())
 		.catch((err) => console.log(err))
-		.then(() => loading.set(false));
+		.finally(() => loading.set(false));
 	return res;
 }
 
@@ -82,7 +81,7 @@ export async function startAllProcess() {
 	const res = fetch(`/api/processes/start`)
 		.then((message) => message.json())
 		.catch((err) => console.log(err))
-		.then(() => loading.set(false));
+		.finally(() => loading.set(false));
 	return res;
 }
 
@@ -92,7 +91,7 @@ export async function stopAllProcess() {
 	const res = fetch(`/api/processes/stop`)
 		.then((message) => message.json())
 		.catch((err) => console.log(err))
-		.then(() => loading.set(false));
+		.finally(() => loading.set(false));
 	return res;
 }
 
@@ -108,7 +107,7 @@ export async function addNewProcessConf(conf) {
 	})
 		.then((message) => message.json())
 		.catch((err) => console.log(err))
-		.then(() => loading.set(false));
+		.finally(() => loading.set(false));
 	return res;
 }
 
@@ -118,11 +117,24 @@ export async function renderProcessConf(name) {
 	return fetch(`/api/config/render/${name}`)
 		.then((response) => response.json())
 		.then((data) => {
-			loading.set(false);
 			return data;
 		})
 		.catch((error) => {
 			console.error(error);
-			loading.set(false);
-		});
+		})
+		.finally(() => loading.set(false));
+}
+
+export async function Taskset(pid, index) {
+	if (get(loading)) return;
+	loading.set(true);
+	return fetch(`/api/cpu/set_affinity/${pid}/${index}`)
+		.then((response) => response.json())
+		.then((data) => {
+			return data;
+		})
+		.catch((error) => {
+			console.error(error);
+		})
+		.finally(() => loading.set(false));
 }

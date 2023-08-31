@@ -16,11 +16,10 @@
 	import TextInput from '../../components/TextInput.svelte';
 	import DropListButton from '../../components/Buttons/DropListButton.svelte';
 	import EditButton from '../../components/Buttons/EditButton.svelte';
-	import MiniModal from '../../components/MiniModal.svelte';
 
 	let values: any;
 	let showModal = 'close';
-	let modalContent: String;
+	let modalContent: any;
 	let logName: string;
 	let logStream: string;
 	let filter = new Array();
@@ -120,7 +119,20 @@
 										>
 									</td>
 									<td class="py-3 px-6 text-center relative">
-										<MiniModal cores={process.core_index} coreCount={$system.cores} />
+										<button
+											on:click={() => {
+												showModal = 'taskset';
+												modalContent = {
+													cores: $system.cores,
+													process: process
+												};
+											}}
+											class="bg-green-300 rounded-md px-3 py-1.5"
+										>
+											{process.core_index ? process.core_index.length : 0} / {Object.keys(
+												$system.cores
+											).length}
+										</button>
 									</td>
 									<td class="py-3 px-6 text-center">
 										<div class="flex item-center justify-center space-x-1">
@@ -216,6 +228,14 @@
 							modalType="editProcess"
 							stream=""
 							name={logName}
+							on:close={() => (showModal = 'close')}
+						/>
+					{:else if (showModal = 'taskset')}
+						<Modal
+							content={modalContent}
+							modalType="taskset"
+							stream=""
+							name=""
 							on:close={() => (showModal = 'close')}
 						/>
 					{/if}

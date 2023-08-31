@@ -13,6 +13,7 @@
 	import ArrowButton from './Buttons/ArrowButton.svelte';
 	import { renderProcessConf } from '../store/action';
 	import EditButton from './Buttons/EditButton.svelte';
+	import Taskset from './Taskset.svelte';
 
 	const dispatch = createEventDispatcher();
 	const close = () => dispatch('close');
@@ -420,6 +421,21 @@
 			</div>
 		</div>
 		<!-- svelte-ignore a11y-autofocus -->
+	</div>
+{:else if modalType == 'taskset'}
+	<div class="modal-background" on:click={close} />
+	<div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
+		<div class="sticky top-0 bg-orange-200 py-5 z-10 flex items-center justify-between px-10">
+			<h1 class="font-bold text-xl">
+				Taskset
+				<span class="text-green-600">
+					{content.process.pid}
+				</span>
+			</h1>
+			<CloseButton on:event={close} />
+		</div>
+		<hr class="pb-5" />
+		<Taskset totalCore={content.cores} process={content.process} />
 	</div>
 {/if}
 
