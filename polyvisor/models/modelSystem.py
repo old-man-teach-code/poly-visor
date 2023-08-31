@@ -74,7 +74,7 @@ def stats():
             idle=int(line[4])+int(line[5])
             usage=total-idle
             cpuList[line[0]]=[total,idle,usage]
-            
+    #cpuList.pop(0)
     return cpuList
 
 def cpu_Stats(time_Sec):
@@ -93,8 +93,7 @@ def cpu_Stats(time_Sec):
         per = (deltaUsage/deltaTotal)*100
         cpuValue=round(per,2)
         cpu_List.append(cpuValue)
-    #cpu_List.pop("cpu")
-    return cpu_List
+    return cpu_List[1:]
 
     # #Get CPU Stats for Chart
     # @property
