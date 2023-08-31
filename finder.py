@@ -52,7 +52,6 @@ def configPath():
 # Get include process config files path
 
 
-
 def get_proc_config_path():
     config = configparser.RawConfigParser(
         dict_type=MultiOrderedDict, strict=False)
@@ -174,14 +173,3 @@ def get_std_log_path(path, stream, name):
         result = config.get("program:"+name, "stderr_logfile")
 
     return result
-
-# get supervisor config file path
-
-# get the username and the password from the process config file
-def get_username_password(path):
-    config = configparser.RawConfigParser(
-        dict_type=MultiOrderedDict, strict=False)
-    config.read(path)
-    # username = config.get("program:demo", "username")
-    # password = config.get("program:demo", "password")
-    return ['admin', 'admin']
