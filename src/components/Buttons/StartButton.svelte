@@ -8,7 +8,7 @@
 </script>
 
 {#if spin}
-	<button class="focus:animate-spin" on:click={handleEvent}>
+	<button on:click={handleEvent}>
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			fill="none"
