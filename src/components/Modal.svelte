@@ -86,11 +86,11 @@
 			conf.edit = true;
 		});
 	}
-	const scrollToBottom = async (node:any) => {
+	const scrollToBottom = async (node: any) => {
 		node.scroll({ top: node.scrollHeight });
 	};
 
-	const handle_keydown = (e:any) => {
+	const handle_keydown = (e: any) => {
 		if (e.key === 'Escape') {
 			close();
 			return;
@@ -99,7 +99,7 @@
 		if (e.key === 'Tab') {
 			// trap focus
 			const nodes = modal.querySelectorAll('*');
-			const tabbable = Array.from(nodes).filter((n:any) => n.tabIndex >= 0);
+			const tabbable = Array.from(nodes).filter((n: any) => n.tabIndex >= 0);
 
 			// @ts-ignore
 			let index = tabbable.indexOf(document.activeElement);
@@ -126,7 +126,6 @@
 <svelte:window on:keydown={handle_keydown} />
 {#if modalType === 'log'}
 	<div
-
 		class="modal-background"
 		on:click={() => {
 			close();
@@ -437,7 +436,7 @@
 
 	.modal {
 		z-index: 10;
-		position: absolute;
+		position: fixed;
 		left: 50%;
 		top: 50%;
 		width: calc(100vw - 4em);

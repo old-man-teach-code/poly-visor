@@ -16,6 +16,7 @@
 	import TextInput from '../../components/TextInput.svelte';
 	import DropListButton from '../../components/Buttons/DropListButton.svelte';
 	import EditButton from '../../components/Buttons/EditButton.svelte';
+	import MiniModal from '../../components/MiniModal.svelte';
 
 	let values: any;
 	let showModal = 'close';
@@ -118,12 +119,8 @@
 											>{process.statename}</span
 										>
 									</td>
-									<td class="py-3 px-6 text-center">
-										<button class="bg-green-300 rounded-md px-3 py-1.5"
-											>{process.core_index ? process.core_index.length : 0} / {Object.keys(
-												$system.cores
-											).length}</button
-										>
+									<td class="py-3 px-6 text-center relative">
+										<MiniModal cores={process.core_index} coreCount={$system.cores} />
 									</td>
 									<td class="py-3 px-6 text-center">
 										<div class="flex item-center justify-center space-x-1">
@@ -175,7 +172,6 @@
 												<EditButton
 													on:event={() => {
 														showModal = 'editProcess';
-
 														logName = process.group;
 													}}
 												/>
