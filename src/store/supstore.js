@@ -3,6 +3,7 @@ import { writable } from "svelte/store";
 
 //writables for fetching api
 export const system = writable([]);
+export const loading = writable(false);
 export const processes = writable([]);
 export const count = writable(0);
 export const cpuCount = writable(0);

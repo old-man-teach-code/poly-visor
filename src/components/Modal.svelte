@@ -13,6 +13,7 @@
 	import ArrowButton from './Buttons/ArrowButton.svelte';
 	import { renderProcessConf } from '../store/action';
 	import EditButton from './Buttons/EditButton.svelte';
+	import Taskset from './Taskset.svelte';
 
 	const dispatch = createEventDispatcher();
 	const close = () => dispatch('close');
@@ -65,7 +66,7 @@
 
 	if (modalType === 'log') {
 		onMount(() => {
-			eventSource = new EventSource(`/process/${stream}/${name}`);
+			eventSource = new EventSource(`/api/process/${stream}/${name}`);
 			eventSource.onmessage = (event) => {
 				let dataProcesses = JSON.parse(event.data);
 				if (logState) {
@@ -86,11 +87,11 @@
 			conf.edit = true;
 		});
 	}
-	const scrollToBottom = async (node:any) => {
+	const scrollToBottom = async (node: any) => {
 		node.scroll({ top: node.scrollHeight });
 	};
 
-	const handle_keydown = (e:any) => {
+	const handle_keydown = (e: any) => {
 		if (e.key === 'Escape') {
 			close();
 			return;
@@ -99,7 +100,7 @@
 		if (e.key === 'Tab') {
 			// trap focus
 			const nodes = modal.querySelectorAll('*');
-			const tabbable = Array.from(nodes).filter((n:any) => n.tabIndex >= 0);
+			const tabbable = Array.from(nodes).filter((n: any) => n.tabIndex >= 0);
 
 			// @ts-ignore
 			let index = tabbable.indexOf(document.activeElement);
@@ -126,7 +127,6 @@
 <svelte:window on:keydown={handle_keydown} />
 {#if modalType === 'log'}
 	<div
-
 		class="modal-background"
 		on:click={() => {
 			close();
@@ -422,6 +422,21 @@
 		</div>
 		<!-- svelte-ignore a11y-autofocus -->
 	</div>
+{:else if modalType == 'taskset'}
+	<div class="modal-background" on:click={close} />
+	<div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
+		<div class="sticky top-0 bg-orange-200 py-5 z-10 flex items-center justify-between px-10">
+			<h1 class="font-bold text-xl">
+				Taskset
+				<span class="text-green-600">
+					{content.process.pid}
+				</span>
+			</h1>
+			<CloseButton on:event={close} />
+		</div>
+		<hr class="pb-5" />
+		<Taskset totalCore={content.cores} process={content.process} />
+	</div>
 {/if}
 
 <style>
@@ -437,7 +452,7 @@
 
 	.modal {
 		z-index: 10;
-		position: absolute;
+		position: fixed;
 		left: 50%;
 		top: 50%;
 		width: calc(100vw - 4em);

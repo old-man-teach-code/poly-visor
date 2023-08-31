@@ -9,8 +9,8 @@
 	import Card from '../components/Card.svelte';
 	import CpuCore from '../components/CpuCore.svelte';
 
-	let chart:any;
-	let textCpu :Boolean = true; //initial text color for CPU as orange
+	let chart: any;
+	let textCpu: Boolean = true; //initial text color for CPU as orange
 	let textRam: Boolean;
 	let textCores: Boolean;
 	let chartState = true;
@@ -93,22 +93,22 @@
 			ds.data = $cpuChart;
 		});
 		data.options.plugins.title.text = 'Overall CPU usage';
-		textCpu = true
-		textRam = false
-		textCores = false
+		textCpu = true;
+		textRam = false;
+		textCores = false;
 	} else if (chart == 'RAM %') {
 		data.data.datasets.forEach((ds) => {
 			ds.label = chart;
 			ds.data = $ramChart;
 		});
 		data.options.plugins.title.text = 'Overall RAM usage';
-		textCpu = false
-		textRam = true
-		textCores = false
+		textCpu = false;
+		textRam = true;
+		textCores = false;
 	} else if (chart == 'Cores') {
-		textCpu = false
-		textRam = false
-		textCores = true
+		textCpu = false;
+		textRam = false;
+		textCores = true;
 	}
 	//function for handling CPU's chart
 	function chartCpu() {
@@ -141,7 +141,7 @@
 			<a class="w-full" href="/processes">
 				<Card
 					content="{$count}/{Object.keys($processes).length}"
-					color="null"
+					enabled={false}
 					title="Running processes"
 				/>
 			</a>
