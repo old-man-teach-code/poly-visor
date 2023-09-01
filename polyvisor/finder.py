@@ -178,10 +178,11 @@ def get_std_log_path(path, stream, name):
 # get supervisor config file path
 
 # get the username and the password from the process config file
-def get_username_password(path):
+def get_username_password(path, name):
     config = configparser.RawConfigParser(
         dict_type=MultiOrderedDict, strict=False)
     config.read(path)
-    # username = config.get("program:demo", "username")
-    # password = config.get("program:demo", "password")
-    return ['admin', 'admin']
+    username = config.get("program:" + name, "username")
+    password = config.get("program:" + name, "password")
+    
+    return [username, password]

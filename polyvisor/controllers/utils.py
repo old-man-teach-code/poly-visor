@@ -21,7 +21,7 @@ import functools
 
 from flask import session, abort
 
-from polyvisor.finder import configPath, get_username_password
+from polyvisor.finder import configPath, get_username_password, split_config_path
 
 
 
@@ -64,17 +64,36 @@ def is_login_valid(username, password):
     username = username.strip()
     password = password.strip()
 
-    config = configPath()
+    config = split_config_path()
+    # read all the files from the "config" folder
+    
     print(config)
+    try:
+        import glob,os
+        file_extension = "*.ini"
+        file_list = glob.glob(os.path.join(config, file_extension))
+        print(file_list)
+        for file_path in file_list:
+            with open(file_path, 'r') as file:
+                file_contents = file.read()
+                # Perform operations on file_contents as needed
+                print(f"File {file_path} contents:")
+                print(file_contents)
+    except Exception as e:
+        print(e)
+
+    
 
     # read from config file of supervisord for username and password
 
-    correct_username = get_username_password(config)[0]
-    correct_password = get_username_password(config)[1]
+    # correct_username = get_username_password(config, name)[0]
+    # correct_password = get_username_password(config, name)[1]
+    correct_username = "admin"
+    correct_password = "admin"
 
     print(correct_username)
     print(correct_password)
-
+    
     return constant_time_compare(username, correct_username) and constant_time_compare(
         password, correct_password
     )
@@ -82,26 +101,12 @@ def is_login_valid(username, password):
 
 is_login_valid("admin", "admin")
 
-
-
-def login_required(app):
-    """
-    Decorator to mark view as requiring being logged in
-    """
-
-    def decorator(func):
-        @functools.wraps(func)
-        def wrapper_login_required(*args, **kwargs):
-            auth_on = use_authentication
-
-            if not auth_on or "username" in session:
-                return func(*args, **kwargs)
-
-            # user not authenticated, return 401
+# make a decorator to check if the user is logged in or not
+def login_required(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        if session.get("logged_in") is not True:
             abort(401)
+        return func(*args, **kwargs)
 
-        return wrapper_login_required
-
-    return decorator
-
-
+    return wrapper

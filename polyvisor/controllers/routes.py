@@ -321,6 +321,7 @@ try:
         
         username = request.form.get("username")
         password = request.form.get("password")
+        
         if is_login_valid( username, password):
             session["username"] = username
             return json.dumps({})
