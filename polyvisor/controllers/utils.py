@@ -75,31 +75,32 @@ def is_login_valid(username, password):
         print(file_list)
         for file_path in file_list:
             with open(file_path, 'r') as file:
-                file_contents = file.read()
-                # Perform operations on file_contents as needed
-                print(f"File {file_path} contents:")
-                print(file_contents)
+                
+                correct_username_password = False
+                # get the username and password from the config file and compare it with the username and password entered by the user
+                correct_username = get_username_password(file_path, os.path.basename(os.path.splitext(file_path)[0]))[0]
+                print(correct_username)
+                correct_password = get_username_password(file_path, os.path.basename(os.path.splitext(file_path)[0]))[1]
+                print(correct_password)
+                if constant_time_compare(username, correct_username) and constant_time_compare(
+                    password, correct_password
+                ):
+                    correct_username_password = True
+                    break
+                else:
+                    pass
     except Exception as e:
         print(e)
 
     
 
-    # read from config file of supervisord for username and password
-
-    # correct_username = get_username_password(config, name)[0]
-    # correct_password = get_username_password(config, name)[1]
-    correct_username = "admin"
-    correct_password = "admin"
-
-    print(correct_username)
-    print(correct_password)
-    
-    return constant_time_compare(username, correct_username) and constant_time_compare(
-        password, correct_password
-    )
+    return correct_username_password
+    # return constant_time_compare(username, correct_username) and constant_time_compare(
+    #     password, correct_password
+    # )
 
 
-is_login_valid("admin", "admin")
+print(is_login_valid("AlexDemo1", "123Demo1"))
 
 # make a decorator to check if the user is logged in or not
 def login_required(func):
