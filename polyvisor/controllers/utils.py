@@ -21,7 +21,7 @@ from functools import wraps
 
 from flask import session, abort, jsonify, request
 
-from polyvisor.finder import configPath, get_username_password, split_config_path
+from polyvisor.finder import MultiOrderedDict, configPath, get_username_password, split_config_path
 
 
 
@@ -95,10 +95,30 @@ def is_login_valid(username, password):
     
 
     return correct_username_password
-    # return constant_time_compare(username, correct_username) and constant_time_compare(
-    #     password, correct_password
-    # )
 
+# check if there are "username" and "password" keys in the .ini config file and return True if there are both keys
+def check_authentication_required():
+    config = split_config_path()
+    # read all the files from the "config" folder
+    
+    import glob,os
+    import configparser
+    from collections import OrderedDict
+    file_extension = "*.ini"
+    file_list = glob.glob(os.path.join(config, file_extension))
+    result = False
+    for file_path in file_list:
+        config_parser = configparser.ConfigParser()
+        config_parser.read(file_path)
+
+        # Check if the config file has both "username" and "password" keys
+        if 'username' in config_parser['program:' + os.path.basename(os.path.splitext(file_path)[0])] and 'password' in config_parser['program:' + os.path.basename(os.path.splitext(file_path)[0])]:
+            result = True
+            break  # Exit the loop as soon as we find a config file with both keys
+
+
+    return result
+    # return bool(username and password)
 
 
 
@@ -106,12 +126,13 @@ def login_required():
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
+
+            authentication_required = check_authentication_required()
             # Check if the username key 
-            if 'username' in session:
+            if not authentication_required or 'username' in session:
                 return f(*args, **kwargs)
-            else:
-                # If not logged in, return an unauthorized response (e.g., 401)
-                return jsonify({'error': 'Authentication required'}), 401
+            
+            abort(401)
 
         return decorated_function
 
