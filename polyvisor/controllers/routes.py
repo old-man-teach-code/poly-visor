@@ -3,7 +3,7 @@ import json
 from time import sleep
 
 from flask_cors import CORS
-from polyvisor.controllers.utils import is_login_valid
+from polyvisor.controllers.utils import is_login_valid, login_required
 from polyvisor.finder import get_std_log_path, split_config_path
 from polyvisor.controllers.processes import tail_stdErr_logFile_model, tail_stdOut_logFile_model, process_Core_Index, set_Process_Core_Index, start_all_processes_model, start_process_by_name_model, start_process_group_model, stop_all_processes_model, stop_process_by_name_model, stop_process_group_model
 from polyvisor.controllers.supervisor import createConfig, restart_supervisor_model, shutdown_supervisor_model
@@ -299,6 +299,7 @@ except Exception as e:
 # Set affinity list in CPU
 try:
     @app_routes.route('/api/cpu/set_affinity/<pid>/<core_index>', methods=['GET'])
+    @login_required()
     def set_process_core_index_route(pid, core_index):
         result = set_Process_Core_Index(pid, core_index)
         return jsonify({'result': result})
@@ -307,7 +308,7 @@ except Exception as e:
 
 # logout of the session
 try:
-    @app_routes.route("/api/logout", methods=["post"])
+    @app_routes.route("/api/logout", methods=["POST"])
     def logout():
         session.clear()
         return jsonify({"message": "logged out"})
@@ -316,11 +317,11 @@ except Exception as e:
 
 # login to the application
 try:
-    @app_routes.route("/api/login", methods=["post"])
+    @app_routes.route("/api/login", methods=["POST"])
     def login():
-        
-        username = request.form.get("username")
-        password = request.form.get("password")
+        data = request.get_json()
+        username = data["username"]
+        password = data["password"]
         
         if is_login_valid( username, password):
             session["username"] = username

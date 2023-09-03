@@ -17,9 +17,9 @@ def check_logs_folder():
 
 
 import hashlib
-import functools
+from functools import wraps
 
-from flask import session, abort
+from flask import session, abort, jsonify, request
 
 from polyvisor.finder import configPath, get_username_password, split_config_path
 
@@ -102,12 +102,17 @@ def is_login_valid(username, password):
 
 print(is_login_valid("AlexDemo1", "123Demo1"))
 
-# make a decorator to check if the user is logged in or not
-def login_required(func):
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        if session.get("logged_in") is not True:
-            abort(401)
-        return func(*args, **kwargs)
+def login_required():
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            # Check if the user is logged in based on your authentication logic
+            if 'username' in session:
+                return f(*args, **kwargs)
+            else:
+                # If not logged in, return an unauthorized response (e.g., 401)
+                return jsonify({'error': 'Authentication required'}), 401
 
-    return wrapper
+        return decorated_function
+
+    return decorator
