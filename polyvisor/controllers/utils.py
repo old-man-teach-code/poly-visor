@@ -67,21 +67,21 @@ def is_login_valid(username, password):
     config = split_config_path()
     # read all the files from the "config" folder
     
-    print(config)
+    
     try:
         import glob,os
         file_extension = "*.ini"
         file_list = glob.glob(os.path.join(config, file_extension))
-        print(file_list)
+        
         for file_path in file_list:
             with open(file_path, 'r') as file:
                 
                 correct_username_password = False
                 # get the username and password from the config file and compare it with the username and password entered by the user
                 correct_username = get_username_password(file_path, os.path.basename(os.path.splitext(file_path)[0]))[0]
-                print(correct_username)
+                
                 correct_password = get_username_password(file_path, os.path.basename(os.path.splitext(file_path)[0]))[1]
-                print(correct_password)
+                
                 if constant_time_compare(username, correct_username) and constant_time_compare(
                     password, correct_password
                 ):
@@ -100,13 +100,13 @@ def is_login_valid(username, password):
     # )
 
 
-print(is_login_valid("AlexDemo1", "123Demo1"))
+
 
 def login_required():
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
-            # Check if the user is logged in based on your authentication logic
+            # Check if the username key 
             if 'username' in session:
                 return f(*args, **kwargs)
             else:

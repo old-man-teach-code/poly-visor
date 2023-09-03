@@ -93,6 +93,7 @@ except Exception as e:
 # stop all processes
 try:
     @app_routes.route('/api/processes/stop', methods=['GET'])
+    @login_required()
     def stop_processes():
         flag = stop_all_processes_model()
         if flag:

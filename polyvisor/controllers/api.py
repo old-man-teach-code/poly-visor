@@ -2,13 +2,16 @@ from flask_cors import CORS
 from polyvisor.controllers.processes import get_all_processes_model, process_Core_Index
 from polyvisor.controllers.supervisor import get_config_info, get_supervisor, renderConfig
 from polyvisor.controllers.system import get_system
-from polyvisor.controllers.utils import get_date
-from flask import jsonify, Blueprint
+from polyvisor.controllers.utils import get_date, login_required
+from flask import jsonify, Blueprint, session
 import logging
 
 app_api = Blueprint('app_api', __name__)
 
 CORS(app_api)
+
+
+
 # configure logger again for api after routes logger
 logger_api = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG,
@@ -29,8 +32,11 @@ except Exception as e:
 # get supervisor object and return a json object
 try:
     @app_api.route('/api/supervisor', methods=['GET'])
+    @login_required()
     def get_supervisor_api():
         supervisor = get_supervisor()
+        # print the session variable
+        
         return jsonify({'stateName': supervisor.stateName, 'stateCode': supervisor.stateCode, 'pid': supervisor.pid})
 except Exception as e:
     app_api.logger_api.debug(e)
