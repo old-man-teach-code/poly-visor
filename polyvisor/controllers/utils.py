@@ -1,3 +1,11 @@
+import hashlib
+from functools import wraps
+from flask import session, abort
+from polyvisor.finder import get_username_password, split_config_path
+import glob,os
+import configparser
+
+
 #get the date of today
 def get_date():
     from datetime import date
@@ -16,12 +24,6 @@ def check_logs_folder():
 
 
 
-import hashlib
-from functools import wraps
-
-from flask import session, abort, jsonify, request
-
-from polyvisor.finder import MultiOrderedDict, configPath, get_username_password, split_config_path
 
 
 
@@ -63,62 +65,43 @@ def constant_time_compare(val1, val2):
 def is_login_valid(username, password):
     username = username.strip()
     password = password.strip()
-
-    config = split_config_path()
-    # read all the files from the "config" folder
     
+    config_path = split_config_path()
     
-    try:
-        import glob,os
-        file_extension = "*.ini"
-        file_list = glob.glob(os.path.join(config, file_extension))
+    for file_path in get_config_files(config_path):
+        correct_username, correct_password = get_username_password(file_path)
         
-        for file_path in file_list:
-            with open(file_path, 'r') as file:
-                
-                correct_username_password = False
-                # get the username and password from the config file and compare it with the username and password entered by the user
-                correct_username = get_username_password(file_path, os.path.basename(os.path.splitext(file_path)[0]))[0]
-                
-                correct_password = get_username_password(file_path, os.path.basename(os.path.splitext(file_path)[0]))[1]
-                
-                if constant_time_compare(username, correct_username) and constant_time_compare(
-                    password, correct_password
-                ):
-                    correct_username_password = True
-                    break
-                else:
-                    pass
-    except Exception as e:
-        print(e)
+        if constant_time_compare(username, correct_username) and constant_time_compare(password, correct_password):
+            return True
 
-    
+    return False
 
-    return correct_username_password
-
-# check if there are "username" and "password" keys in the .ini config file and return True if there are both keys
 def check_authentication_required():
-    config = split_config_path()
-    # read all the files from the "config" folder
-    
-    import glob,os
-    import configparser
-    from collections import OrderedDict
-    file_extension = "*.ini"
-    file_list = glob.glob(os.path.join(config, file_extension))
-    result = False
-    for file_path in file_list:
+    config_path = split_config_path()
+
+    for file_path in get_config_files(config_path):
         config_parser = configparser.ConfigParser()
         config_parser.read(file_path)
+        
+        section_name = 'program:' + os.path.basename(os.path.splitext(file_path)[0])
+        
+        if section_name in config_parser and 'username' in config_parser[section_name] and 'password' in config_parser[section_name]:
+            return True
+    
+    return False
 
-        # Check if the config file has both "username" and "password" keys
-        if 'username' in config_parser['program:' + os.path.basename(os.path.splitext(file_path)[0])] and 'password' in config_parser['program:' + os.path.basename(os.path.splitext(file_path)[0])]:
-            result = True
-            break  # Exit the loop as soon as we find a config file with both keys
 
+def get_config_files(config_path):
+    file_extension = "*.ini"
+    return glob.glob(os.path.join(config_path, file_extension))
 
-    return result
-    # return bool(username and password)
+def get_username_password(file_path):
+    config_parser = configparser.ConfigParser()
+    config_parser.read(file_path)
+    section_name = 'program:' + os.path.basename(os.path.splitext(file_path)[0])
+    username = config_parser[section_name]['username']
+    password = config_parser[section_name]['password']
+    return username, password
 
 
 
