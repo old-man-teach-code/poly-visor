@@ -3,10 +3,11 @@ import json
 from time import sleep
 
 from flask_cors import CORS
+from polyvisor.controllers.utils import is_login_valid, login_required
 from polyvisor.finder import get_std_log_path, split_config_path
 from polyvisor.controllers.processes import tail_stdErr_logFile_model, tail_stdOut_logFile_model, process_Core_Index, set_Process_Core_Index, start_all_processes_model, start_process_by_name_model, start_process_group_model, stop_all_processes_model, stop_process_by_name_model, stop_process_group_model
 from polyvisor.controllers.supervisor import createConfig, restart_supervisor_model, shutdown_supervisor_model
-from flask import jsonify, Blueprint, Response, request, send_from_directory
+from flask import jsonify, Blueprint, Response, request, send_from_directory, session
 import base64
 
 
@@ -92,6 +93,7 @@ except Exception as e:
 # stop all processes
 try:
     @app_routes.route('/api/processes/stop', methods=['GET'])
+    @login_required()
     def stop_processes():
         flag = stop_all_processes_model()
         if flag:
@@ -298,15 +300,35 @@ except Exception as e:
 # Set affinity list in CPU
 try:
     @app_routes.route('/api/cpu/set_affinity/<pid>/<core_index>', methods=['GET'])
+    @login_required()
     def set_process_core_index_route(pid, core_index):
         result = set_Process_Core_Index(pid, core_index)
         return jsonify({'result': result})
 except Exception as e:
     app_routes.logger_routes.debug(e)
 
+# logout of the session
 try:
-    @app_routes.route('/test', methods=['GET'])
-    def test():
-        return 'aasdasdas'
+    @app_routes.route("/api/logout", methods=["POST"])
+    def logout():
+        session.clear()
+        return jsonify({"message": "logged out"})
+except Exception as e:
+    app_routes.logger_routes.debug(e)
+
+# login to the application
+try:
+    @app_routes.route("/api/login", methods=["POST"])
+    def login():
+        data = request.get_json()
+        username = data["username"]
+        password = data["password"]
+        
+        if is_login_valid( username, password):
+            session["username"] = username
+            return json.dumps({})
+        else:
+            response_data = {"errors": {"password": "Invalid username or password"}}
+            return json.dumps(response_data), 400
 except Exception as e:
     app_routes.logger_routes.debug(e)
