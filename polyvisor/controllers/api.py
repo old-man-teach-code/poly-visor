@@ -1,4 +1,5 @@
 from flask_cors import CORS
+from flask_jwt_extended import jwt_required
 from polyvisor.controllers.processes import get_all_processes_model, process_Core_Index
 from polyvisor.controllers.supervisor import get_config_info, get_supervisor, renderConfig
 from polyvisor.controllers.system import get_system
@@ -33,6 +34,7 @@ except Exception as e:
 try:
     @app_api.route('/api/supervisor', methods=['GET'])
     @login_required()
+    @jwt_required()
     def get_supervisor_api():
         supervisor = get_supervisor()
         # print the session variable
