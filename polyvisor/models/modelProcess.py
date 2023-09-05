@@ -152,15 +152,20 @@ def get_process_affinity_CPU(pid):
         
 
 def set_process_affinity_CPU(pid, core_index):
-    terminal_command = [
+    try:
+        terminal_command = [
         "pkexec",
         "bash",
         "-c",
         "taskset -cp " + str(core_index) + " " + str(pid) 
-    ]
-    try:    
-        subprocess.run(terminal_command)
+        ]
+        # run the terminal_command if success return True, else return False
+        subprocess.check_output(terminal_command)
         return True
-    except subprocess.CalledProcessError as e:
-        print("Error:", e.stderr)
+    except subprocess.CalledProcessError:
         return False
+        
+
+    
+    
+
