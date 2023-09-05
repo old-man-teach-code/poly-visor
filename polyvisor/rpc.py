@@ -12,15 +12,16 @@ def make_rpc_interface(supervisord,**config):
     
     #p1=threading.Thread(target=run_server)
     get_bind = config.get("bind",0)
+    access_point = config.get("access_point","localhost")
     bind = int(get_bind)
     if(bind==0):
         bind=5000
-    p1=multiprocessing.Process(target=run_server,args=(bind,))    
+    p1=multiprocessing.Process(target=run_server,args=(access_point,bind,))    
     p1.start()
     
 
-def run_server(bind):   
-    http_server = WSGIServer(("localhost", bind), app)
+def run_server(ipAddress,bind):   
+    http_server = WSGIServer((ipAddress, bind), app)
     http_server.serve_forever()
 
 def get_ip():
