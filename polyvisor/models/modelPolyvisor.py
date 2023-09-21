@@ -7,7 +7,7 @@ except ImportError:
 
 from gevent import spawn, joinall
 import modelSupervisor
-from .util import filter_patterns
+
 class PolyVisor(object):
     def __init__(self, options):
         self.options = options
@@ -102,3 +102,13 @@ class PolyVisor(object):
 
     # def stop_processes(self, *patterns):
     #     self._do_processes(Process.stop, *patterns)
+
+
+def filter_patterns(names, patterns):
+    patterns = [
+        "*:{}".format(p) if ":" not in p and "*" not in p else p for p in patterns
+    ]
+    result = set()
+    sets = (fnmatch.filter(names, pattern) for pattern in patterns)
+    list(map(result.update, sets))
+    return result
