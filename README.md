@@ -15,6 +15,12 @@ This version has only been tested on Linux OS.
 
 To install polyvisor. The following steps need to be followed exactly.
 
+### Requirements
+Polyvisor needs some packages to run, install by ```pip```:
+```bash
+pip install -r requirements.txt
+```
+
 ### Web server
 Clone the repository from git
 ```bash
