@@ -1,22 +1,13 @@
-import copy
-import logging
-import os
-import time
-import weakref
 
-from blinker import signal
 
 try:
     from ConfigParser import SafeConfigParser
 except ImportError:
     from configparser import SafeConfigParser
 
-import zerorpc
-from gevent import spawn, sleep, joinall
-from supervisor.xmlrpc import Faults
-from supervisor.states import RUNNING_STATES
-
-from .util import sanitize_url, filter_patterns, parse_dict
+from gevent import spawn, joinall
+import modelSupervisor
+from .util import filter_patterns
 class PolyVisor(object):
     def __init__(self, options):
         self.options = options
@@ -95,19 +86,19 @@ class PolyVisor(object):
         joinall(tasks)
 
     def update_supervisors(self, *names):
-        self._do_supervisors(Supervisor.update_server, *names)
+        self._do_supervisors(modelSupervisor.update_server, *names)
 
     def restart_supervisors(self, *names):
-        self._do_supervisors(Supervisor.restart, *names)
+        self._do_supervisors(modelSupervisor.restart, *names)
 
     def reread_supervisors(self, *names):
-        self._do_supervisors(Supervisor.reread, *names)
+        self._do_supervisors(modelSupervisor.reread, *names)
 
     def shutdown_supervisors(self, *names):
-        self._do_supervisors(Supervisor.shutdown, *names)
+        self._do_supervisors(modelSupervisor.shutdown, *names)
 
-    def restart_processes(self, *patterns):
-        self._do_processes(Process.restart, *patterns)
+    # def restart_processes(self, *patterns):
+    #     self._do_processes(Process.restart, *patterns)
 
-    def stop_processes(self, *patterns):
-        self._do_processes(Process.stop, *patterns)
+    # def stop_processes(self, *patterns):
+    #     self._do_processes(Process.stop, *patterns)
