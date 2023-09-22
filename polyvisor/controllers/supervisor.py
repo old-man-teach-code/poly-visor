@@ -4,7 +4,8 @@ import os
 import configparser
 from flask import send_file
 from polyvisor.models.modelSupervisor import Supervisor
-from polyvisor.finder import split_config_path
+from polyvisor.finder import configPolyvisorPath, split_config_path
+from polyvisor.models.modelPolyvisor import PolyVisor
 
 # Get PARENT path of project to import modules
 current = os.path.dirname(os.path.realpath(__file__))
@@ -189,3 +190,16 @@ def renderConfig(process_name):
 
     else:
         return 'File not found'
+    
+
+# get multiple supervisord instance 
+def getMultipleSupervisor(uid):
+    options = {
+        "config_file": configPolyvisorPath()  # Replace with the actual file path
+    }
+    print(options)
+    polyvisor = PolyVisor(options)
+    return polyvisor.get_supervisor(uid)
+
+
+

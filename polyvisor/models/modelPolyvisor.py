@@ -6,18 +6,44 @@ except ImportError:
     from configparser import SafeConfigParser
 
 from gevent import spawn, joinall
-import modelSupervisor
+from polyvisor.finder import MultiOrderedDict, get_pid, runShell
+from polyvisor.models.modelSupervisor import Supervisor
+import os
+import re
+import configparser
+
+def load_config(config_file):
+    parser = configparser.RawConfigParser(
+        dict_type=MultiOrderedDict, strict=False)
+    parser.read(config_file)
+    dft_global = dict(name="polyvisor")
+
+    supervisors = {}
+    config = dict(dft_global, supervisors=supervisors)
+    config.update(parser.items("global"))
+    tasks = []
+    for section in parser.sections():
+        if not section.startswith("supervisor:"):
+            continue
+        name = section[len("supervisor:") :]
+        print('test: ',name)
+        section_items = dict(parser.items(section))
+        url = section_items.get("url", "")
+        supervisors[name] = Supervisor(name, url)
+        
+    return config
+
 
 class PolyVisor(object):
     def __init__(self, options):
         self.options = options
         self.reload()
 
-    # @property
-    # def config(self):
-    #     if self._config is None:
-    #         self._config = load_config(self.options.config_file)
-    #     return self._config
+    @property
+    def config(self):
+        if self._config is None:
+            self._config = load_config(self.options.get('config_file', ''))
+        return self._config
 
     # @property
     # def safe_config(self):
@@ -85,17 +111,38 @@ class PolyVisor(object):
         tasks = [spawn(operation, procs[puid]) for puid in puids]
         joinall(tasks)
 
+
+    
+    def configPolyvisorPath(self):
+        pid = get_pid()
+        result = runShell("ps -p " + pid + " -o args")
+        supervisord_conf_folder = ""
+        
+        # Find the folder containing supervisord.conf
+        s = re.findall(r'(\/.*?\/supervisord\.conf)', result)
+        if s:
+            supervisord_conf_folder = os.path.dirname(s[0])
+        
+        # Search for polyvisor.ini in the same folder
+        if supervisord_conf_folder:
+            for root, dirs, files in os.walk(supervisord_conf_folder):
+                for file in files:
+                    if file == "polyvisor.ini":
+                        return os.path.join(root, file)
+
+        return "Can't find polyvisor.ini in the folder of supervisord.conf"
+    
     def update_supervisors(self, *names):
-        self._do_supervisors(modelSupervisor.update_server, *names)
+        self._do_supervisors(Supervisor.update_server, *names)
 
     def restart_supervisors(self, *names):
-        self._do_supervisors(modelSupervisor.restart, *names)
+        self._do_supervisors(Supervisor.restart, *names)
 
     def reread_supervisors(self, *names):
-        self._do_supervisors(modelSupervisor.reread, *names)
+        self._do_supervisors(Supervisor.reread, *names)
 
     def shutdown_supervisors(self, *names):
-        self._do_supervisors(modelSupervisor.shutdown, *names)
+        self._do_supervisors(Supervisor.shutdown, *names)
 
     # def restart_processes(self, *patterns):
     #     self._do_processes(Process.restart, *patterns)
