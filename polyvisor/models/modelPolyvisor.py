@@ -20,16 +20,16 @@ def load_config(config_file):
 
     supervisors = {}
     config = dict(dft_global, supervisors=supervisors)
-    config.update(parser.items("global"))
+    # config.update(parser.items("global"))
     tasks = []
     for section in parser.sections():
         if not section.startswith("supervisor:"):
             continue
         name = section[len("supervisor:") :]
-        print('test: ',name)
         section_items = dict(parser.items(section))
         url = section_items.get("url", "")
         supervisors[name] = Supervisor(name, url)
+        
         
     return config
 
@@ -42,8 +42,15 @@ class PolyVisor(object):
     @property
     def config(self):
         if self._config is None:
-            self._config = load_config(self.options.get('config_file', ''))
+            try:
+                print("Loading configuration...")
+                self._config = load_config(self.options.get('config_file', ''))
+            except Exception as e:
+                print(f"Error loading configuration: {str(e)}")
+                return None
+          
         return self._config
+
 
     # @property
     # def safe_config(self):
@@ -113,24 +120,6 @@ class PolyVisor(object):
 
 
     
-    def configPolyvisorPath(self):
-        pid = get_pid()
-        result = runShell("ps -p " + pid + " -o args")
-        supervisord_conf_folder = ""
-        
-        # Find the folder containing supervisord.conf
-        s = re.findall(r'(\/.*?\/supervisord\.conf)', result)
-        if s:
-            supervisord_conf_folder = os.path.dirname(s[0])
-        
-        # Search for polyvisor.ini in the same folder
-        if supervisord_conf_folder:
-            for root, dirs, files in os.walk(supervisord_conf_folder):
-                for file in files:
-                    if file == "polyvisor.ini":
-                        return os.path.join(root, file)
-
-        return "Can't find polyvisor.ini in the folder of supervisord.conf"
     
     def update_supervisors(self, *names):
         self._do_supervisors(Supervisor.update_server, *names)

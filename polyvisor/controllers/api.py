@@ -88,9 +88,10 @@ except Exception as e:
 
 # get multiple supervisords
 try:
-    @app_api.route('/api/supervisors/<uid>', methods=['GET'])
-    def get_supervisors_api(uid):
-        polyvisor = getMultipleSupervisor(uid)
+    @app_api.route('/api/supervisors', methods=['GET'])
+    def get_supervisors_api():
+        polyvisor = getMultipleSupervisor()
+        
         return jsonify(polyvisor)
 except Exception as e:
     app_api.logger_api.debug(e)

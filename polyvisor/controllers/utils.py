@@ -173,3 +173,30 @@ def sanitize_url(url, protocol=None, host=None, port=None):
         host=host,
         port=port,
     )
+
+
+def parse_dict(obj):
+    """Returns a copy of `obj` where bytes from key/values was replaced by str"""
+    decoded = {}
+    for k, v in obj.items():
+        if isinstance(k, bytes):
+            k = k.decode("utf-8")
+        if isinstance(v, bytes):
+            v = v.decode("utf-8")
+        decoded[k] = v
+    return decoded
+
+
+def parse_obj(obj):
+    """Returns `obj` or a copy replacing recursively bytes by str
+
+    `obj` can be any objects, including list and dictionary"""
+    if isinstance(obj, bytes):
+        return obj.decode()
+    elif isinstance(obj, six.text_type):
+        return obj
+    elif isinstance(obj, abc.Mapping):
+        return {parse_obj(k): parse_obj(v) for k, v in obj.items()}
+    elif isinstance(obj, abc.Container):
+        return type(obj)(parse_obj(i) for i in obj)
+    return obj

@@ -193,13 +193,18 @@ def renderConfig(process_name):
     
 
 # get multiple supervisord instance 
-def getMultipleSupervisor(uid):
+def getMultipleSupervisor():
     options = {
         "config_file": configPolyvisorPath()  # Replace with the actual file path
     }
-    print(options)
-    polyvisor = PolyVisor(options)
-    return polyvisor.get_supervisor(uid)
+    multiple_supervisords = PolyVisor(options)
+    multiple_supervisords.refresh()
+    supervisors = multiple_supervisords.supervisors
+    
+
+
+    return supervisors
+    
 
 
 

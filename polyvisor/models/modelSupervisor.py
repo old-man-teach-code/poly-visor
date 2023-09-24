@@ -1,12 +1,21 @@
-from multiprocessing import reduction
 import time
 from xmlrpc.client import ServerProxy
 import sys
 import os
 from gevent import sleep, spawn
 import  zerorpc
+from polyvisor.controllers.utils import parse_dict, sanitize_url
+import logging
+import time
 
-from polyvisor.controllers.utils import sanitize_url
+from blinker import signal
+
+try:
+    from ConfigParser import SafeConfigParser
+except ImportError:
+    from configparser import SafeConfigParser
+
+
 # Get parent path of project to import modules
 current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
@@ -98,7 +107,8 @@ class Supervisor(dict):
     def read_info(self):
         info = self.create_base_info()
         server = self.server
-        info["pid"] = server.getPID()
+        # get PID
+        info["pid"] = self.server
         info["running"] = True
         info["identification"] = server.getIdentification()
         info["api_version"] = server.getAPIVersion()
@@ -221,7 +231,6 @@ class Supervisor(dict):
             info("Shut down {}".format(self.name))
         else:
             error("Error shutting down {}".format(self.name))
-
 
 
 def send(payload, event):

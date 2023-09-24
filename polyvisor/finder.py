@@ -55,8 +55,9 @@ def configPolyvisorPath():
         result = runShell("ps -p " + pid + " -o args")
         supervisord_conf_folder = ""
         
-        # Find the folder containing supervisord.conf
+        # Find the folder containing .conf extension
         s = re.findall(r'(\/.*?\/supervisord\.conf)', result)
+        
         if s:
             result = os.path.dirname(s[0])
             match = re.search(r'-c\s+([^\s]+)', result)
