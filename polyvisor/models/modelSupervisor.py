@@ -49,6 +49,7 @@ class Supervisor(dict):
         self.address = addr["url"]
         self.host = self["host"] = addr["host"]
         self.server = ServerProxy(self.address + "/RPC2")
+        print('Server, ', self.server)
         # fill supervisor info before events start coming in
         self.event_loop = spawn(self.run)
 
@@ -72,10 +73,6 @@ class Supervisor(dict):
                     # connection and avoid TimeoutExpired
                     if i != 0:
                         self.handle_event(event)
-            except zerorpc.LostRemote:
-                self.log.info("Lost remote")
-            except zerorpc.TimeoutExpired:
-                self.log.info("Timeout expired")
             except Exception as err:
                 self.log.warning("Unexpected error %r", err)
             finally:
@@ -105,20 +102,21 @@ class Supervisor(dict):
         return dict(self.Null, name=self.name, url=self.url, host=self.host)
 
     def read_info(self):
+        from polyvisor.models.modelProcess import Process
         info = self.create_base_info()
-        server = self.server
-        print('Server, ', self.server.supervisor)
+        server = self.server.supervisor
+        
         # get PID
-        # info["pid"] = self.server.supervisor.getPID()
+        info["pid"] = self.server.supervisor.getPID()
         info["running"] = True
-        info["identification"] = server.supervisor.getIdentification()
+        info["identification"] = server.getIdentification()
         info["api_version"] = server.getAPIVersion()
         info["supervisor_version"] = server.getSupervisorVersion()
-        info["processes"] = processes = {}
+        info["processes"] = processes = server.getAllProcessInfo()
         procInfo = server.getAllProcessInfo()
-        for proc in procInfo:
-            process = Process(self, parse_dict(proc))
-            processes[process["uid"]] = process
+        # for proc in procInfo:
+        #     process = Process(self, parse_dict(proc))
+        #     processes[process["uid"]] = process
         return info
 
     def update_info(self, info):
