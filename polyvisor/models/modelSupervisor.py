@@ -23,7 +23,7 @@ parent = os.path.dirname(current)
 sys.path.insert(1, parent)
 from finder import serverURL
 
-server = ServerProxy("http://localhost"+str(serverURL())+"/RPC2")
+server = 'ServerProxy("http://localhost"+str(serverURL())+"/RPC2")'
 import logging
 
 log = logging.getLogger("polyvisor")
@@ -45,10 +45,10 @@ class Supervisor(dict):
         self.name = self["name"] = name
         self.url = self["url"] = url
         self.log = log.getChild(name)
-        addr = sanitize_url(url, protocol="tcp", host=name, port=9002)
+        addr = sanitize_url(url, protocol="http", host=name, port=9002)
         self.address = addr["url"]
         self.host = self["host"] = addr["host"]
-        self.server = zerorpc.Client(self.address)
+        self.server = ServerProxy(self.address + "/RPC2")
         # fill supervisor info before events start coming in
         self.event_loop = spawn(self.run)
 
@@ -107,10 +107,11 @@ class Supervisor(dict):
     def read_info(self):
         info = self.create_base_info()
         server = self.server
+        print('Server, ', self.server.supervisor)
         # get PID
-        info["pid"] = self.server
+        # info["pid"] = self.server.supervisor.getPID()
         info["running"] = True
-        info["identification"] = server.getIdentification()
+        info["identification"] = server.supervisor.getIdentification()
         info["api_version"] = server.getAPIVersion()
         info["supervisor_version"] = server.getSupervisorVersion()
         info["processes"] = processes = {}
