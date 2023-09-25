@@ -97,10 +97,11 @@ class Process(dict):
         self["supervisor"] = supervisor_name
         self["host"] = supervisor["host"]
         self["uid"] = uid
+        self["core_index"] = get_process_affinity_CPU(self["pid"])
 
     @property
     def server(self):
-        return self.supervisor.server
+        return self.supervisor.server.supervisor
 
     @property
     def full_name(self):
