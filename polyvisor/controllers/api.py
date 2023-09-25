@@ -1,10 +1,10 @@
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required
 from polyvisor.controllers.processes import get_all_processes_model, process_Core_Index
-from polyvisor.controllers.supervisor import get_config_info, get_supervisor, renderConfig
+from polyvisor.controllers.supervisor import get_config_info, get_supervisor, getMultipleSupervisors, renderConfig
 from polyvisor.controllers.system import get_system
-from polyvisor.controllers.utils import get_date, login_required
-from flask import jsonify, Blueprint, session
+from polyvisor.controllers.utils import login_required
+from flask import jsonify, Blueprint
 import logging
 
 app_api = Blueprint('app_api', __name__)
@@ -83,3 +83,15 @@ try:
         return jsonify({'core_index': result})
 except Exception as e:
     app_api.logger_api.debug(e)
+
+
+# get multiple supervisords
+try:
+    @app_api.route('/api/supervisors', methods=['GET'])
+    def get_supervisors_api():
+        supervisor = getMultipleSupervisors()
+        return jsonify(supervisor)
+except Exception as e:
+    app_api.logger_api.debug(e)
+
+

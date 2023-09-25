@@ -1,79 +1,185 @@
 import subprocess
 import sys
 import os
+import weakref
+from polyvisor.controllers.utils import parse_dict
 # Get parent path of project to import modules
 current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 # insert into PYTHONPATH
 sys.path.insert(1, parent)
-from polyvisor.models.modelSupervisor import server
+from polyvisor.models.modelSupervisor import error, info, send, server, warning
 from polyvisor.finder import runShell
 
 
-class Process:
-    name = ""
-    group = ""
-    description = ""
-    start = ""
-    stop = ""
-    state = ""
-    statename = ""
-    spawnerr = ""
-    exitstatus = ""
-    logfile = ""
-    stdout_logfile = ""
-    stderr_logfile = ""
-    pid = 0
-    core_index = ""
+# class Process:
+#     name = ""
+#     group = ""
+#     description = ""
+#     start = ""
+#     stop = ""
+#     state = ""
+#     statename = ""
+#     spawnerr = ""
+#     exitstatus = ""
+#     logfile = ""
+#     stdout_logfile = ""
+#     stderr_logfile = ""
+#     pid = 0
+#     core_index = ""
 
-    def __init__(self, name, group,  start, stop, state, statename, spawnerr, exitstatus, logfile, stdout_logfile, stderr_logfile, pid, description):
-        self.name = name
-        self.group = group
-        self.start = start
-        self.stop = stop
-        self.state = state
-        self.statename = statename
-        self.spawnerr = spawnerr
-        self.exitstatus = exitstatus
-        self.logfile = logfile
-        self.stdout_logfile = stdout_logfile
-        self.stderr_logfile = stderr_logfile
-        self.pid = pid
-        self.description = description
-        if self.pid :
-            self.core_index = get_process_affinity_CPU(self.pid)
-        else:
-            self.core_index = None    
+#     def __init__(self, name, group,  start, stop, state, statename, spawnerr, exitstatus, logfile, stdout_logfile, stderr_logfile, pid, description):
+#         self.name = name
+#         self.group = group
+#         self.start = start
+#         self.stop = stop
+#         self.state = state
+#         self.statename = statename
+#         self.spawnerr = spawnerr
+#         self.exitstatus = exitstatus
+#         self.logfile = logfile
+#         self.stdout_logfile = stdout_logfile
+#         self.stderr_logfile = stderr_logfile
+#         self.pid = pid
+#         self.description = description
+#         if self.pid :
+#             self.core_index = get_process_affinity_CPU(self.pid)
+#         else:
+#             self.core_index = None    
         
 
-    @classmethod
-    def getAllProcessInfo(self):
+#     @classmethod
+#     def getAllProcessInfo(self):
         
 
-        # get all process info from supervisor and return a list of Process objects
-        processInfo = server.supervisor.getAllProcessInfo()
-        # append get process afinity CPU to processInfo
+#         # get all process info from supervisor and return a list of Process objects
+#         processInfo = server.supervisor.getAllProcessInfo()
+#         # append get process afinity CPU to processInfo
         
-        processList = []
-        for process in processInfo:
-            processList.append(Process(
-                process['name'],
-                process['group'],
-                process['start'],
-                process['stop'],
-                process['state'],
-                process['statename'],
-                process['spawnerr'],
-                process['exitstatus'],
-                process['logfile'],
-                process['stdout_logfile'],
-                process['stderr_logfile'],
-                process['pid'],
-                process['description'],
-                ))
+#         processList = []
+#         for process in processInfo:
+#             processList.append(Process(
+#                 process['name'],
+#                 process['group'],
+#                 process['start'],
+#                 process['stop'],
+#                 process['state'],
+#                 process['statename'],
+#                 process['spawnerr'],
+#                 process['exitstatus'],
+#                 process['logfile'],
+#                 process['stdout_logfile'],
+#                 process['stderr_logfile'],
+#                 process['pid'],
+#                 process['description'],
+#                 ))
             
                 
-        return processList
+#         return processList
+
+
+class Process(dict):
+
+    Null = {"running": False, "pid": None, "state": None, "statename": "UNKNOWN"}
+
+    def __init__(self, supervisor, *args, **kwargs):
+        super(Process, self).__init__(self.Null)
+        if args:
+            self.update(args[0])
+        self.update(kwargs)
+        supervisor_name = supervisor["name"]
+        full_name = self.get("group", "") + ":" + self.get("name", "")
+        uid = "{}:{}".format(supervisor_name, full_name)
+        self.log = log.getChild(uid)
+        self.supervisor = weakref.proxy(supervisor)
+        self["full_name"] = full_name
+        self["running"] = self["state"] in RUNNING_STATES
+        self["supervisor"] = supervisor_name
+        self["host"] = supervisor["host"]
+        self["uid"] = uid
+        self["core_index"] = get_process_affinity_CPU(self["pid"])
+
+    @property
+    def server(self):
+        return self.supervisor.server.supervisor
+
+    @property
+    def full_name(self):
+        return self["full_name"]
+
+    def handle_event(self, event):
+        event_name = event["eventname"]
+        if event_name.startswith("PROCESS_STATE"):
+            payload = event["payload"]
+            proc_info = payload.get("process")
+            if proc_info is not None:
+                proc_info = parse_dict(proc_info)
+                old = self.update_info(proc_info)
+                if old != self:
+                    old_state, new_state = old["statename"], self["statename"]
+                    send(self, event="process_changed")
+                    if old_state != new_state:
+                        info(
+                            "{} changed from {} to {}".format(
+                                self, old_state, new_state
+                            )
+                        )
+
+    def read_info(self):
+        proc_info = dict(self.Null)
+        try:
+            from_serv = parse_dict(self.server.getProcessInfo(self.full_name))
+            proc_info.update(from_serv)
+        except Exception as err:
+            self.log.warn("Failed to read info from %s: %s", self["uid"], err)
+        return proc_info
+
+    def update_info(self, proc_info):
+        old = dict(self)
+        proc_info["running"] = proc_info["state"] in RUNNING_STATES
+        self.update(proc_info)
+        return old
+
+    def refresh(self):
+        proc_info = self.read_info()
+        proc_info = parse_dict(proc_info)
+        self.update_info(proc_info)
+
+    def start(self):
+        try:
+            self.server.startProcess(self.full_name, False, timeout=30)
+        except:
+            message = "Error trying to start {}!".format(self)
+            error(message)
+            self.log.exception(message)
+
+    def stop(self):
+        try:
+            self.server.stopProcess(self.full_name)
+        except:
+            message = "Failed to stop {}".format(self["uid"])
+            warning(message)
+            self.log.exception(message)
+
+    def restart(self):
+        if self["running"]:
+            self.stop()
+        self.start()
+
+    def __str__(self):
+        return "{0} on {1}".format(self["name"], self["supervisor"])
+
+    def __eq__(self, proc):
+        p1, p2 = dict(self), dict(proc)
+        p1.pop("description")
+        p1.pop("now")
+        p2.pop("description")
+        p2.pop("now")
+        return p1 == p2
+
+    def __ne__(self, proc):
+        return not self == proc
+
 
 # start all processes, return array result
 def startAllProcesses():
