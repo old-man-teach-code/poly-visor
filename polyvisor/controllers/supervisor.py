@@ -80,26 +80,7 @@ def reread_and_update():
     os.system(commandReread)
     os.system(commandUpdate)
 
-
-
-    purpose = {
-        'command': 'The command that will be run when this program is started',
-        'numprocs': 'Supervisor will start as many instances of this program as named by numprocs',
-        'umask': 'The umask value that will be used when this program is started',
-        'numprocs_start': 'An integer offset that is used to compute the number at which process_num starts',
-        'priority': 'The relative priority of the program in the start and shutdown ordering',
-        'autostart': 'If true, the program will be automatically started when Supervisor starts',
-        'autorestart': 'Specifies if supervisord should automatically restart a process if it exits when it is in the RUNNING state',
-        'startsecs': 'The total number of seconds which the program needs to stay running after a startup to consider the start successful',
-        'startretries': 'The number of serial failure attempts that supervisord will allow when attempting to start the program before giving up and putting the process into an FATAL state',
-        'exitcodes': 'The list of “expected” exit codes for this program used with autorestart',
-        'stopsignal': 'The signal used to kill the program when a stop is requested',
-        'stopwaitsecs': 'The number of seconds to wait for the OS to return a SIGCHLD to supervisord after the program has been sent a stopsignal',
-        'stopasgroup': 'If true, the flag causes supervisor to send the stop signal to the whole process group and implies killasgroup is true',
-        'killasgroup': 'If true, the flag causes supervisor to send the kill signal to the whole process group',
-        'redirect_stderr': 'If true, cause the process’ stderr output to be sent back to supervisord on its stdout file descriptor',
-
-    }
+    
 # Create config file for supervisor and check if file exist
 def createConfig(
         process_full_name, 
@@ -193,17 +174,38 @@ def renderConfig(process_name):
     
 
 # get multiple supervisord instance 
-def getMultipleSupervisor():
+def getMultipleSupervisors():
     options = {
         "config_file": configPolyvisorPath()  # Replace with the actual file path
     }
     multiple_supervisords = PolyVisor(options)
     multiple_supervisords.refresh()
     supervisors = multiple_supervisords.supervisors
-    
-
 
     return supervisors
+
+# shutdown supervisord instance by uid
+
+def shutdownSupervisors(*names):
+    options = {
+        "config_file": configPolyvisorPath()  # Replace with the actual file path
+    }
+    poly_visor = PolyVisor(options)
+    poly_visor.shutdown_supervisors(*names)
+
+    return True
+
+# restart supervisord instance by names
+def restartSupervisors(*names):
+    options = {
+        "config_file": configPolyvisorPath()  # Replace with the actual file path
+    }
+    poly_visor = PolyVisor(options)
+    poly_visor.restart_supervisors(*names)
+
+    return True
+
+# 
     
 
 
