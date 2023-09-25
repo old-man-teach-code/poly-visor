@@ -365,10 +365,7 @@ try:
             str.strip(supervisor) for supervisor in request.form["supervisor"].split(",")
         )
         result = restartSupervisors(*names)
-        if(result):
-            return jsonify({'message': 'Supervisor restarted successfully'})
-        else:
-            return jsonify({'message': 'Supervisor not restarted'})
+        return jsonify(result)
     
 except Exception as e:
     app_routes.logger_api.debug(e)    

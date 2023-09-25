@@ -1,12 +1,14 @@
 import subprocess
 import sys
 import os
+import weakref
+from polyvisor.controllers.utils import parse_dict
 # Get parent path of project to import modules
 current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 # insert into PYTHONPATH
 sys.path.insert(1, parent)
-from polyvisor.models.modelSupervisor import server
+from polyvisor.models.modelSupervisor import error, info, send, server, warning
 from polyvisor.finder import runShell
 
 
@@ -89,7 +91,7 @@ class Process(dict):
         full_name = self.get("group", "") + ":" + self.get("name", "")
         uid = "{}:{}".format(supervisor_name, full_name)
         self.log = log.getChild(uid)
-        self.supervisor = supervisor.server
+        self.supervisor = weakref.proxy(supervisor)
         self["full_name"] = full_name
         self["running"] = self["state"] in RUNNING_STATES
         self["supervisor"] = supervisor_name

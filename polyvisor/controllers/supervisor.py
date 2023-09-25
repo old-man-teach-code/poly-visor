@@ -201,9 +201,9 @@ def restartSupervisors(*names):
         "config_file": configPolyvisorPath()  # Replace with the actual file path
     }
     poly_visor = PolyVisor(options)
-    poly_visor.restart_supervisors(*names)
+    result = poly_visor.restart_supervisors(*names)
 
-    return True
+    return result
 
 # 
     

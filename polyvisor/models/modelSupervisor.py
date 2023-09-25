@@ -49,7 +49,6 @@ class Supervisor(dict):
         self.address = addr["url"]
         self.host = self["host"] = addr["host"]
         self.server = ServerProxy(self.address + "/RPC2")
-        print('Server, ', self.server)
         # fill supervisor info before events start coming in
         self.event_loop = spawn(self.run)
 
@@ -142,7 +141,7 @@ class Supervisor(dict):
             self.update_info(info)
 
     def update_server(self, group_names=()):
-        server = self.server
+        server = self.server.supervisor
         try:
             added, changed, removed = server.reloadConfig()[0]
         except zerorpc.RemoteError as rerr:
@@ -195,17 +194,15 @@ class Supervisor(dict):
         self.log.info("Updated %s", self.name)
 
     def _reread(self):
-        return self.server.reloadConfig()
+        return self.server.supervisor.reloadConfig()
 
     def restart(self):
         # do a reread. If there is an error (bad config) inform the user and
         # and refuse to restart
-        try:
-            self._reread()
-        except zerorpc.RemoteError as rerr:
-            error("Cannot restart: {}".format(rerr.msg))
-            return
-        result = self.server.restart(timeout=30)
+        
+        self._reread()
+        
+        result = self.server.supervisor.restart()
         if result:
             info("Restarted {}".format(self.name))
         else:
