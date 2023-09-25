@@ -56,7 +56,7 @@ def configPolyvisorPath():
         supervisord_conf_folder = ""
         
         # Find the folder containing .conf extension
-        s = re.findall(r'(\/.*?\/supervisord\.conf)', result)
+        s = re.findall(r'\/[^\/]*\.conf', result)
         
         if s:
             result = os.path.dirname(s[0])

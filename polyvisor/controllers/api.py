@@ -1,11 +1,10 @@
-import json
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required
 from polyvisor.controllers.processes import get_all_processes_model, process_Core_Index
-from polyvisor.controllers.supervisor import get_config_info, get_supervisor, getMultipleSupervisors, renderConfig, getMultipleSupervisor
+from polyvisor.controllers.supervisor import get_config_info, get_supervisor, getMultipleSupervisors, renderConfig
 from polyvisor.controllers.system import get_system
-from polyvisor.controllers.utils import get_date, login_required
-from flask import jsonify, Blueprint, session
+from polyvisor.controllers.utils import login_required
+from flask import jsonify, Blueprint
 import logging
 
 app_api = Blueprint('app_api', __name__)

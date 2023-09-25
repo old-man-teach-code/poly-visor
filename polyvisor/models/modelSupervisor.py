@@ -107,7 +107,7 @@ class Supervisor(dict):
         server = self.server.supervisor
         
         # get PID
-        info["pid"] = self.server.supervisor.getPID()
+        info["pid"] = server.getPID()
         info["running"] = True
         info["identification"] = server.getIdentification()
         info["api_version"] = server.getAPIVersion()
@@ -225,7 +225,7 @@ class Supervisor(dict):
             )
 
     def shutdown(self):
-        result = self.server.shutdown()
+        result = self.server.supervisor.shutdown()
         if result:
             info("Shut down {}".format(self.name))
         else:
