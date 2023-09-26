@@ -5,7 +5,7 @@ from time import sleep
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token
 from polyvisor.controllers.utils import is_login_valid, login_required
-from polyvisor.controllers.processes import tail_stdErr_logFile_model, tail_stdOut_logFile_model, set_Process_Core_Index, start_all_processes_model, start_process_by_name_model, start_process_group_model, stop_all_processes_model, stop_process_group_model, stop_processes_by_name_model
+from polyvisor.controllers.processes import restart_processes_by_name_model, start_processes_by_name_model, tail_stdErr_logFile_model, tail_stdOut_logFile_model, set_Process_Core_Index, start_all_processes_model, start_process_group_model, stop_process_group_model, stop_processes_by_name_model
 from polyvisor.controllers.supervisor import createConfig, restart_supervisor_model, restartSupervisors, shutdown_supervisor_model, shutdownSupervisors
 from flask import jsonify, Blueprint, Response, request, send_from_directory, session
 import base64
@@ -78,16 +78,16 @@ except Exception as e:
     app_routes.logger_routes.debug(e)
 
 #  start process by name
-try:
-    @app_routes.route('/api/process/start/<name>', methods=['GET'])
-    def start_process_by_name(name):
-        flag = start_process_by_name_model(name)
-        if flag:
-            return jsonify({'message': 'Process started successfully'})
-        else:
-            return jsonify({'message': 'Process not started'})
-except Exception as e:
-    app_routes.logger_routes.debug(e)
+# try:
+#     @app_routes.route('/api/process/start/<name>', methods=['GET'])
+#     def start_process_by_name(name):
+#         flag = start_process_by_name_model(name)
+#         if flag:
+#             return jsonify({'message': 'Process started successfully'})
+#         else:
+#             return jsonify({'message': 'Process not started'})
+# except Exception as e:
+#     app_routes.logger_routes.debug(e)
 
 
 # # stop all processes
@@ -378,5 +378,27 @@ try:
         result = stop_processes_by_name_model(*names)
         return jsonify(result)
 
+except Exception as e:
+    app_routes.logger_api.debug(e)
+
+
+# restart process by names
+try:
+    @app_routes.route('/api/processes/restart', methods=['POST'])
+    def restart_process_by_name_api():
+        names = request.form["uid"].split(",")
+        result = restart_processes_by_name_model(*names)
+        return jsonify(result)
+    
+except Exception as e:
+    app_routes.logger_api.debug(e)
+
+# start process by names
+try:
+    @app_routes.route('/api/processes/start', methods=['POST'])
+    def start_process_by_name_api():
+        names = request.form["uid"].split(",")
+        result =start_processes_by_name_model(*names)
+        return jsonify(result)
 except Exception as e:
     app_routes.logger_api.debug(e)

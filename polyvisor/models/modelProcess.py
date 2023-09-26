@@ -116,12 +116,12 @@ class Process(dict):
         full_name = self.get("group", "") + ":" + self.get("name", "")
         uid = "{}:{}".format(supervisor_name, full_name)
         self.log = log.getChild(uid)
-        self.supervisor = weakref.proxy(supervisor)
+        self.supervisor = supervisor
         self["full_name"] = full_name
         self["running"] = self["state"] in RUNNING_STATES
         self["supervisor"] = supervisor_name
         self["host"] = supervisor["host"]
-        print(self.supervisor.url + "/RPC2")
+        
         self["uid"] = uid
         if self["pid"] :
             self["core_index"] = get_process_affinity_CPU(self["pid"])
@@ -130,9 +130,7 @@ class Process(dict):
 
     @property
     def server(self):
-        
-        server = ServerProxy(self.supervisor.url + "/RPC2")
-        return server
+        return self.supervisor.server.supervisor
 
     @property
     def full_name(self):
@@ -178,7 +176,7 @@ class Process(dict):
 
     def start(self):
         try:
-            self.server.startProcess(self.full_name, False, timeout=30)
+            self.server.startProcess(self.full_name)
         except:
             message = "Error trying to start {}!".format(self)
             error(message)
@@ -186,7 +184,8 @@ class Process(dict):
 
     def stop(self):
         try:
-            result = self.server.supervisor.stopProcess(self.full_name)
+            print("THe process is stop now")
+            result = self.server.stopProcess(self.full_name)
             if(result):
                 return "The process {} has been stopped".format(self["uid"])
             else:

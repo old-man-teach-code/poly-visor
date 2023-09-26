@@ -78,6 +78,7 @@ class PolyVisor(object):
 
     @property
     def supervisors(self):
+        
         return self.config["supervisors"]
 
     @property
@@ -114,7 +115,7 @@ class PolyVisor(object):
         tasks = [spawn(operation, supervisor) for supervisor in supervisors]
         joinall(tasks)
 
-    def _do_processes(self, operation, *patterns):
+    def _do_processes(self, operation, *patterns): 
         procs = self.processes
         puids = filter_patterns(procs, patterns)
         tasks = [spawn(operation, procs[puid]) for puid in puids]
@@ -138,9 +139,20 @@ class PolyVisor(object):
     def restart_processes(self, *patterns):
         self._do_processes(Process.restart, *patterns)
 
+    def restart_all_processes(self):
+        self.restart_processes("*")    
+
+    def start_all_processes(self):
+        self.start_processes("*")
+
+    def stop_all_processes(self):
+        self.stop_processes("*")
+
     def stop_processes(self, *patterns):
         self._do_processes(Process.stop, *patterns)
         
+    def start_processes(self, *patterns):
+        self._do_processes(Process.start, *patterns)    
 
 
 def filter_patterns(names, patterns):

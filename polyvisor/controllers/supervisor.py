@@ -205,7 +205,15 @@ def restartSupervisors(*names):
 
     return result
 
-# 
+# start process by name
+def startProcesses(*names):
+    options = {
+        "config_file": configPolyvisorPath()  # Replace with the actual file path
+    }
+    poly_visor = PolyVisor(options)
+    result = poly_visor.start_processes(*names)
+
+    return result
     
 
 

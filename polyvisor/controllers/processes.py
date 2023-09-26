@@ -18,8 +18,8 @@ def start_all_processes_model():
     return startAllProcesses()    
 
 #start process by name, always return True unless error
-def start_process_by_name_model(name):
-    return startProcessByName(name)
+# def start_process_by_name_model(name):
+#     return startProcessByName(name)
 
 #stop process by name, always return True unless error
 # def stop_process_by_name_model(name):
@@ -86,6 +86,27 @@ def stop_processes_by_name_model(*name):
         "config_file": configPolyvisorPath()  # Replace with the actual file path
     }
     poly_visor = PolyVisor(options)
+    poly_visor.refresh()
     result = poly_visor.stop_processes(*name)
     return result
     
+
+def restart_processes_by_name_model(*name):
+
+    options = {
+        "config_file": configPolyvisorPath()  # Replace with the actual file path
+    }
+    poly_visor = PolyVisor(options)
+    poly_visor.refresh()
+    result = poly_visor.restart_processes(*name)
+    return result    
+
+def start_processes_by_name_model(*name):
+
+    options = {
+        "config_file": configPolyvisorPath()  # Replace with the actual file path
+    }
+    poly_visor = PolyVisor(options)
+    poly_visor.refresh()
+    result = poly_visor.start_processes(*name)
+    return result
