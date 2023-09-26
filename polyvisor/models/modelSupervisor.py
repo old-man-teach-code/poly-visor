@@ -103,6 +103,7 @@ class Supervisor(dict):
     def read_info(self):
         from polyvisor.models.modelProcess import Process
         info = self.create_base_info()
+        
         server = self.server.supervisor
         
         # get PID
@@ -111,11 +112,11 @@ class Supervisor(dict):
         info["identification"] = server.getIdentification()
         info["api_version"] = server.getAPIVersion()
         info["supervisor_version"] = server.getSupervisorVersion()
-        info["processes"] = processes = server.getAllProcessInfo()
+        info["processes"] = processes = {}
         procInfo = server.getAllProcessInfo()
-        # for proc in procInfo:
-        #     process = Process(self, parse_dict(proc))
-        #     processes[process["uid"]] = process
+        for proc in procInfo:
+            process = Process(self, parse_dict(proc))
+            processes[process["uid"]] = process
         return info
 
     def update_info(self, info):
@@ -205,8 +206,10 @@ class Supervisor(dict):
         result = self.server.supervisor.restart()
         if result:
             info("Restarted {}".format(self.name))
+            return "Restarted {}".format(self.name)
         else:
             error("Error restarting {}".format(self.name))
+            return "Error restarting {}".format(self.name)
 
     def reread(self):
         try:
@@ -225,8 +228,10 @@ class Supervisor(dict):
         result = self.server.supervisor.shutdown()
         if result:
             info("Shut down {}".format(self.name))
+            return "Shut down {}".format(self.name)
         else:
             error("Error shutting down {}".format(self.name))
+            return "Error shutting down {}".format(self.name)
 
 
 def send(payload, event):

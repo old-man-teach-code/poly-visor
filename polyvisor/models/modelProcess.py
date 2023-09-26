@@ -2,6 +2,8 @@ import subprocess
 import sys
 import os
 import weakref
+import logging
+from xmlrpc.client import ServerProxy
 from polyvisor.controllers.utils import parse_dict
 # Get parent path of project to import modules
 current = os.path.dirname(os.path.realpath(__file__))
@@ -11,6 +13,7 @@ sys.path.insert(1, parent)
 from polyvisor.models.modelSupervisor import error, info, send, server, warning
 from polyvisor.finder import runShell
 
+log = logging.getLogger("polyvisor")
 
 # class Process:
 #     name = ""
@@ -76,6 +79,28 @@ from polyvisor.finder import runShell
             
                 
 #         return processList
+class ProcessStates:
+    STOPPED = 0
+    STARTING = 10
+    RUNNING = 20
+    BACKOFF = 30
+    STOPPING = 40
+    EXITED = 100
+    FATAL = 200
+    UNKNOWN = 1000
+
+STOPPED_STATES = (ProcessStates.STOPPED,
+                  ProcessStates.EXITED,
+                  ProcessStates.FATAL,
+                  ProcessStates.UNKNOWN)
+
+RUNNING_STATES = (ProcessStates.RUNNING,
+                  ProcessStates.BACKOFF,
+                  ProcessStates.STARTING)
+
+SIGNALLABLE_STATES = (ProcessStates.RUNNING,
+                     ProcessStates.STARTING,
+                     ProcessStates.STOPPING)
 
 
 class Process(dict):
@@ -96,12 +121,18 @@ class Process(dict):
         self["running"] = self["state"] in RUNNING_STATES
         self["supervisor"] = supervisor_name
         self["host"] = supervisor["host"]
+        print(self.supervisor.url + "/RPC2")
         self["uid"] = uid
-        self["core_index"] = get_process_affinity_CPU(self["pid"])
+        if self["pid"] :
+            self["core_index"] = get_process_affinity_CPU(self["pid"])
+        else:
+            self["core_index"] = None    
 
     @property
     def server(self):
-        return self.supervisor.server.supervisor
+        
+        server = ServerProxy(self.supervisor.url + "/RPC2")
+        return server
 
     @property
     def full_name(self):
@@ -155,7 +186,12 @@ class Process(dict):
 
     def stop(self):
         try:
-            self.server.stopProcess(self.full_name)
+            result = self.server.supervisor.stopProcess(self.full_name)
+            if(result):
+                return "The process {} has been stopped".format(self["uid"])
+            else:
+                return "Failed to stop {}".format(self["uid"])
+
         except:
             message = "Failed to stop {}".format(self["uid"])
             warning(message)

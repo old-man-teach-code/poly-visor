@@ -5,8 +5,10 @@ try:
 except ImportError:
     from configparser import SafeConfigParser
 
+import fnmatch
 from gevent import spawn, joinall
 from polyvisor.finder import MultiOrderedDict, get_pid, runShell
+from polyvisor.models.modelProcess import Process
 from polyvisor.models.modelSupervisor import Supervisor
 import os
 import re
@@ -43,7 +45,7 @@ class PolyVisor(object):
     def config(self):
         if self._config is None:
             try:
-                print("Loading configuration...")
+                
                 self._config = load_config(self.options.get('config_file', ''))
             except Exception as e:
                 print(f"Error loading configuration: {str(e)}")
@@ -133,11 +135,12 @@ class PolyVisor(object):
     def shutdown_supervisors(self, *names):
         self._do_supervisors(Supervisor.shutdown, *names)
 
-    # def restart_processes(self, *patterns):
-    #     self._do_processes(Process.restart, *patterns)
+    def restart_processes(self, *patterns):
+        self._do_processes(Process.restart, *patterns)
 
-    # def stop_processes(self, *patterns):
-    #     self._do_processes(Process.stop, *patterns)
+    def stop_processes(self, *patterns):
+        self._do_processes(Process.stop, *patterns)
+        
 
 
 def filter_patterns(names, patterns):
