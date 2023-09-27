@@ -184,6 +184,17 @@ def getMultipleSupervisors():
 
     return supervisors
 
+
+# get supervisord instance by uid
+def getSupervisor(uid):
+    options = {
+        "config_file": configPolyvisorPath()  # Replace with the actual file path
+    }
+    poly_visor = PolyVisor(options)
+    poly_visor.refresh()
+    supervisor = poly_visor.get_supervisor(uid)
+
+    return supervisor
 # shutdown supervisord instance by uid
 
 def shutdownSupervisors(*names):
@@ -205,7 +216,15 @@ def restartSupervisors(*names):
 
     return result
 
-# 
+# start process by name
+def startProcesses(*names):
+    options = {
+        "config_file": configPolyvisorPath()  # Replace with the actual file path
+    }
+    poly_visor = PolyVisor(options)
+    result = poly_visor.start_processes(*names)
+
+    return result
     
 
 
