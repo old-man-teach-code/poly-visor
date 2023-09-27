@@ -201,6 +201,22 @@ class Process(dict):
             self.stop()
         self.start()
 
+    def stopAll(self):
+        try:
+            self.server.stopAllProcesses()
+        except:
+            message = "Failed to stop all processes!"
+            warning(message)
+            self.log.exception(message)
+
+    def startAll(self):
+        try:
+            self.server.startAllProcesses()
+        except:
+            message = "Failed to start all processes!"
+            warning(message)
+            self.log.exception(message)
+
     def __str__(self):
         return "{0} on {1}".format(self["name"], self["supervisor"])
 

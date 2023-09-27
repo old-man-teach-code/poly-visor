@@ -122,7 +122,7 @@ class PolyVisor(object):
         joinall(tasks)
 
 
-    
+    # 
     
     def update_supervisors(self, *names):
         self._do_supervisors(Supervisor.update_server, *names)
@@ -139,15 +139,11 @@ class PolyVisor(object):
     def restart_processes(self, *patterns):
         self._do_processes(Process.restart, *patterns)
 
-    def restart_all_processes(self):
-        self.restart_processes("*")    
+    def stop_all_processes(self):
+        self._do_processes(Process.stopAll, "*")
 
     def start_all_processes(self):
-        self.start_processes("*")
-
-    def stop_all_processes(self):
-        self.stop_processes("*")
-
+        self._do_processes(Process.startAll, "*")
     def stop_processes(self, *patterns):
         self._do_processes(Process.stop, *patterns)
         

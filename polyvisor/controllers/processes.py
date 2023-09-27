@@ -13,9 +13,9 @@ from polyvisor.models.modelProcess import Process, clear_all_process_log, read_s
 def get_all_processes_model():
     return Process.getAllProcessInfo()
 
-#start all processes, return array result
-def start_all_processes_model():
-    return startAllProcesses()    
+# #start all processes, return array result
+# def start_all_processes_model():
+#     return startAllProcesses()    
 
 #start process by name, always return True unless error
 # def start_process_by_name_model(name):
@@ -109,4 +109,26 @@ def start_processes_by_name_model(*name):
     poly_visor = PolyVisor(options)
     poly_visor.refresh()
     result = poly_visor.start_processes(*name)
+    return result
+
+
+def stop_all_processes_model():
+
+    options = {
+        "config_file": configPolyvisorPath()  # Replace with the actual file path
+    }
+    poly_visor = PolyVisor(options)
+    poly_visor.refresh()
+    result = poly_visor.stop_all_processes()
+    return result
+
+
+def start_all_processes_model():
+
+    options = {
+        "config_file": configPolyvisorPath()  # Replace with the actual file path
+    }
+    poly_visor = PolyVisor(options)
+    poly_visor.refresh()
+    result = poly_visor.start_all_processes()
     return result

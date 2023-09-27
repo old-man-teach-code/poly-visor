@@ -5,7 +5,7 @@ from time import sleep
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token
 from polyvisor.controllers.utils import is_login_valid, login_required
-from polyvisor.controllers.processes import restart_processes_by_name_model, start_processes_by_name_model, tail_stdErr_logFile_model, tail_stdOut_logFile_model, set_Process_Core_Index, start_all_processes_model, start_process_group_model, stop_process_group_model, stop_processes_by_name_model
+from polyvisor.controllers.processes import restart_processes_by_name_model, start_processes_by_name_model, stop_all_processes_model, tail_stdErr_logFile_model, tail_stdOut_logFile_model, set_Process_Core_Index, start_all_processes_model, start_process_group_model, stop_process_group_model, stop_processes_by_name_model
 from polyvisor.controllers.supervisor import createConfig, restart_supervisor_model, restartSupervisors, shutdown_supervisor_model, shutdownSupervisors
 from flask import jsonify, Blueprint, Response, request, send_from_directory, session
 import base64
@@ -37,45 +37,45 @@ def base(path):
     return send_from_directory('./build', path)
 
 
-# restart supervisor
-try:
-    @app_routes.route('/api/supervisor/restart', methods=['GET'])
-    def restart_supervisor():
-        flag = restart_supervisor_model()
-        if flag:
-            return jsonify({'message': 'Supervisor restarted'})
-        else:
-            return jsonify({'message': 'Supervisor not restarted'})
+# # restart supervisor
+# try:
+#     @app_routes.route('/api/supervisor/restart', methods=['GET'])
+#     def restart_supervisor():
+#         flag = restart_supervisor_model()
+#         if flag:
+#             return jsonify({'message': 'Supervisor restarted'})
+#         else:
+#             return jsonify({'message': 'Supervisor not restarted'})
 
-except Exception as e:
-    app_routes.logger_routes.debug(e)
+# except Exception as e:
+#     app_routes.logger_routes.debug(e)
 
-# shutdown supervisor
-try:
-    @app_routes.route('/api/supervisor/shutdown', methods=['GET'])
-    def shutdown_supervisor():
-        flag = shutdown_supervisor_model()
-        if flag:
-            return jsonify({'message': 'Supervisor shutdown successfully'})
-        else:
-            return jsonify({'message': 'Supervisor not shutdown'})
+# # shutdown supervisor
+# try:
+#     @app_routes.route('/api/supervisor/shutdown', methods=['GET'])
+#     def shutdown_supervisor():
+#         flag = shutdown_supervisor_model()
+#         if flag:
+#             return jsonify({'message': 'Supervisor shutdown successfully'})
+#         else:
+#             return jsonify({'message': 'Supervisor not shutdown'})
 
-except Exception as e:
-    app_routes.logger_routes.debug(e)
+# except Exception as e:
+#     app_routes.logger_routes.debug(e)
 
 
-# start all processes
-try:
-    @app_routes.route('/api/processes/start', methods=['GET'])
-    def start_processes():
-        flag = start_all_processes_model()
-        if flag:
-            return jsonify({'message': 'All processes started successfully'})
-        else:
-            return jsonify({'message': 'All processes not started'})
+# # start all processes
+# try:
+#     @app_routes.route('/api/processes/start', methods=['GET'])
+#     def start_processes():
+#         flag = start_all_processes_model()
+#         if flag:
+#             return jsonify({'message': 'All processes started successfully'})
+#         else:
+#             return jsonify({'message': 'All processes not started'})
 
-except Exception as e:
-    app_routes.logger_routes.debug(e)
+# except Exception as e:
+#     app_routes.logger_routes.debug(e)
 
 #  start process by name
 # try:
@@ -399,6 +399,24 @@ try:
     def start_process_by_name_api():
         names = request.form["uid"].split(",")
         result =start_processes_by_name_model(*names)
+        return jsonify(result)
+except Exception as e:
+    app_routes.logger_api.debug(e)
+
+# stop all processes
+try:
+    @app_routes.route('/api/processes/stop', methods=['GET'])
+    def stop_all_processes_api():
+        result = stop_all_processes_model()
+        return jsonify(result)
+except Exception as e:
+    app_routes.logger_api.debug(e)
+
+# start all processes
+try:
+    @app_routes.route('/api/processes/start', methods=['GET'])
+    def start_all_processes_api():
+        result = start_all_processes_model()
         return jsonify(result)
 except Exception as e:
     app_routes.logger_api.debug(e)
