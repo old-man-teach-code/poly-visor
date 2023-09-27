@@ -12,6 +12,9 @@ import base64
 
 
 import logging
+from polyvisor.finder import configPolyvisorPath
+
+from polyvisor.models.modelPolyvisor import PolyVisor
 
 app_routes = Blueprint('app_routes', __name__)
 
@@ -193,17 +196,22 @@ except Exception as e:
 #     app_routes.logger_routes.debug(e)
 
 try:
-    @app_routes.route('/api/process/<stream>/<name>', methods=['GET'])
-    def process_log_tail(stream, name):
+    @app_routes.route('/api/process/<stream>/<uid>', methods=['GET'])
+    def process_log_tail(stream, uid):
+        sname, pname = uid.split(":", 1)
+        polyvisor = PolyVisor({"config_file": configPolyvisorPath()})
+        supervisor = polyvisor.get_supervisor(sname)
+        server = supervisor.server.supervisor
+
         if stream == "out":
-            tail = tail_stdOut_logFile_model
+            tail = server.tailProcessStdoutLog
         else:
-            tail = tail_stdErr_logFile_model
+            tail = server.tailProcessStderrLog
 
         def event_stream():
             i, offset, length = 0, 0, 2 ** 12
             while True:
-                data = tail(name, offset, length)
+                data = tail(pname, offset, length)
                 log, offset, overflow = data
                 # don't care about overflow in first log message
                 if overflow and i:
