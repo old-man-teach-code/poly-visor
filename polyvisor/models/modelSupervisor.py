@@ -3,8 +3,9 @@ from xmlrpc.client import ServerProxy
 import sys
 import os
 from gevent import sleep, spawn
+import requests
 import  zerorpc
-from polyvisor.controllers.utils import parse_dict, sanitize_url
+from polyvisor.controllers.utils import parse_dict, sanitize_url, send_webhook_alert
 import logging
 import time
 
@@ -96,6 +97,10 @@ class Supervisor(dict):
                 self.name, payload["groupname"], payload["processname"]
             )
             self["processes"][puid].handle_event(event)
+
+
+    
+        
 
     def create_base_info(self):
         return dict(self.Null, name=self.name, url=self.url, host=self.host)
@@ -206,6 +211,7 @@ class Supervisor(dict):
         result = self.server.supervisor.restart()
         if result:
             info("Restarted {}".format(self.name))
+            send_webhook_alert("Restarted {}".format(self.name))
             return "Restarted {}".format(self.name)
         else:
             error("Error restarting {}".format(self.name))
@@ -227,6 +233,7 @@ class Supervisor(dict):
     def shutdown(self):
         result = self.server.supervisor.shutdown()
         if result:
+            send_webhook_alert("Shutdown {}".format(self.name))
             info("Shut down {}".format(self.name))
             return "Shut down {}".format(self.name)
         else:

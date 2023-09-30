@@ -1,7 +1,9 @@
 import hashlib
 from functools import wraps
 import re
-from flask import session, abort
+import time
+from flask import logging, session, abort
+import requests
 from polyvisor.finder import get_username_password, split_config_path
 import glob,os
 import configparser
@@ -200,3 +202,18 @@ def parse_obj(obj):
     elif isinstance(obj, abc.Container):
         return type(obj)(parse_obj(i) for i in obj)
     return obj
+
+
+def send_webhook_alert(event):
+        webhook_payload = {
+            "content": "Event '{}' has been triggered at '{}'".format(event, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())),
+        }
+        WEBHOOK_URL = "https://discord.com/api/webhooks/1157695978846027887/dTYWL9zZaq59Dhyy9nVmia-6YdZBZbJOBuPQS9qpDNjtUmuWAIJPyC8TbGktFCJw35El"
+        try:
+            response = requests.post(WEBHOOK_URL, json=webhook_payload)
+            if response.status_code == 200:
+                logging.info("Webhook alert sent successfully")
+            else:
+                logging.warning("Failed to send webhook alert. Status code: %s", response.status_code)
+        except Exception as e:
+            logging.error("Error sending webhook alert: %s", str(e))
