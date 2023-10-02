@@ -4,7 +4,7 @@ import os
 import weakref
 import logging
 from xmlrpc.client import ServerProxy
-from polyvisor.controllers.utils import parse_dict
+from polyvisor.controllers.utils import parse_dict, send_webhook_alert
 # Get parent path of project to import modules
 current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
@@ -176,6 +176,7 @@ class Process(dict):
 
     def start(self):
         try:
+            send_webhook_alert(self.supervisor.webhook_url, "Start process {}".format(self["uid"]))
             self.server.startProcess(self.full_name)
         except:
             message = "Error trying to start {}!".format(self)
@@ -184,7 +185,7 @@ class Process(dict):
 
     def stop(self):
         try:
-            print("THe process is stop now")
+            send_webhook_alert(self.supervisor.webhook_url, "Stop process {}".format(self["uid"]))
             result = self.server.stopProcess(self.full_name)
             if(result):
                 return "The process {} has been stopped".format(self["uid"])
@@ -200,9 +201,11 @@ class Process(dict):
         if self["running"]:
             self.stop()
         self.start()
+        send_webhook_alert(self.supervisor.webhook_url, "Restart process {}".format(self["uid"]))
 
     def stopAll(self):
         try:
+            send_webhook_alert(self.supervisor.webhook_url, "Stop all processes")
             self.server.stopAllProcesses()
         except:
             message = "Failed to stop all processes!"
@@ -211,6 +214,7 @@ class Process(dict):
 
     def startAll(self):
         try:
+            send_webhook_alert(self.supervisor.webhook_url, "Start all processes")
             self.server.startAllProcesses()
         except:
             message = "Failed to start all processes!"

@@ -203,17 +203,24 @@ def parse_obj(obj):
         return type(obj)(parse_obj(i) for i in obj)
     return obj
 
+import logging
 
-def send_webhook_alert(event):
+log = logging.getLogger("polyvisor")
+
+def send_webhook_alert(webhook_url,event):
         webhook_payload = {
             "content": "Event '{}' has been triggered at '{}'".format(event, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())),
         }
         WEBHOOK_URL = "https://discord.com/api/webhooks/1157695978846027887/dTYWL9zZaq59Dhyy9nVmia-6YdZBZbJOBuPQS9qpDNjtUmuWAIJPyC8TbGktFCJw35El"
-        try:
-            response = requests.post(WEBHOOK_URL, json=webhook_payload)
-            if response.status_code == 200:
-                logging.info("Webhook alert sent successfully")
-            else:
-                logging.warning("Failed to send webhook alert. Status code: %s", response.status_code)
-        except Exception as e:
-            logging.error("Error sending webhook alert: %s", str(e))
+        if webhook_url is not None :
+            try:
+                response = requests.post(webhook_url, json=webhook_payload)
+                if response.status_code == 200:
+                    log.info("Webhook alert sent successfully")
+                else:
+                    log.warning("Failed to send webhook alert. Status code: %s", response.status_code)
+            except Exception as e:
+                log.error("Failed to send webhook alert. Exception: %s", e)
+                
+        else:
+            log.warning("Webhook URL is empty. Webhook alert not sent.")        

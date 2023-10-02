@@ -30,7 +30,8 @@ def load_config(config_file):
         name = section[len("supervisor:") :]
         section_items = dict(parser.items(section))
         url = section_items.get("url", "")
-        supervisors[name] = Supervisor(name, url)
+        webhook_url = section_items.get("webhook_url", "")
+        supervisors[name] = Supervisor(name, url, webhook_url)
         
         
     return config
