@@ -3,6 +3,7 @@ import sys
 import os
 import weakref
 import logging
+import psutil
 from xmlrpc.client import ServerProxy
 from polyvisor.controllers.utils import parse_dict, send_webhook_alert
 # Get parent path of project to import modules
@@ -116,7 +117,7 @@ class Process(dict):
         full_name = self.get("group", "") + ":" + self.get("name", "")
         uid = "{}:{}".format(supervisor_name, full_name)
         self.log = log.getChild(uid)
-        self.supervisor = supervisor
+        self.supervisor = weakref.proxy(supervisor)
         self["full_name"] = full_name
         self["running"] = self["state"] in RUNNING_STATES
         self["supervisor"] = supervisor_name
@@ -127,6 +128,11 @@ class Process(dict):
             self["core_index"] = get_process_affinity_CPU(self["pid"])
         else:
             self["core_index"] = None    
+
+        self["network_io_counters"] = self.get_network_io_counters()
+        self["network_connections"] = self.get_network_connections()
+        self["network_interface_addrs"] = self.get_network_interface_addrs()
+        self["network_interface_stats"] = self.get_network_interface_stats()
 
     @property
     def server(self):
@@ -220,6 +226,65 @@ class Process(dict):
             message = "Failed to start all processes!"
             warning(message)
             self.log.exception(message)
+
+
+ 
+    def get_network_io_counters(self):
+        """
+        Get network I/O statistics for the process.
+
+        Returns:
+            network_counters (psutil._common.snetio): Network I/O statistics for the process.
+        """
+        try:
+            process = psutil.Process(self["pid"])
+            network_counters = process.io_counters()
+            return network_counters
+        except psutil.NoSuchProcess:
+            return None
+
+    def get_network_connections(self):
+        """
+        Get network connections associated with the process.
+
+        Returns:
+            connections (list): List of named tuples representing network connections.
+        """
+        try:
+            process = psutil.Process(self["pid"])
+            connections = process.connections(kind='inet')  # Filter by IPv4 connections
+            return connections
+        except psutil.NoSuchProcess:
+            return []
+
+    def get_network_interface_addrs(self):
+        """
+        Get addresses associated with network interfaces.
+
+        Returns:
+            interface_addrs (dict): Dictionary where keys are network interface names, and values are lists of named tuples representing addresses.
+        """
+        try:
+            interface_addrs = psutil.net_if_addrs()
+            return interface_addrs
+        except Exception as e:
+            return {}
+
+    def get_network_interface_stats(self):
+        """
+        Get statistics for network interfaces.
+
+        Returns:
+            interface_stats (dict): Dictionary where keys are network interface names, and values are named tuples representing interface statistics.
+        """
+        try:
+            interface_stats = psutil.net_if_stats()
+            return interface_stats
+        except Exception as e:
+            return {}
+
+    
+
 
     def __str__(self):
         return "{0} on {1}".format(self["name"], self["supervisor"])
