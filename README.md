@@ -50,6 +50,25 @@ Run supervisord along with polyvisor via supervisord.conf
 supervisord -c /route/to/conf/supervisord.conf
 ```
 
+To run multiple supervisord instances, first create a polyvisor.ini file to store all the urls of each supervisord instance (which is the "serverurl" in the "[supervisorctl]" section)
+```ini
+[supervisor:<name of the first supervisord instance>]
+url=<url of the first supervisord instance>
+
+[supervisor:<name of the second supervisord instance>]
+url=<url of the second supervisord instance>
+```
+And then run the supervisord instances sequentially with the following command
+```bash
+supervisord -c /route/to/conf/first_supervisord_instance.conf
+supervisord -c /route/to/conf/second_supervisord_instance.conf
+``` 
+
+Then run polyvisor with the following command
+```bash
+```
+
+```
 # Development
 
 ## Development mode
