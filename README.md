@@ -43,7 +43,10 @@ Add the following line to supervisord config file
 [rpcinterface:polyvisor]
 supervisor.rpcinterface_factory = polyvisor.rpc:make_rpc_interfacce
 bind=5000
+access_point=auto
 ```
+```access_point``` is optional, you can remove it if you don't want to access the web dashboard from LAN.
+You can specify access_point on an IP address or set to ```auto```, the program will automatically search for IP and get that value, if there is no data, they will run on ```localhost```
 
 Run supervisord along with polyvisor via supervisord.conf
 ```bash
@@ -63,12 +66,64 @@ And then run the supervisord instances sequentially with the following command
 supervisord -c /route/to/conf/first_supervisord_instance.conf
 supervisord -c /route/to/conf/second_supervisord_instance.conf
 ``` 
+After that run the polyvisor 
 
-Then run polyvisor with the following command
-```bash
+Here is the example
+
+polyvisor.ini:
+```ini
+[supervisor:lid001]
+url=localhost:9011
+
+
+[supervisor:lid002]
+url=localhost:9021
+
+
+[global]
+name=Test
 ```
 
+lid001.conf:
+```ini
+[supervisord]
+logfile_backups=10
+logfile_maxbytes=1MB
+pidfile=/tmp/supervisor_lid001.pid
+identifier=lid001
+
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+[supervisorctl]
+serverurl=http://localhost:9011
+
+[include]
+;files = /home/hlk9/Documents/Proc/*.ini
+files = /etc/supervisor/conf.d/*.ini; change your process directory accordingly
 ```
+
+lid002.conf:
+```ini
+
+[supervisord]
+logfile_backups=10
+logfile_maxbytes=1MB
+pidfile=/tmp/supervisor_lid002.pid
+identifier=lid002
+
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+[supervisorctl]
+serverurl=http://localhost:9021
+
+[include]
+;files = /home/hlk9/Documents/Proc/*.ini
+files = /etc/supervisor/conf2.d/*.ini; change your process directory accordingly
+```
+
+
 # Development
 
 ## Development mode
