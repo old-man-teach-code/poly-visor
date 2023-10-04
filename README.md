@@ -15,6 +15,12 @@ This version has only been tested on Linux OS.
 
 To install polyvisor. The following steps need to be followed exactly.
 
+### Requirements
+Polyvisor needs some packages to run, install by ```pip```:
+```bash
+pip install -r requirements.txt
+```
+
 ### Web server
 Clone the repository from git
 ```bash
@@ -37,7 +43,10 @@ Add the following line to supervisord config file
 [rpcinterface:polyvisor]
 supervisor.rpcinterface_factory = polyvisor.rpc:make_rpc_interfacce
 bind=5000
+access_point=auto
 ```
+```access_point``` is optional, you can remove it if you don't want to access the web dashboard from LAN.
+You can specify access_point on an IP address or set to ```auto```, the program will automatically search for IP and get that value, if there is no data, they will run on ```localhost```
 
 Run supervisord along with polyvisor via supervisord.conf
 ```bash

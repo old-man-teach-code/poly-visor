@@ -50,6 +50,31 @@ def configPath():
     return path
 
 # Get include process config files path
+def configPolyvisorPath():
+        pid = get_pid()
+        result = runShell("ps -p " + pid + " -o args")
+        supervisord_conf_folder = ""
+        
+        # Find the folder containing .conf extension
+        s = re.findall(r'\/[^\/]*\.conf', result)
+        
+        if s:
+            result = os.path.dirname(s[0])
+            match = re.search(r'-c\s+([^\s]+)', result)
+            supervisord_conf_folder = match.group(1) if match else result
+            
+        
+        # Search for polyvisor.ini in the same folder
+        if supervisord_conf_folder:
+            
+            for root, dirs, files in os.walk(supervisord_conf_folder):
+                for file in files:
+                    if file == "polyvisor.ini":
+                        return os.path.join(root, file)
+                    
+                    
+
+        return "Can't find polyvisor.ini in the folder of supervisord.conf"
 
 
 def get_proc_config_path():
@@ -173,3 +198,15 @@ def get_std_log_path(path, stream, name):
         result = config.get("program:"+name, "stderr_logfile")
 
     return result
+
+# get supervisor config file path
+
+# get the username and the password from the process config file
+def get_username_password(path, name):
+    config = configparser.RawConfigParser(
+        dict_type=MultiOrderedDict, strict=False)
+    config.read(path)
+    username = config.get("program:" + name, "username")
+    password = config.get("program:" + name, "password")
+    
+    return [username, password]
