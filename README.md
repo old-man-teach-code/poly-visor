@@ -68,6 +68,61 @@ supervisord -c /route/to/conf/second_supervisord_instance.conf
 ``` 
 After that run the polyvisor 
 
+Here is the example
+polyvisor.ini:
+```ini
+[supervisor:lid001]
+url=localhost:9011
+
+
+[supervisor:lid002]
+url=localhost:9021
+webhook_url=https://discord.com/api/webhooks/1157695978846027887/dTYWL9zZaq59Dhyy9nVmia-6YdZBZbJOBuPQS9qpDNjtUmuWAIJPyC8TbGktFCJw35El
+
+[global]
+name=Test
+```
+
+lid001.conf:
+```ini
+[supervisord]
+logfile_backups=10
+logfile_maxbytes=1MB
+pidfile=/tmp/supervisor_lid001.pid
+identifier=lid001
+
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+[supervisorctl]
+serverurl=http://localhost:9011
+
+[include]
+;files = /home/hlk9/Documents/Proc/*.ini
+files = /etc/supervisor/conf.d/*.ini; change your process directory accordingly
+```
+
+lid002.conf:
+```ini
+
+[supervisord]
+logfile_backups=10
+logfile_maxbytes=1MB
+pidfile=/tmp/supervisor_lid002.pid
+identifier=lid002
+
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+[supervisorctl]
+serverurl=http://localhost:9021
+
+[include]
+;files = /home/hlk9/Documents/Proc/*.ini
+files = /etc/supervisor/conf2.d/*.ini; change your process directory accordingly
+```
+
+
 # Development
 
 ## Development mode
