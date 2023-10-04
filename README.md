@@ -66,12 +66,8 @@ And then run the supervisord instances sequentially with the following command
 supervisord -c /route/to/conf/first_supervisord_instance.conf
 supervisord -c /route/to/conf/second_supervisord_instance.conf
 ``` 
+After that run the polyvisor 
 
-Then run polyvisor with the following command
-```bash
-```
-
-```
 # Development
 
 ## Development mode
