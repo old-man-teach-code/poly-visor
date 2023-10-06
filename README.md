@@ -86,6 +86,9 @@ name=Test
 
 lid001.conf:
 ```ini
+[inet_http_server]
+port=:9011
+
 [supervisord]
 logfile_backups=10
 logfile_maxbytes=1MB
@@ -104,6 +107,8 @@ files = /etc/supervisor/conf.d/*.ini; change your process directory accordingly
 
 lid002.conf:
 ```ini
+[inet_http_server]
+port=:9021
 
 [supervisord]
 logfile_backups=10
