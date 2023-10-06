@@ -1,10 +1,11 @@
 from flask_cors import CORS
-from flask_jwt_extended import jwt_required
+
 from polyvisor.controllers.processes import get_all_processes_model, process_Core_Index
 from polyvisor.controllers.supervisor import get_config_info, get_supervisor, getMultipleSupervisors, getSupervisor, renderConfig
 from polyvisor.controllers.system import get_system
 from polyvisor.controllers.utils import login_required
 from flask import jsonify, Blueprint
+from polyvisor.models.modelPolyvisor import PolyVisor
 import logging
 
 app_api = Blueprint('app_api', __name__)
@@ -28,20 +29,20 @@ try:
             list_of_processes_json.append(process.__dict__)
         return jsonify(list_of_processes_json)
 except Exception as e:
-    app_api.logger_api.debug(e)
+    logger_api.debug(e)
 
-# get supervisor object and return a json object
-try:
-    @app_api.route('/api/supervisor', methods=['GET'])
-    @login_required()
-    @jwt_required()
-    def get_supervisor_api():
-        supervisor = get_supervisor()
-        # print the session variable
+# # get supervisor object and return a json object
+# try:
+#     @app_api.route('/api/supervisor', methods=['GET'])
+    
+    
+#     def get_supervisor_api():
+#         supervisor = get_supervisor()
+#         # print the session variable
         
-        return jsonify({'stateName': supervisor.stateName, 'stateCode': supervisor.stateCode, 'pid': supervisor.pid})
-except Exception as e:
-    app_api.logger_api.debug(e)
+#         return jsonify({'stateName': supervisor.stateName, 'stateCode': supervisor.stateCode, 'pid': supervisor.pid})
+# except Exception as e:
+#     logger_api.debug(e)
 
 
 # get system object and return a json object
@@ -52,7 +53,7 @@ try:
         return jsonify({'cpu': system.current_cpu_usage, 'cores': system.each_cpu_usage, 'memory': system.memory_status, 'machineSpec': system.machine_spec})
 except Exception as e:
     # logging the exception to a test.log file in the storage/logs folder
-    app_api.logger_api.debug(e)
+    logger_api.debug(e)
 
 # render the config file
 try:
@@ -63,7 +64,7 @@ try:
 
         return jsonify(result)
 except Exception as e:
-    app_api.logger_api.debug(e)
+    logger_api.debug(e)
 
 
 # render config
@@ -73,7 +74,7 @@ try:
         result = get_config_info()
         return jsonify(result)
 except Exception as e:
-    app_api.logger_api.debug(e)
+    logger_api.debug(e)
 
 # View current affinity list in CPU
 try:
@@ -82,7 +83,7 @@ try:
         result = process_Core_Index(pid)
         return jsonify({'core_index': result})
 except Exception as e:
-    app_api.logger_api.debug(e)
+    logger_api.debug(e)
 
 
 # get multiple supervisords
@@ -92,7 +93,7 @@ try:
         supervisor = getMultipleSupervisors()
         return jsonify(supervisor)
 except Exception as e:
-    app_api.logger_api.debug(e)
+    logger_api.debug(e)
 
 
 # get supervisord instance by uid
@@ -102,5 +103,5 @@ try:
         supervisor = getSupervisor(uid)
         return jsonify(supervisor)
 except Exception as e:
-    app_api.logger_api.debug(e)
+    logger_api.debug(e)
 

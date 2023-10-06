@@ -82,6 +82,26 @@ class PolyVisor(object):
                 if username and password:
                     return True  # Authentication is required in at least one section
         return False  # No section with both username and password found
+    
+   
+    def check_credentials(self, username, password):
+       
+        # Iterate through the keys and values in the config dictionary
+        for section, config_data in self.config.items():
+            if section.startswith("supervisor:") and isinstance(config_data, dict):
+                config_username = config_data.get("username")
+                config_password = config_data.get("password")
+
+                print(f"config_username: {config_username}")
+                print(f"config_password: {config_password}")
+                # Check if the provided username and password match this section
+                if username == config_username and password == config_password:
+                    return True
+
+        return False
+
+
+
     @property
     def config_file_content(self):
         with open(self.options.config_file) as config_file:

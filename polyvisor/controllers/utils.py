@@ -8,7 +8,7 @@ from polyvisor.finder import configPolyvisorPath, get_username_password, split_c
 import glob,os
 import configparser
 
-from polyvisor.models.modelPolyvisor import PolyVisor
+
 
 
 #get the date of today
@@ -110,11 +110,11 @@ def get_username_password(file_path):
 
 
 
-def login_required():
+def login_required(app):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
-            polyvisor = PolyVisor({"config_file": configPolyvisorPath()})
+            polyvisor = app.polyvisor
 
             username = session.get('username')
             password = session.get('password')
@@ -139,22 +139,7 @@ from functools import wraps
 from flask import request, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
-def jwt_login_required():
-    def decorator(f):
-        @wraps(f)
-        def decorated_function(*args, **kwargs):
-            # Get the JWT payload (user claims)
-            user_claims = get_jwt_identity()
 
-            # Check if the JWT contains the required claims for authentication
-            if "username" in user_claims and "password" in user_claims:
-                return f(*args, **kwargs)
-            
-            abort(401)  # Return a 401 Unauthorized status if the claims are missing
-
-        return jwt_required()(decorated_function)
-
-    return decorator
 
 
 _PROTO_RE_STR = "(?P<protocol>\w+)\://"
