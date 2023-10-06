@@ -68,6 +68,20 @@ class PolyVisor(object):
     #     config.pop("password", "")
     #     return config
 
+
+    @property
+    def use_authentication(self):
+        """
+        :return: whether authentication should be used
+        """
+        sections = self.config.sections()  # Get all sections in the config file
+        for section in sections:
+            if section.startswith("supervisor:"):
+                username = self.config.get(section, "username", fallback=None)
+                password = self.config.get(section, "password", fallback=None)
+                if username and password:
+                    return True  # Authentication is required in at least one section
+        return False  # No section with both username and password found
     @property
     def config_file_content(self):
         with open(self.options.config_file) as config_file:

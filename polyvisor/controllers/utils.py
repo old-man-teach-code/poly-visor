@@ -4,9 +4,11 @@ import re
 import time
 from flask import logging, session, abort
 import requests
-from polyvisor.finder import get_username_password, split_config_path
+from polyvisor.finder import configPolyvisorPath, get_username_password, split_config_path
 import glob,os
 import configparser
+
+from polyvisor.models.modelPolyvisor import PolyVisor
 
 
 #get the date of today
@@ -112,17 +114,25 @@ def login_required():
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
+            polyvisor = PolyVisor({"config_file": configPolyvisorPath()})
 
-            authentication_required = check_authentication_required()
-            # Check if the username key 
-            if not authentication_required or 'username' in session:
+            username = session.get('username')
+            password = session.get('password')
+
+            # Check if the provided username and password match the config file
+            if (
+                username
+                and password
+                and polyvisor.check_credentials(username, password)
+            ):
                 return f(*args, **kwargs)
-            
+
             abort(401)
 
         return decorated_function
 
     return decorator
+
 
 
 from functools import wraps
