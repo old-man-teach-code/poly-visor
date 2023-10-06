@@ -4,3 +4,5 @@ gevent
 WSGIserver
 flask_session
 flask_jwt_extended
+zerorpc
+requests

@@ -66,7 +66,7 @@ And then run the supervisord instances sequentially with the following command
 supervisord -c /route/to/conf/first_supervisord_instance.conf
 supervisord -c /route/to/conf/second_supervisord_instance.conf
 ``` 
-After that run the polyvisor 
+After that run the polyvisor rpc interface via supervisord
 
 Here is the example
 
@@ -86,6 +86,9 @@ name=Test
 
 lid001.conf:
 ```ini
+[inet_http_server]
+port=:9011
+
 [supervisord]
 logfile_backups=10
 logfile_maxbytes=1MB
@@ -99,12 +102,13 @@ supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 serverurl=http://localhost:9011
 
 [include]
-;files = /home/hlk9/Documents/Proc/*.ini
 files = /etc/supervisor/conf.d/*.ini; change your process directory accordingly
 ```
 
 lid002.conf:
 ```ini
+[inet_http_server]
+port=:9021
 
 [supervisord]
 logfile_backups=10
@@ -119,7 +123,6 @@ supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 serverurl=http://localhost:9021
 
 [include]
-;files = /home/hlk9/Documents/Proc/*.ini
 files = /etc/supervisor/conf2.d/*.ini; change your process directory accordingly
 ```
 
