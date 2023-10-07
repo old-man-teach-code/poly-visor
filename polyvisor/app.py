@@ -1,4 +1,3 @@
-from flask_jwt_extended import JWTManager
 from polyvisor.controllers.routes import app_routes
 from polyvisor.controllers.api import app_api
 from flask_cors import CORS

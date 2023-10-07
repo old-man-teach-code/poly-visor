@@ -110,24 +110,16 @@ def get_username_password(file_path):
 
 
 
-def login_required(app):
+def login_required(app, supervisor_name):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
-            polyvisor = app.polyvisor
-
-            username = session.get('username')
-            password = session.get('password')
-
-            # Check if the provided username and password match the config file
-            if (
-                username
-                and password
-                and polyvisor.check_credentials(username, password)
-            ):
-                return f(*args, **kwargs)
-
-            abort(401)
+            # Add authentication logic here
+            if not session.get("logged_in"):
+                abort(401)
+            elif not app.polyvisor.is_user_authorized(supervisor_name, session.get("username"), session.get("password")):
+                abort(403)  # Forbidden if the user is not authorized for the supervisor
+            return f(*args, **kwargs)
 
         return decorated_function
 
@@ -135,11 +127,27 @@ def login_required(app):
 
 
 
+
 from functools import wraps
 from flask import request, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
+def jwt_login_required():
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            # Get the JWT payload (user claims)
+            user_claims = get_jwt_identity()
 
+            # Check if the JWT contains the required claims for authentication
+            if "username" in user_claims and "password" in user_claims:
+                return f(*args, **kwargs)
+            
+            abort(401)  # Return a 401 Unauthorized status if the claims are missing
+
+        return jwt_required()(decorated_function)
+
+    return decorator
 
 
 _PROTO_RE_STR = "(?P<protocol>\w+)\://"

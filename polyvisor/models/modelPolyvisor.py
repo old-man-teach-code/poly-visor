@@ -23,7 +23,7 @@ def load_config(config_file):
     supervisors = {}
     config = dict(dft_global, supervisors=supervisors)
     # config.update(parser.items("global"))
-    tasks = []
+    
     for section in parser.sections():
         if not section.startswith("supervisor:"):
             continue
@@ -31,7 +31,9 @@ def load_config(config_file):
         section_items = dict(parser.items(section))
         url = section_items.get("url", "")
         webhook_url = section_items.get("webhook_url", "")
-        supervisors[name] = Supervisor(name, url, webhook_url)
+        username = section_items.get("username", "")
+        password = section_items.get("password", "")
+        supervisors[name] = Supervisor(name, url, webhook_url, username, password)
         
         
     return config
@@ -71,40 +73,40 @@ class PolyVisor(object):
 
     @property
     def use_authentication(self):
-        """
-        :return: whether authentication should be used
-        """
-        sections = self.config.sections()  # Get all sections in the config file
-        for section in sections:
+        authentication_required = False  # Initialize as False
+        config = configparser.ConfigParser()
+        config.read_string(self.config_file_content)  # Replace with the actual path to your config file
+        
+        for section in config.sections():
+            print(section)
             if section.startswith("supervisor:"):
-                username = self.config.get(section, "username", fallback=None)
-                password = self.config.get(section, "password", fallback=None)
+                username = config.get(section, 'username', fallback=None)
+                password = config.get(section, 'password', fallback=None)
+                
                 if username and password:
-                    return True  # Authentication is required in at least one section
-        return False  # No section with both username and password found
+                    authentication_required = True
+                    break  # Authentication is required in at least one section, no need to continue checking
+        
+        return authentication_required
     
-   
-    def check_credentials(self, username, password):
-       
-        # Iterate through the keys and values in the config dictionary
-        for section, config_data in self.config.items():
-            if section.startswith("supervisor:") and isinstance(config_data, dict):
-                config_username = config_data.get("username")
-                config_password = config_data.get("password")
+    def is_user_authorized(self, supervisor_name, username, password):
+        config = configparser.ConfigParser()
+        config.read_string(self.config_file_content)
 
-                print(f"config_username: {config_username}")
-                print(f"config_password: {config_password}")
-                # Check if the provided username and password match this section
-                if username == config_username and password == config_password:
-                    return True
+        section_name = f"supervisor:{supervisor_name}"
+        if section_name in config:
+            section_username = config.get(section_name, 'username', fallback=None)
+            section_password = config.get(section_name, 'password', fallback=None)
+            return username == section_username and password == section_password
 
         return False
-
+   
+    
 
 
     @property
     def config_file_content(self):
-        with open(self.options.config_file) as config_file:
+        with open(self.options.get('config_file', '')) as config_file:
             return config_file.read()
 
     def reload(self):

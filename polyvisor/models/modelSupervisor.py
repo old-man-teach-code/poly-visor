@@ -41,7 +41,7 @@ class Supervisor(dict):
         "pid": None,
     }
 
-    def __init__(self, name, url, webhook_url=None):
+    def __init__(self, name, url, webhook_url=None, username=None, password=None):
         super(Supervisor, self).__init__(self.Null)
         self.name = self["name"] = name
         self.url = self["url"] = url
@@ -51,6 +51,8 @@ class Supervisor(dict):
         self.address = addr["url"]
         self.host = self["host"] = addr["host"]
         self.webhook_url = webhook_url
+        self.username = username
+        self.password = password
         self.server = ServerProxy(self.address + "/RPC2")
         # fill supervisor info before events start coming in
         self.event_loop = spawn(self.run)

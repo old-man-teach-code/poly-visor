@@ -334,21 +334,21 @@ except Exception as e:
 try:
     @app_routes.route("/api/login", methods=["POST"])
     def login():
+
+        if not app_routes.polyvisor.use_authentication:
+            return "Authentication is not required"
         data = request.get_json()
         username = data["username"]
         password = data["password"]
-        
-        polyvisor = PolyVisor({"config_file": configPolyvisorPath()})
+        supervisor_name = data["supervisor_name"]
 
-        # Check if the provided username and password match the config file
-        if polyvisor.check_credentials(username, password):
-            # Store the username in the session to indicate a successful login
+        if app_routes.polyvisor.is_user_authorized(supervisor_name, username, password):
+            access_token = create_access_token(identity=username)
+            session["logged_in"] = True
             session["username"] = username
-            session["password"] = password
-            return jsonify({"message": "Login successful"})
-
-        response_data = {"errors": {"password": "Invalid username or password"}}
-        return json.dumps(response_data), 400
+            return jsonify(access_token=access_token)
+        else:
+            return jsonify({"message": "Invalid username or password"}), 401
 except Exception as e:
     app_routes.logger_routes.debug(e)
 
@@ -360,7 +360,7 @@ except Exception as e:
 #stop supervisord instance by uid
 try:
     @app_routes.route('/api/supervisors/shutdown', methods=['POST'])
-    @login_required(app)
+    
     def shutdown_supervisor_api():
         names = (
             str.strip(supervisor) for supervisor in request.form["supervisor"].split(",")
@@ -376,7 +376,7 @@ except Exception as e:
 # restart supervisord instance by names
 try:
     @app_routes.route('/api/supervisors/restart', methods=['POST'])
-    @login_required(app_routes)
+    @login_required(app_routes, supervisor_name=request.form["supervisor"])
     def restart_supervisor_api():
         names = (
             str.strip(supervisor) for supervisor in request.form["supervisor"].split(",")
