@@ -1,16 +1,13 @@
+from flask_jwt_extended import JWTManager
 from polyvisor.controllers.routes import app_routes
 from polyvisor.controllers.api import app_api
 from flask_cors import CORS
 from flask import Flask
 from flask_session import Session
-from polyvisor.finder import configPolyvisorPath
-
-from polyvisor.models.modelPolyvisor import PolyVisor
 
 app = Flask(__name__, static_folder="./build")
 CORS(app)
-
-
+jwt = JWTManager(app)
 
 # Set the session type and key
 app.config['SESSION_TYPE'] = 'filesystem'

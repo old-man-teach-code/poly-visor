@@ -78,7 +78,6 @@ class PolyVisor(object):
         config.read_string(self.config_file_content)  # Replace with the actual path to your config file
         
         for section in config.sections():
-            print(section)
             if section.startswith("supervisor:"):
                 username = config.get(section, 'username', fallback=None)
                 password = config.get(section, 'password', fallback=None)
@@ -88,18 +87,35 @@ class PolyVisor(object):
                     break  # Authentication is required in at least one section, no need to continue checking
         
         return authentication_required
-    
-    def is_user_authorized(self, supervisor_name, username, password):
+    def is_login_valid(self, supervisor_name, username, password):
         config = configparser.ConfigParser()
         config.read_string(self.config_file_content)
 
         section_name = f"supervisor:{supervisor_name}"
+        print(f"section_name: {section_name}")
+
         if section_name in config:
             section_username = config.get(section_name, 'username', fallback=None)
+        
             section_password = config.get(section_name, 'password', fallback=None)
+            
             return username == section_username and password == section_password
+        else :
+            return False
 
-        return False
+    def is_user_authorized(self, supervisor_name, username):
+        config = configparser.ConfigParser()
+        config.read_string(self.config_file_content)
+
+        section_name = f"supervisor:{supervisor_name}"
+        print(f"section_name: {section_name}")
+
+        if section_name in config:
+            section_username = config.get(section_name, 'username', fallback=None)
+        
+            return username == section_username 
+        else :
+            return False
    
     
 
