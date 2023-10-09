@@ -376,8 +376,9 @@ except Exception as e:
 # restart supervisord instance by names
 try:
     @app_routes.route('/api/supervisors/restart', methods=['POST'])
-    @login_required(app_routes, supervisor_name="lid001")
+    @login_required(app_routes)
     def restart_supervisor_api():
+        print("Form: ", request.form["supervisor"])
         names = (
             str.strip(supervisor) for supervisor in request.form["supervisor"].split(",")
         )
@@ -385,6 +386,7 @@ try:
         return jsonify(result)
     
 except Exception as e:
+    
     logger_routes.debug(e)  
 
 # stop process by names

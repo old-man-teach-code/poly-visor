@@ -110,21 +110,24 @@ def get_username_password(file_path):
 
 
 
-def login_required(app, supervisor_name):
-    def decorator(f):
-        @wraps(f)
-        def decorated_function(*args, **kwargs):
-            # Add authentication logic here
-            if not session.get("logged_in"):
-                abort(401)
-            elif not app.polyvisor.is_user_authorized(supervisor_name, session.get("username"), session.get("password")):
-                abort(403)  # Forbidden if the user is not authorized for the supervisor
-            return f(*args, **kwargs)
+try:
+    def login_required(app):
+        def decorator(f):
+            @wraps(f)
+            def decorated_function(*args, **kwargs):
+                supervisor_name = request.form.get("supervisor")
+                # Add authentication logic here
+                if not session.get("logged_in"):
+                    abort(401)
+                elif not app.polyvisor.is_user_authorized(supervisor_name, session.get("username")):
+                    abort(403)  # Forbidden if the user is not authorized for the supervisor
+                return f(*args, **kwargs)
 
-        return decorated_function
+            return decorated_function
 
-    return decorator
-
+        return decorator
+except Exception as e:
+    print(f"Error login: {str(e)}")
 
 
 
