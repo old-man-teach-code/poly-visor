@@ -1,7 +1,7 @@
 from flask_cors import CORS
 
 from polyvisor.controllers.processes import get_all_processes_model, process_Core_Index
-from polyvisor.controllers.supervisor import get_config_info, get_supervisor, getMultipleSupervisors, getSupervisor, renderConfig
+from polyvisor.controllers.supervisor import get_config_info, get_supervisor, getMultipleSupervisors, getSupervisor, getSupervisorProcesses, renderConfig
 from polyvisor.controllers.system import get_system
 from polyvisor.controllers.utils import login_required
 from flask import jsonify, Blueprint
@@ -105,3 +105,12 @@ try:
 except Exception as e:
     logger_api.debug(e)
 
+# get supervisord processes by uid
+try:
+    @app_api.route('/api/supervisor/<uid>/processes', methods=['GET'])
+    def get_supervisor_processes_by_uid_api(uid):
+        supervisor = getSupervisorProcesses(uid)
+        return jsonify(supervisor)
+except Exception as e:
+    logger_api.debug(e)
+    

@@ -32,16 +32,13 @@ log = logging.getLogger("polyvisor")
 class Supervisor(dict):
 
     Null = {
-        "identification": None,
-        "api_version": None,
-        "version": None,
-        "supervisor_version": None,
+        
         "processes": {},
         "running": False,
         "pid": None,
     }
 
-    def __init__(self, name, url, webhook_url=None, username=None, password=None):
+    def __init__(self, name, url, webhook_url=None):
         super(Supervisor, self).__init__(self.Null)
         self.name = self["name"] = name
         self.url = self["url"] = url
@@ -51,8 +48,6 @@ class Supervisor(dict):
         self.address = addr["url"]
         self.host = self["host"] = addr["host"]
         self.webhook_url = webhook_url
-        self.username = username
-        self.password = password
         self.server = ServerProxy(self.address + "/RPC2")
         # fill supervisor info before events start coming in
         self.event_loop = spawn(self.run)
@@ -111,7 +106,7 @@ class Supervisor(dict):
         return dict(self.Null, name=self.name, url=self.url, host=self.host)
 
     def read_info(self):
-        from polyvisor.models.modelProcess import Process
+        
         info = self.create_base_info()
         
         server = self.server.supervisor
@@ -119,16 +114,28 @@ class Supervisor(dict):
         # get PID
         info["pid"] = server.getPID()
         info["running"] = True
-        info["identification"] = server.getIdentification()
-        info["api_version"] = server.getAPIVersion()
-        info["supervisor_version"] = server.getSupervisorVersion()
         info["processes"] = processes = {}
+        
+        return info
+
+    def get_processes(self):
+        """
+        Retrieves detailed information about the supervisor's processes.
+        """
+        from polyvisor.models.modelProcess import Process
+
+
+        server = self.server.supervisor
+
+        processes = {}
         procInfo = server.getAllProcessInfo()
+
         for proc in procInfo:
             process = Process(self, parse_dict(proc))
             processes[process["uid"]] = process
-        return info
 
+        return processes
+    
     def update_info(self, info):
         info = parse_dict(info)
         if self == info:

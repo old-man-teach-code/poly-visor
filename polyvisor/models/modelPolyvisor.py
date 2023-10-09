@@ -31,9 +31,7 @@ def load_config(config_file):
         section_items = dict(parser.items(section))
         url = section_items.get("url", "")
         webhook_url = section_items.get("webhook_url", "")
-        username = section_items.get("username", "")
-        password = section_items.get("password", "")
-        supervisors[name] = Supervisor(name, url, webhook_url, username, password)
+        supervisors[name] = Supervisor(name, url, webhook_url)
         
         
     return config
@@ -158,6 +156,8 @@ class PolyVisor(object):
 
     def get_supervisor(self, name):
         return self.supervisors[name]
+    def get_supervisor_processes(self, name):
+        return self.supervisors[name].get_processes()
 
     def get_process(self, uid):
         supervisor, _ = uid.split(":", 1)

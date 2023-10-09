@@ -195,6 +195,19 @@ def getSupervisor(uid):
     supervisor = poly_visor.get_supervisor(uid)
 
     return supervisor
+
+
+# get supervisord's processes by uid
+def getSupervisorProcesses(uid):
+    options = {
+        "config_file": configPolyvisorPath()  # Replace with the actual file path
+    }
+    poly_visor = PolyVisor(options)
+    poly_visor.refresh()
+    supervisor = poly_visor.get_supervisor_processes(uid)
+
+    return supervisor
+
 # shutdown supervisord instance by uid
 
 def shutdownSupervisors(*names):
