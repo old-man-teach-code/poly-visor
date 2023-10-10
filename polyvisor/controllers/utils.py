@@ -4,9 +4,11 @@ import re
 import time
 from flask import logging, session, abort
 import requests
-from polyvisor.finder import get_username_password, split_config_path
+from polyvisor.finder import configPolyvisorPath, get_username_password, split_config_path
 import glob,os
 import configparser
+
+
 
 
 #get the date of today
@@ -108,21 +110,25 @@ def get_username_password(file_path):
 
 
 
-def login_required():
-    def decorator(f):
-        @wraps(f)
-        def decorated_function(*args, **kwargs):
-
-            authentication_required = check_authentication_required()
-            # Check if the username key 
-            if not authentication_required or 'username' in session:
+try:
+    def login_required(app):
+        def decorator(f):
+            @wraps(f)
+            def decorated_function(*args, **kwargs):
+                supervisor_name = request.form.get("supervisor")
+                # Add authentication logic here
+                if not session.get("logged_in"):
+                    abort(401)
+                elif not app.polyvisor.is_user_authorized(supervisor_name, session.get("username")):
+                    abort(403)  # Forbidden if the user is not authorized for the supervisor
                 return f(*args, **kwargs)
-            
-            abort(401)
 
-        return decorated_function
+            return decorated_function
 
-    return decorator
+        return decorator
+except Exception as e:
+    print(f"Error login: {str(e)}")
+
 
 
 from functools import wraps
