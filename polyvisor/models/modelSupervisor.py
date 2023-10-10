@@ -130,15 +130,9 @@ class Supervisor(dict):
         # get PID
         info["pid"] = server.getPID()
         info["running"] = True
+              
         info["processes"] = processes = {}
-        
-        
-
-        
-
-  
         procInfo = server.getAllProcessInfo()
-
         for proc in procInfo:
             process = Process(self, parse_dict(proc))
             processes[process["uid"]] = process
