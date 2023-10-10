@@ -123,18 +123,27 @@ class Supervisor(dict):
         Retrieves detailed information about the supervisor's processes.
         """
         from polyvisor.models.modelProcess import Process
-
-
+        info = self.create_base_info()
+        
         server = self.server.supervisor
+        
+        # get PID
+        info["pid"] = server.getPID()
+        info["running"] = True
+        info["processes"] = processes = {}
+        
+        
 
-        processes = {}
+        
+
+  
         procInfo = server.getAllProcessInfo()
 
         for proc in procInfo:
             process = Process(self, parse_dict(proc))
             processes[process["uid"]] = process
 
-        return processes
+        return info
     
     def update_info(self, info):
         info = parse_dict(info)
