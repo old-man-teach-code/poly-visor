@@ -337,10 +337,10 @@ try:
 
         if not app_routes.polyvisor.use_authentication:
             return "Authentication is not required"
-        data = request.get_json()
-        username = data["username"]
-        password = data["password"]
-        supervisor_name = data["supervisor_name"]
+        
+        username = request.get("username")
+        password = request.get("password")
+        supervisor_name = request.form.get("supervisor")
 
         if app_routes.polyvisor.is_login_valid(supervisor_name, username, password):
             access_token = create_access_token(identity=username)
