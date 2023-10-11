@@ -4,10 +4,11 @@ from time import sleep
 
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token
+from polyvisor import app
 from polyvisor.controllers.utils import is_login_valid, login_required
 from polyvisor.controllers.processes import restart_processes_by_name_model, start_processes_by_name_model, stop_all_processes_model, tail_stdErr_logFile_model, tail_stdOut_logFile_model, set_Process_Core_Index, start_all_processes_model, start_process_group_model, stop_process_group_model, stop_processes_by_name_model
 from polyvisor.controllers.supervisor import createConfig, restart_supervisor_model, restartSupervisors, shutdown_supervisor_model, shutdownSupervisors
-from flask import jsonify, Blueprint, Response, request, send_from_directory, session
+from flask import  jsonify, Blueprint, Response, request, send_from_directory, session
 import base64
 
 
@@ -17,6 +18,8 @@ from polyvisor.finder import configPolyvisorPath
 from polyvisor.models.modelPolyvisor import PolyVisor
 
 app_routes = Blueprint('app_routes', __name__)
+
+app_routes.polyvisor = PolyVisor({"config_file": configPolyvisorPath()})
 
 logger_routes = logging.getLogger(__name__)
 
@@ -51,7 +54,7 @@ def base(path):
 #             return jsonify({'message': 'Supervisor not restarted'})
 
 # except Exception as e:
-#     app_routes.logger_routes.debug(e)
+#     logger_routes.debug(e)
 
 # # shutdown supervisor
 # try:
@@ -64,7 +67,7 @@ def base(path):
 #             return jsonify({'message': 'Supervisor not shutdown'})
 
 # except Exception as e:
-#     app_routes.logger_routes.debug(e)
+#     logger_routes.debug(e)
 
 
 # # start all processes
@@ -78,7 +81,7 @@ def base(path):
 #             return jsonify({'message': 'All processes not started'})
 
 # except Exception as e:
-#     app_routes.logger_routes.debug(e)
+#     logger_routes.debug(e)
 
 #  start process by name
 # try:
@@ -90,7 +93,7 @@ def base(path):
 #         else:
 #             return jsonify({'message': 'Process not started'})
 # except Exception as e:
-#     app_routes.logger_routes.debug(e)
+#     logger_routes.debug(e)
 
 
 # # stop all processes
@@ -104,7 +107,7 @@ def base(path):
 #         else:
 #             return jsonify({'message': 'All processes not stopped'})
 # except Exception as e:
-#     app_routes.logger_routes.debug(e)
+#     logger_routes.debug(e)
 
 
 # stop process by name
@@ -117,7 +120,7 @@ def base(path):
 #         else:
 #             return jsonify({'message': 'Process not stopped'})
 # except Exception as e:
-#     app_routes.logger_routes.debug(e)
+#     logger_routes.debug(e)
 
 
 # start process group
@@ -130,7 +133,7 @@ try:
         else:
             return jsonify({'message': 'Process group not started'})
 except Exception as e:
-    app_routes.logger_routes.debug(e)
+    logger_routes.debug(e)
 
 # stop process group
 try:
@@ -142,7 +145,7 @@ try:
         else:
             return jsonify({'message': 'Process group not stopped'})
 except Exception as e:
-    app_routes.logger_routes.debug(e)
+    logger_routes.debug(e)
 
 #
 try:
@@ -156,7 +159,7 @@ try:
         else:
             return jsonify({'message': 'Config file creation failed'})
 except Exception as e:
-    app_routes.logger_routes.debug(e)
+    logger_routes.debug(e)
 
 # update the config file
 try:
@@ -170,7 +173,7 @@ try:
         else:
             return jsonify({'message': 'Config file update failed'})
 except Exception as e:
-    app_routes.logger_routes.debug(e)
+    logger_routes.debug(e)
 
 
 # tail the /var/log/demo.out.log on the browser
@@ -193,7 +196,7 @@ except Exception as e:
 
 #         return Response(generate(), mimetype='text/event-stream')
 # except Exception as e:
-#     app_routes.logger_routes.debug(e)
+#     logger_routes.debug(e)
 
 try:
     @app_routes.route('/api/process/<stream>/<uid>', methods=['GET'])
@@ -224,7 +227,7 @@ try:
 
         return Response(event_stream(), mimetype="text/event-stream")
 except Exception as e:
-    app_routes.logger_routes.debug(e)
+    logger_routes.debug(e)
 
 
 
@@ -307,17 +310,16 @@ try:
             else:
                 return jsonify({'message': 'Config file creation failed'})
 except Exception as e:
-    app_routes.logger_routes.debug(e)
+    logger_routes.debug(e)
 
 # Set affinity list in CPU
 try:
     @app_routes.route('/api/cpu/set_affinity/<pid>/<core_index>', methods=['GET'])
-    @login_required()
     def set_process_core_index_route(pid, core_index):
         result = set_Process_Core_Index(pid, core_index)
         return jsonify({'result': result})
 except Exception as e:
-    app_routes.logger_routes.debug(e)
+    logger_routes.debug(e)
 
 # logout of the session
 try:
@@ -326,25 +328,30 @@ try:
         session.clear()
         return jsonify({"message": "logged out"})
 except Exception as e:
-    app_routes.logger_routes.debug(e)
+    logger_routes.debug(e)
 
 # login to the application
 try:
     @app_routes.route("/api/login", methods=["POST"])
     def login():
-        data = request.get_json()
-        username = data["username"]
-        password = data["password"]
+
+        if not app_routes.polyvisor.use_authentication:
+            return "Authentication is not required"
         
-        if is_login_valid( username, password):
-            session["username"] = username
+        username = request.get("username")
+        password = request.get("password")
+        supervisor_name = request.form.get("supervisor")
+
+        if app_routes.polyvisor.is_login_valid(supervisor_name, username, password):
             access_token = create_access_token(identity=username)
-            return jsonify({"access_token": access_token})
+            session["logged_in"] = True
+            session["username"] = username
+            return jsonify(access_token=access_token)
         else:
-            response_data = {"errors": {"password": "Invalid username or password"}}
-            return json.dumps(response_data), 400
+            return jsonify({"message": "Invalid username or password"}), 401
 except Exception as e:
-    app_routes.logger_routes.debug(e)
+    logger_routes.debug(e)
+
 
 
 # get supervisor
@@ -353,6 +360,7 @@ except Exception as e:
 #stop supervisord instance by uid
 try:
     @app_routes.route('/api/supervisors/shutdown', methods=['POST'])
+    
     def shutdown_supervisor_api():
         names = (
             str.strip(supervisor) for supervisor in request.form["supervisor"].split(",")
@@ -363,12 +371,14 @@ try:
         else:
             return jsonify({'message': 'Supervisor not shutdown'})
 except Exception as e:
-    app_routes.logger_api.debug(e)    
+    logger_routes.debug(e)  
 
 # restart supervisord instance by names
 try:
     @app_routes.route('/api/supervisors/restart', methods=['POST'])
+    @login_required(app_routes)
     def restart_supervisor_api():
+        print("Form: ", request.form["supervisor"])
         names = (
             str.strip(supervisor) for supervisor in request.form["supervisor"].split(",")
         )
@@ -376,7 +386,8 @@ try:
         return jsonify(result)
     
 except Exception as e:
-    app_routes.logger_api.debug(e)    
+    
+    logger_routes.debug(e)  
 
 # stop process by names
 try:
@@ -387,7 +398,7 @@ try:
         return jsonify(result)
 
 except Exception as e:
-    app_routes.logger_api.debug(e)
+    logger_routes.debug(e)
 
 
 # restart process by names
@@ -399,7 +410,7 @@ try:
         return jsonify(result)
     
 except Exception as e:
-    app_routes.logger_api.debug(e)
+    logger_routes.debug(e)
 
 # start process by names
 try:
@@ -409,7 +420,7 @@ try:
         result =start_processes_by_name_model(*names)
         return jsonify(result)
 except Exception as e:
-    app_routes.logger_api.debug(e)
+    logger_routes.debug(e)
 
 # stop all processes
 try:
@@ -418,7 +429,7 @@ try:
         result = stop_all_processes_model()
         return jsonify(result)
 except Exception as e:
-    app_routes.logger_api.debug(e)
+    logger_routes.debug(e)
 
 # start all processes
 try:
@@ -427,4 +438,4 @@ try:
         result = start_all_processes_model()
         return jsonify(result)
 except Exception as e:
-    app_routes.logger_api.debug(e)
+    logger_routes.debug(e)

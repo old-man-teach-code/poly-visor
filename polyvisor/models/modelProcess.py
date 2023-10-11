@@ -109,6 +109,7 @@ class Process(dict):
     Null = {"running": False, "pid": None, "state": None, "statename": "UNKNOWN"}
 
     def __init__(self, supervisor, *args, **kwargs):
+        # take only important info from supervisor
         super(Process, self).__init__(self.Null)
         if args:
             self.update(args[0])
