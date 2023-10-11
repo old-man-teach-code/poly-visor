@@ -32,10 +32,7 @@ log = logging.getLogger("polyvisor")
 class Supervisor(dict):
 
     Null = {
-        "identification": None,
-        "api_version": None,
-        "version": None,
-        "supervisor_version": None,
+        
         "processes": {},
         "running": False,
         "pid": None,
@@ -109,6 +106,22 @@ class Supervisor(dict):
         return dict(self.Null, name=self.name, url=self.url, host=self.host)
 
     def read_info(self):
+        
+        info = self.create_base_info()
+        
+        server = self.server.supervisor
+        
+        # get PID
+        info["pid"] = server.getPID()
+        info["running"] = True
+        info["processes"] = processes = {}
+        
+        return info
+
+    def get_processes(self):
+        """
+        Retrieves detailed information about the supervisor's processes.
+        """
         from polyvisor.models.modelProcess import Process
         info = self.create_base_info()
         
@@ -117,16 +130,15 @@ class Supervisor(dict):
         # get PID
         info["pid"] = server.getPID()
         info["running"] = True
-        info["identification"] = server.getIdentification()
-        info["api_version"] = server.getAPIVersion()
-        info["supervisor_version"] = server.getSupervisorVersion()
+              
         info["processes"] = processes = {}
         procInfo = server.getAllProcessInfo()
         for proc in procInfo:
             process = Process(self, parse_dict(proc))
             processes[process["uid"]] = process
-        return info
 
+        return info
+    
     def update_info(self, info):
         info = parse_dict(info)
         if self == info:

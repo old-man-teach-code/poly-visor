@@ -23,7 +23,7 @@ def load_config(config_file):
     supervisors = {}
     config = dict(dft_global, supervisors=supervisors)
     # config.update(parser.items("global"))
-    tasks = []
+    
     for section in parser.sections():
         if not section.startswith("supervisor:"):
             continue
@@ -68,9 +68,59 @@ class PolyVisor(object):
     #     config.pop("password", "")
     #     return config
 
+
+    @property
+    def use_authentication(self):
+        authentication_required = False  # Initialize as False
+        config = configparser.ConfigParser()
+        config.read_string(self.config_file_content)  # Replace with the actual path to your config file
+        
+        for section in config.sections():
+            if section.startswith("supervisor:"):
+                username = config.get(section, 'username', fallback=None)
+                password = config.get(section, 'password', fallback=None)
+                
+                if username and password:
+                    authentication_required = True
+                    break  # Authentication is required in at least one section, no need to continue checking
+        
+        return authentication_required
+    def is_login_valid(self, supervisor_name, username, password):
+        config = configparser.ConfigParser()
+        config.read_string(self.config_file_content)
+
+        section_name = f"supervisor:{supervisor_name}"
+        print(f"section_name: {section_name}")
+
+        if section_name in config:
+            section_username = config.get(section_name, 'username', fallback=None)
+        
+            section_password = config.get(section_name, 'password', fallback=None)
+            
+            return username == section_username and password == section_password
+        else :
+            return False
+
+    def is_user_authorized(self, supervisor_name, username):
+        config = configparser.ConfigParser()
+        config.read_string(self.config_file_content)
+
+        section_name = f"supervisor:{supervisor_name}"
+        print(f"section_name: {section_name}")
+
+        if section_name in config:
+            section_username = config.get(section_name, 'username', fallback=None)
+        
+            return username == section_username 
+        else :
+            return False
+   
+    
+
+
     @property
     def config_file_content(self):
-        with open(self.options.config_file) as config_file:
+        with open(self.options.get('config_file', '')) as config_file:
             return config_file.read()
 
     def reload(self):
@@ -106,6 +156,8 @@ class PolyVisor(object):
 
     def get_supervisor(self, name):
         return self.supervisors[name]
+    def get_supervisor_processes(self, name):
+        return self.supervisors[name].get_processes()
 
     def get_process(self, uid):
         supervisor, _ = uid.split(":", 1)
