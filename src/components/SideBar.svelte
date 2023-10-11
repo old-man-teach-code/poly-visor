@@ -4,13 +4,13 @@
 </script>
 
 <!-- Side bar -->
-<div class="bg-sidebar sm:w-56 sm:h-screen max-sm:bottom-0 max-sm:w-full fixed overflow-auto z-50 ">
+<div class="bg-sidebar z-50 fixed w-full sm:w-fit max-sm:bottom-0 sm:static">
 	<div class="flex flex-col max-sm:flex-row">
-		<div class="inline-flex justify-center py-5 sm:w-full max-sm:hidden">
+		<div class="hidden sm:flex justify-center items-center gap-2 sm:m-8">
 			<img class="w-8 h-8" src="/images/logo.png" alt="" />
-			<h1 class="ml-3 text-text-logo text-xl">Poly-Visor</h1>
+			<h1 class="text-text-logo text-xl whitespace-nowrap">Poly-Visor</h1>
 		</div>
-		<ul class="sm:pt-5 flex flex-col max-sm:flex-row ">
+		<ul class="flex sm:flex-col flex-row ">
 			<li class="text-center">
 				<a
 					href="/"
