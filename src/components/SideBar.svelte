@@ -6,7 +6,7 @@
 <!-- Side bar -->
 <div class="bg-sidebar z-50 fixed w-full sm:w-fit max-sm:bottom-0 sm:static">
 	<div class="flex flex-col max-sm:flex-row">
-		<div class="hidden sm:flex justify-center items-center gap-2 sm:m-8">
+		<div class="hidden sm:flex justify-center items-center gap-2 sm:mx-14 my-8">
 			<img class="w-8 h-8" src="/images/logo.png" alt="" />
 			<h1 class="text-text-logo text-xl whitespace-nowrap">Poly-Visor</h1>
 		</div>
