@@ -1,3 +1,4 @@
+from datetime import timedelta
 from flask_jwt_extended import JWTManager
 from polyvisor.controllers.routes import app_routes
 from polyvisor.controllers.api import app_api
@@ -13,6 +14,8 @@ jwt = JWTManager(app)
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config["SESSION_PERMANENT"] = False
 app.config['SECRET_KEY'] = 'your_secret_key_here'
+# set the token expiration time
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
 
 # Initialize the session
 session = Session(app)
