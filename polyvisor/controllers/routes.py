@@ -338,8 +338,8 @@ try:
         if not app_routes.polyvisor.use_authentication:
             return "Authentication is not required"
         
-        username = request.get("username")
-        password = request.get("password")
+        username = request.form.get("username")
+        password = request.form.get("password")
         supervisor_name = request.form.get("supervisor")
 
         if app_routes.polyvisor.is_login_valid(supervisor_name, username, password):
