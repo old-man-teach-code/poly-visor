@@ -336,7 +336,7 @@ try:
     def login():
 
         if not app_routes.polyvisor.use_authentication:
-            return "Authentication is not required"
+            return jsonify({"message": "Authentication not required"}), 200
         
         username = request.form.get("username")
         password = request.form.get("password")
