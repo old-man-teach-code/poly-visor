@@ -1,3 +1,4 @@
+import configparser
 import time
 from xmlrpc.client import ServerProxy
 import sys
@@ -22,7 +23,7 @@ current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 # insert into PYTHONPATH
 sys.path.insert(1, parent)
-from finder import serverURL
+from finder import configPolyvisorPath, serverURL
 
 server = 'ServerProxy("http://localhost"+str(serverURL())+"/RPC2")'
 import logging
@@ -36,6 +37,7 @@ class Supervisor(dict):
         "processes": {},
         "running": False,
         "pid": None,
+        "authentication": False,
     }
 
     def __init__(self, name, url, webhook_url=None):
@@ -115,9 +117,29 @@ class Supervisor(dict):
         info["pid"] = server.getPID()
         info["running"] = True
         info["processes"] = processes = {}
-        
+        info["authentication"] = self.check_authentication()
         return info
 
+    # read the polyvisor.ini file to check if the supervisor needed to be authenticated
+    def check_authentication(self):
+        file_location = configPolyvisorPath()
+        authentication_required = False 
+        config = configparser.ConfigParser()
+        # read the file
+        config.read(file_location)
+        for section in config.sections():
+            if section.startswith("supervisor:{}", format(self.name)):
+                username = config.get(section, 'username', fallback=None)
+                password = config.get(section, 'password', fallback=None)
+                
+                if username and password:
+                    authentication_required = True
+                    break  # Authentication is required in at least one section, no need to continue checking
+                else :
+                    authentication_required = False
+                    break
+        
+        return authentication_required
     def get_processes(self):
         """
         Retrieves detailed information about the supervisor's processes.
@@ -130,7 +152,7 @@ class Supervisor(dict):
         # get PID
         info["pid"] = server.getPID()
         info["running"] = True
-              
+        info["authentication"] = self.check_authentication()
         info["processes"] = processes = {}
         procInfo = server.getAllProcessInfo()
         for proc in procInfo:
