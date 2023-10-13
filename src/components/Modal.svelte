@@ -435,13 +435,14 @@
 			<CloseButton on:event={close} />
 		</div>
 		<hr class="pb-5" />
-		<Taskset totalCore={content.cores} process={content.process} />
+		<Taskset on:closeTask={close} totalCore={content.cores} process={content.process} />
 	</div>
 {/if}
 
 <style>
 	.modal-background {
 		z-index: 10;
+		display: flex;
 		position: fixed;
 		top: 0;
 		left: 0;
@@ -451,13 +452,15 @@
 	}
 
 	.modal {
+		box-sizing: border-box;
 		z-index: 10;
 		position: fixed;
 		left: 50%;
 		top: 50%;
 		width: calc(100vw - 4em);
+		height: fit-content;
+		max-height: 80%;
 		max-width: 32em;
-		max-height: calc(100vh - 4em);
 		overflow: auto;
 		transform: translate(-50%, -50%);
 		border-radius: 0.2em;

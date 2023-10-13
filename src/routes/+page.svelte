@@ -67,6 +67,7 @@
 			fill: true,
 			responsive: true,
 			maintainAspectRatio: false,
+			resizeDelay: 0,
 			plugins: {
 				legend: {
 					position: 'top'
@@ -131,14 +132,14 @@
 	}
 </script>
 
-<div class="w-full h-screen px-10 space-y-5">
-	<h1 class="text-2xl font-semibold pt-5">Overview</h1>
-	<div class="space-y-5 h-3/4">
-		<div class="grid grid-cols-4 max-md:grid-cols-2 gap-5">
+<div class="px-10 space-y-5 mb-5 flex flex-col w-full">
+	<h1 class="text-2xl font-semibold mt-5">Overview</h1>
+	<div class="flex flex-col gap-5">
+		<div class="grid xl:grid-cols-4 grid-cols-2 gap-7">
 			<Card enabled={textCpu} content="{$system.cpu}%" title="Cpu Usage" on:event={chartCpu} />
 			<Card enabled={textRam} content="{$system.memory}%" title="Ram Usage" on:event={chartRam} />
 			<Card enabled={textCores} content={$cpuCount} title="Number of cores" on:event={chartCores} />
-			<a class="w-full" href="/processes">
+			<a class="" href="/processes">
 				<Card
 					content="{$count}/{Object.keys($processes).length}"
 					enabled={false}
@@ -146,22 +147,18 @@
 				/>
 			</a>
 		</div>
-		{#if chartState}
-			<div class="h-full flex justify-center">
-				<div
-					class="sm:w-3/4 w-full h-3/4 relative border-2 bg-white rounded-md flex justify-center"
-				>
-					<canvas class="p-2" use:chartJS={data} id="myChart" />
-				</div>
-			</div>
-		{:else}
-			<div
-				class="grid grid-cols-4 max-md:grid-cols-2 justify-items-center place-content-center gap-10"
-			>
-				{#each Object.entries($system.cores) as [key, value]}
-					<CpuCore coreName={key} coreValue={value} />
-				{/each}
-			</div>
-		{/if}
 	</div>
+	{#if chartState}
+		<div class="flex flex-1 justify-center">
+			<div class="relative bg-white border-2 rounded-md h-4/5 w-11/12 lg:w-3/4 min-h-[300px]">
+				<canvas class="p-2" use:chartJS={data} id="myChart" />
+			</div>
+		</div>
+	{:else}
+		<div class="grid lg:grid-cols-4 grid-cols-2 justify-items-center place-content-center gap-10">
+			{#each Object.entries($system.cores) as [key, value]}
+				<CpuCore coreName={key} coreValue={value} />
+			{/each}
+		</div>
+	{/if}
 </div>
