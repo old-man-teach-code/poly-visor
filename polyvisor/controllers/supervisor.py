@@ -180,7 +180,7 @@ def getMultipleSupervisors():
     }
     multiple_supervisords = PolyVisor(options)
     multiple_supervisords.refresh()
-    supervisors = multiple_supervisords.supervisors
+    supervisors = multiple_supervisords.get_supervisors
 
     return supervisors
 
