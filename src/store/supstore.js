@@ -21,7 +21,7 @@ currentSupervisor.subscribe((value) => {
 
 //fetch api
 const fetchAll = async () => {
-	if (get(isAuthenticated)) {
+	if (get(isAuthenticated) == 'true') {
 		try {
 			// fetching system data
 			const resSystem = await fetch('/api/system');
