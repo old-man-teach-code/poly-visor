@@ -1,4 +1,5 @@
 from flask_cors import CORS
+from flask_jwt_extended import jwt_required
 
 from polyvisor.controllers.processes import get_all_processes_model, process_Core_Index
 from polyvisor.controllers.supervisor import get_config_info, get_supervisor, getMultipleSupervisors, getSupervisor, getSupervisorProcesses, renderConfig
@@ -108,6 +109,7 @@ except Exception as e:
 # get supervisord processes by uid
 try:
     @app_api.route('/api/supervisor/<uid>/processes', methods=['GET'])
+    # @jwt_required( )
     def get_supervisor_processes_by_uid_api(uid):
         supervisor = getSupervisorProcesses(uid)
         return jsonify(supervisor)

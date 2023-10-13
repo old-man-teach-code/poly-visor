@@ -172,25 +172,20 @@ def renderConfig(process_name):
     else:
         return 'File not found'
     
+    
+poly_visor = PolyVisor({"config_file": configPolyvisorPath()})    
 
 # get multiple supervisord instance 
 def getMultipleSupervisors():
-    options = {
-        "config_file": configPolyvisorPath()  # Replace with the actual file path
-    }
-    multiple_supervisords = PolyVisor(options)
-    multiple_supervisords.refresh()
-    supervisors = multiple_supervisords.get_supervisors
+    poly_visor.refresh()
+    supervisors = poly_visor.get_supervisors
 
     return supervisors
 
 
 # get supervisord instance by uid
 def getSupervisor(uid):
-    options = {
-        "config_file": configPolyvisorPath()  # Replace with the actual file path
-    }
-    poly_visor = PolyVisor(options)
+    
     poly_visor.refresh()
     supervisor = poly_visor.get_supervisor(uid)
 
@@ -199,10 +194,7 @@ def getSupervisor(uid):
 
 # get supervisord's processes by uid
 def getSupervisorProcesses(uid):
-    options = {
-        "config_file": configPolyvisorPath()  # Replace with the actual file path
-    }
-    poly_visor = PolyVisor(options)
+    
     poly_visor.refresh()
     supervisor = poly_visor.get_supervisor_processes(uid)
 
@@ -211,30 +203,21 @@ def getSupervisorProcesses(uid):
 # shutdown supervisord instance by uid
 
 def shutdownSupervisors(*names):
-    options = {
-        "config_file": configPolyvisorPath()  # Replace with the actual file path
-    }
-    poly_visor = PolyVisor(options)
+    
     poly_visor.shutdown_supervisors(*names)
 
     return True
 
 # restart supervisord instance by names
 def restartSupervisors(*names):
-    options = {
-        "config_file": configPolyvisorPath()  # Replace with the actual file path
-    }
-    poly_visor = PolyVisor(options)
+   
     result = poly_visor.restart_supervisors(*names)
 
     return result
 
 # start process by name
 def startProcesses(*names):
-    options = {
-        "config_file": configPolyvisorPath()  # Replace with the actual file path
-    }
-    poly_visor = PolyVisor(options)
+    
     result = poly_visor.start_processes(*names)
 
     return result
