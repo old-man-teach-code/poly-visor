@@ -138,3 +138,31 @@ export async function Taskset(pid, index) {
 		})
 		.finally(() => loading.set(false));
 }
+
+export async function getAllSupervisors() {
+	loading.set(true);
+	return fetch(`/api/supervisors`)
+		.then((response) => response.json())
+		.then((data) => {
+			return data;
+		})
+		.catch((error) => {
+			console.error(error);
+		})
+		.finally(() => loading.set(false));
+}
+
+export async function login(formdata) {
+	if (get(loading)) return;
+	loading.set(true);
+	return fetch(`/api/login`, {
+		method: 'POST',
+		body: formdata
+	})
+		.then((message) => message.json())
+		.then((data) => {
+			return data;
+		})
+		.catch((err) => console.log(err))
+		.finally(() => loading.set(false));
+}
