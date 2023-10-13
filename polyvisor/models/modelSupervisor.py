@@ -128,7 +128,7 @@ class Supervisor(dict):
         # read the file
         config.read(file_location)
         for section in config.sections():
-            if section.startswith("supervisor:{}", format(self.name)):
+            if section.startswith("supervisor:{}".format(self.name)):
                 username = config.get(section, 'username', fallback=None)
                 password = config.get(section, 'password', fallback=None)
                 
