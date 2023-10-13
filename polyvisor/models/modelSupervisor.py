@@ -34,7 +34,7 @@ class Supervisor(dict):
 
     Null = {
         
-        "processes": {},
+        "processes": [],
         "running": False,
         "pid": None,
         "authentication": False,
@@ -116,7 +116,7 @@ class Supervisor(dict):
         # get PID
         info["pid"] = server.getPID()
         info["running"] = True
-        info["processes"] = processes = {}
+        info["processes"] = processes = []
         info["authentication"] = self.check_authentication()
         return info
 
@@ -153,11 +153,11 @@ class Supervisor(dict):
         info["pid"] = server.getPID()
         info["running"] = True
         info["authentication"] = self.check_authentication()
-        info["processes"] = processes = {}
+        info["processes"] = processes = []
         procInfo = server.getAllProcessInfo()
         for proc in procInfo:
             process = Process(self, parse_dict(proc))
-            processes[process["uid"]] = process
+            processes.append(process)
 
         return info
     
