@@ -34,7 +34,7 @@ class Supervisor(dict):
 
     Null = {
         
-        "processes": {},
+        "processes": [],
         "running": False,
         "pid": None,
         "authentication": False,
@@ -62,7 +62,15 @@ class Supervisor(dict):
         this, other = dict(self), dict(other)
         this_p = this.pop("processes")
         other_p = other.pop("processes")
-        return this == other and list(this_p.keys()) == list(other_p.keys())
+        
+        # Compare the remaining attributes of the objects
+        attributes_equal = this == other
+        
+        # Compare the processes as lists
+        processes_equal = sorted(this_p) == sorted(other_p)
+        
+        return attributes_equal and processes_equal
+
 
     def run(self):
         last_retry = time.time()
@@ -116,7 +124,7 @@ class Supervisor(dict):
         # get PID
         info["pid"] = server.getPID()
         info["running"] = True
-        info["processes"] = processes = {}
+        info["processes"] = processes = []
         info["authentication"] = self.check_authentication()
         return info
 
@@ -128,7 +136,7 @@ class Supervisor(dict):
         # read the file
         config.read(file_location)
         for section in config.sections():
-            if section.startswith("supervisor:{}", format(self.name)):
+            if section.startswith("supervisor:{}".format(self.name)):
                 username = config.get(section, 'username', fallback=None)
                 password = config.get(section, 'password', fallback=None)
                 
@@ -153,11 +161,11 @@ class Supervisor(dict):
         info["pid"] = server.getPID()
         info["running"] = True
         info["authentication"] = self.check_authentication()
-        info["processes"] = processes = {}
+        info["processes"] = processes = []
         procInfo = server.getAllProcessInfo()
         for proc in procInfo:
             process = Process(self, parse_dict(proc))
-            processes[process["uid"]] = process
+            processes.append(process)
 
         return info
     
@@ -166,13 +174,14 @@ class Supervisor(dict):
         if self == info:
             this_p, info_p = self["processes"], info["processes"]
             if this_p != info_p:
-                for name, process in info_p.items():
-                    if process != this_p[name]:
-                        send(process, "process_changed")
+                for this_process, info_process in zip(this_p, info_p):
+                    if this_process != info_process:
+                        send(info_process, "process_changed")
             self.update(info)
         else:
             self.update(info)
             send(self, "supervisor_changed")
+
 
     def refresh(self):
         try:

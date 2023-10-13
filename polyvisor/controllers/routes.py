@@ -1,11 +1,12 @@
 
+from datetime import timedelta
 import json
 from time import sleep
 
 from flask_cors import CORS
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required
 from polyvisor import app
-from polyvisor.controllers.utils import is_login_valid, login_required
+from polyvisor.controllers.utils import is_login_valid, jwt_login_required, login_required
 from polyvisor.controllers.processes import restart_processes_by_name_model, start_processes_by_name_model, stop_all_processes_model, tail_stdErr_logFile_model, tail_stdOut_logFile_model, set_Process_Core_Index, start_all_processes_model, start_process_group_model, stop_process_group_model, stop_processes_by_name_model
 from polyvisor.controllers.supervisor import createConfig, restart_supervisor_model, restartSupervisors, shutdown_supervisor_model, shutdownSupervisors
 from flask import  jsonify, Blueprint, Response, request, send_from_directory, session
@@ -343,7 +344,8 @@ try:
         supervisor_name = request.form.get("supervisor")
 
         if app_routes.polyvisor.is_login_valid(supervisor_name, username, password):
-            access_token = create_access_token(identity=username)
+            access_token = create_access_token(identity=username, expires_delta=timedelta(hours=1))
+            
             session["logged_in"] = True
             session["username"] = username
             return jsonify(access_token=access_token)
@@ -360,7 +362,7 @@ except Exception as e:
 #stop supervisord instance by uid
 try:
     @app_routes.route('/api/supervisors/shutdown', methods=['POST'])
-    
+    @jwt_required( )
     def shutdown_supervisor_api():
         names = (
             str.strip(supervisor) for supervisor in request.form["supervisor"].split(",")
@@ -376,7 +378,7 @@ except Exception as e:
 # restart supervisord instance by names
 try:
     @app_routes.route('/api/supervisors/restart', methods=['POST'])
-    @login_required(app_routes)
+    @jwt_required( )
     def restart_supervisor_api():
         print("Form: ", request.form["supervisor"])
         names = (
@@ -392,6 +394,7 @@ except Exception as e:
 # stop process by names
 try:
     @app_routes.route('/api/processes/stop', methods=['POST'])
+    @jwt_required( )
     def stop_process_by_name_api():
         names = request.form["uid"].split(",")
         result = stop_processes_by_name_model(*names)
@@ -404,6 +407,7 @@ except Exception as e:
 # restart process by names
 try:
     @app_routes.route('/api/processes/restart', methods=['POST'])
+    @jwt_required( )
     def restart_process_by_name_api():
         names = request.form["uid"].split(",")
         result = restart_processes_by_name_model(*names)
@@ -415,6 +419,7 @@ except Exception as e:
 # start process by names
 try:
     @app_routes.route('/api/processes/start', methods=['POST'])
+    @jwt_required( )
     def start_process_by_name_api():
         names = request.form["uid"].split(",")
         result =start_processes_by_name_model(*names)
@@ -425,6 +430,7 @@ except Exception as e:
 # stop all processes
 try:
     @app_routes.route('/api/processes/stop', methods=['GET'])
+    @jwt_required( )
     def stop_all_processes_api():
         result = stop_all_processes_model()
         return jsonify(result)
@@ -434,6 +440,7 @@ except Exception as e:
 # start all processes
 try:
     @app_routes.route('/api/processes/start', methods=['GET'])
+    @jwt_required( )
     def start_all_processes_api():
         result = start_all_processes_model()
         return jsonify(result)

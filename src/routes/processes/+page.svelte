@@ -44,59 +44,62 @@
 	<h1 class="pt-5 text-2xl font-semibold">Processes</h1>
 	<div class="h-[85%] border-2 bg-white w-full min-w-fit rounded-md mt-10 grid">
 		<div class="flex flex-col min-h-full">
-			<div class="flex justify-between pt-8">
-				<h3 class="pl-10 font-bold">All Processes</h3>
-				<div class="flex items-center">
-					<ToolTip title="Add new process">
-						<AddButton
-							on:event={() => {
-								showModal = 'addProcess';
-							}}
-						/>
-					</ToolTip>
-				</div>
-				<div class="flex items-center pr-24">
-					<ToolTip title="Start all processes">
-						<StartButton spin={false} on:event={() => startAllProcess()} />
-					</ToolTip>
-					<ToolTip title="Stop all processes">
-						<StopButton spin={false} on:event={() => stopAllProcess()} />
-					</ToolTip>
-				</div>
-			</div>
-			<div class="flex justify-between">
-				<div class="pl-5 pb-5 w-1/4">
-					<TextInput inputLabel="" inputPlaceholder="Search" bind:inputValue={search} />
-				</div>
-				<div class="flex flex-row space-x-10 items-center">
-					{#if paginationPage == 0}
-						<ToolTip title={tableDrop ? 'Show less rows' : 'Show all rows'}>
-							<DropListButton
-								direction={tableDrop ? 'up' : 'down'}
+			<div class=" flex flex-col gap-5">
+				<div class="flex justify-between mx-10 mt-8">
+					<h3 class=" font-bold">All Processes</h3>
+					<div class="flex items-center">
+						<ToolTip title="Add new process">
+							<AddButton
 								on:event={() => {
-									tableDrop = !tableDrop;
-									rowPerPage = tableDrop ? $processes.length : 5;
+									showModal = 'addProcess';
 								}}
 							/>
 						</ToolTip>
-					{/if}
+					</div>
+					<div class="flex items-center gap-4">
+						<ToolTip title="Start all processes">
+							<StartButton spin={false} on:event={() => startAllProcess()} />
+						</ToolTip>
+						<ToolTip title="Stop all processes">
+							<StopButton spin={false} on:event={() => stopAllProcess()} />
+						</ToolTip>
+					</div>
+				</div>
+				<div class="flex justify-between mb-5">
+					<div class="ml-5 w-1/4">
+						<TextInput inputLabel="" inputPlaceholder="Search" bind:inputValue={search} />
+					</div>
+					<div class="flex flex-row gap-10 items-center">
+						{#if paginationPage == 0}
+							<ToolTip title={tableDrop ? 'Show less rows' : 'Show all rows'}>
+								<DropListButton
+									direction={tableDrop ? 'up' : 'down'}
+									on:event={() => {
+										tableDrop = !tableDrop;
+										rowPerPage = tableDrop ? $processes.length : 5;
+									}}
+								/>
+							</ToolTip>
+						{/if}
 
-					<Selector
-						bind:result={filter}
-						title="Status"
-						options={['RUNNING', 'STARTING', 'BACKOFF', 'STOPPED', 'FATAL']}
-					/>
+						<Selector
+							bind:result={filter}
+							title="Status"
+							options={['RUNNING', 'STARTING', 'BACKOFF', 'STOPPED', 'FATAL']}
+						/>
+					</div>
 				</div>
 			</div>
+
 			<div class="overflow-auto flex flex-col items-center">
 				<table class=" w-full table-auto">
-					<thead>
+					<thead class="sticky top-0">
 						<tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-							<th class="py-3 px-6 text-left">Process name</th>
-							<th class="py-3 px-6 text-left">Description</th>
-							<th class="py-3 px-6 text-center">Status</th>
-							<th class="py-3 px-6 text-center">Taskset</th>
-							<th class="py-3 px-6 text-center">Actions</th>
+							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-left">Description</th>
+							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-center">Status</th>
+							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-left">Process name</th>
+							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-center">Taskset</th>
+							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-center">Actions</th>
 						</tr>
 					</thead>
 					<tbody class="h-full text-gray-600 text-sm font-light">
