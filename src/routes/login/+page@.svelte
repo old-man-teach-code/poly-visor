@@ -3,8 +3,7 @@
 	import { getAllSupervisors } from '../../store/action';
 	import LoadingScreen from '../../components/LoadingScreen.svelte';
 	import LoginModal from '../../components/LoginModal.svelte';
-	import { goto } from '$app/navigation';
-	import { startFetching } from '../../store/supstore';
+	import { isAuthenticated } from '../../store/supstore';
 	interface Supervisor {
 		host: string;
 		name: string;
@@ -19,13 +18,13 @@
 	let selectedSupervisor: string = '';
 
 	onMount(async () => {
+		if ($isAuthenticated == 'true') window.location.href = '/';
 		supervisors = await getAllSupervisors();
 	});
 
 	function handleSupervisorClick(supervisor: Supervisor) {
 		if (!supervisor.authentication) {
-			startFetching();
-			goto('/');
+			window.location.href = `/login/${supervisor.name}`;
 			return;
 		}
 		if (!supervisor.running) {

@@ -1,5 +1,4 @@
-import { browser } from '$app/environment';
-import { writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 
 //writables for fetching api
 export const system = writable([]);
@@ -10,44 +9,55 @@ export const cpuCount = writable(0);
 export const cpuChart = writable(Array(31));
 export const ramChart = writable(Array(31));
 
+export const isAuthenticated = writable(localStorage.isAuthenticated || false);
+isAuthenticated.subscribe((value) => {
+	localStorage.isAuthenticated = value;
+});
+
+export const currentSupervisor = writable(localStorage.currentSupervisor || '');
+currentSupervisor.subscribe((value) => {
+	localStorage.currentSupervisor = value;
+});
+
 //fetch api
-const fetchAll = async (supervisorName) => {
-	try {
-		// fetching system data
-		const resSystem = await fetch('/api/system');
-		const dataSystem = await resSystem.json();
-		let cpus = dataSystem.machineSpec.CPUs;
-		cpuCount.set(cpus);
-		system.set(dataSystem);
-		cpuChart.update((items) => {
-			items.shift();
-			items.push(dataSystem.cpu);
-			return items;
-		});
-		ramChart.update((items) => {
-			items.shift();
-			items.push(dataSystem.memory);
-			return items;
-		});
-		fetchProcesses(supervisorName);
-	} catch (err) {
-		console.log(err);
+const fetchAll = async () => {
+	if (get(isAuthenticated) == 'true') {
+		try {
+			// fetching system data
+			const resSystem = await fetch('/api/system');
+			const dataSystem = await resSystem.json();
+			let cpus = dataSystem.machineSpec.CPUs;
+			cpuCount.set(cpus);
+			system.set(dataSystem);
+			cpuChart.update((items) => {
+				items.shift();
+				items.push(dataSystem.cpu);
+				return items;
+			});
+			ramChart.update((items) => {
+				items.shift();
+				items.push(dataSystem.memory);
+				return items;
+			});
+			fetchProcesses();
+		} catch (err) {
+			console.log(err);
+		}
 	}
 };
 // //First time calling api when the page loads
 // fetchAll();
 // //fetch api every 2 seconds
-export function startFetching(supervisorName) {
-	setInterval(() => {
-		fetchAll(supervisorName);
-	}, 2000);
-}
+setInterval(() => {
+	fetchAll();
+}, 2000);
 
-async function fetchProcesses(supervisorName) {
+async function fetchProcesses() {
 	// fetching processes data
+	const supervisorName = get(currentSupervisor);
+	console.log(supervisorName);
 	const resProcesses = await fetch(`/api/supervisor/${supervisorName}/processes`);
 	const data = await resProcesses.json();
-	console.log(data);
 	const dataProcesses = data.processes;
 	const loadedProcesses = dataProcesses.map((data) => ({
 		description: data.description,
