@@ -79,13 +79,10 @@ def process_Core_Index(pid):
 def set_Process_Core_Index(pid, core_index):
     return set_process_affinity_CPU(pid,core_index)
 
-
+poly_visor = PolyVisor({"config_file": configPolyvisorPath()})
 def stop_processes_by_name_model(*name):
 
-    options = {
-        "config_file": configPolyvisorPath()  # Replace with the actual file path
-    }
-    poly_visor = PolyVisor(options)
+    
     poly_visor.refresh()
     result = poly_visor.stop_processes(*name)
     return result
@@ -93,20 +90,13 @@ def stop_processes_by_name_model(*name):
 
 def restart_processes_by_name_model(*name):
 
-    options = {
-        "config_file": configPolyvisorPath()  # Replace with the actual file path
-    }
-    poly_visor = PolyVisor(options)
+    
     poly_visor.refresh()
     result = poly_visor.restart_processes(*name)
     return result    
 
 def start_processes_by_name_model(*name):
 
-    options = {
-        "config_file": configPolyvisorPath()  # Replace with the actual file path
-    }
-    poly_visor = PolyVisor(options)
     poly_visor.refresh()
     result = poly_visor.start_processes(*name)
     return result
@@ -114,10 +104,6 @@ def start_processes_by_name_model(*name):
 
 def stop_all_processes_model():
 
-    options = {
-        "config_file": configPolyvisorPath()  # Replace with the actual file path
-    }
-    poly_visor = PolyVisor(options)
     poly_visor.refresh()
     result = poly_visor.stop_all_processes()
     return result
@@ -125,10 +111,6 @@ def stop_all_processes_model():
 
 def start_all_processes_model():
 
-    options = {
-        "config_file": configPolyvisorPath()  # Replace with the actual file path
-    }
-    poly_visor = PolyVisor(options)
     poly_visor.refresh()
     result = poly_visor.start_all_processes()
     return result
