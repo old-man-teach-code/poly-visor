@@ -21,7 +21,7 @@
 {#if pathname == '/login'}
 	<slot />
 {:else}
-	<div class="flex flex-row w-full max-w-screen min-h-fit h-screen">
+	<div class="flex flex-row w-full min-h-screen ">
 		<Sidebar />
 		<LoadingScreen />
 		<slot />
