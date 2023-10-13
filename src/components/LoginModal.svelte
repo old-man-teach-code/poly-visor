@@ -51,7 +51,6 @@
 			alert('Invalid username or password');
 			return;
 		}
-		document.cookie = `accessToken=${accessToken}`;
 		//redirect to '/'
 		isAuthenticated.set(true);
 		currentSupervisor.set(supervisorName);

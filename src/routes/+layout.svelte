@@ -1,8 +1,8 @@
 <script>
 	import Sidebar from '../components/SideBar.svelte';
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
-	import { isAuthenticated } from '../store/supstore.js';
+	import { beforeUpdate, onMount } from 'svelte';
+	import { isAuthenticated, startFetching } from '../store/supstore.js';
 
 	$: pathname = $page.url.pathname;
 
@@ -11,7 +11,11 @@
 
 	onMount(() => {
 		if ($isAuthenticated == 'false' && pathname != '/login') {
-			window.location.href = '/login';
+			window.location.href = '/logcasi in';
+		}
+		if ($isAuthenticated == 'true' && pathname != '/login') {
+			console.log(true);
+			startFetching();
 		}
 	});
 </script>
