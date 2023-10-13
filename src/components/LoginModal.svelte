@@ -50,7 +50,7 @@
 		if (accessToken !== 'Invalid username or password') {
 			document.cookie = `accessToken=${accessToken}`;
 			//redirect to '/'
-			startFetching();
+			startFetching(supervisorName);
 			goto('/');
 		}
 	}

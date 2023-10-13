@@ -152,7 +152,7 @@
 	</div>
 	{#if chartState}
 		<div class="flex flex-1 justify-center">
-			<div class="relative bg-white border-2 rounded-md h-4/5 w-3/4 min-h-[300px]">
+			<div class="relative bg-white border-2 rounded-md h-4/5 w-11/12 lg:w-3/4 min-h-[300px]">
 				<canvas class="p-2" use:chartJS={data} id="myChart" />
 			</div>
 		</div>
