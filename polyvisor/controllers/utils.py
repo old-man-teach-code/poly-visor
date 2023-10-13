@@ -143,7 +143,7 @@ def jwt_login_required():
             user_claims = get_jwt_identity()
 
             # Check if the JWT contains the required claims for authentication
-            if "username" in user_claims and "password" in user_claims:
+            if "username" in user_claims:
                 return f(*args, **kwargs)
             
             abort(401)  # Return a 401 Unauthorized status if the claims are missing

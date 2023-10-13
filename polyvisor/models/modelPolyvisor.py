@@ -131,6 +131,18 @@ class PolyVisor(object):
     def supervisors(self):
         
         return self.config["supervisors"]
+        
+
+    @property
+    def get_supervisors(self):
+        supervisors_dict = self.config["supervisors"]  # Default to an empty dictionary if "supervisors" is not in the config
+        result_array = []
+
+        for key, value in supervisors_dict.items():
+            value["name"] = key  # Add the "name" field to the supervisor object
+            result_array.append(value)
+
+        return result_array
 
     @property
     def processes(self):
