@@ -10,7 +10,9 @@ from polyvisor.finder import runShell
 class System:
 
     def __init__(self):
-        pass 
+        self.cpu_quota = 80  # Define a CPU quota (80% in this example)
+        self.memory_quota = 80  # Define a memory quota (80% in this example)
+        self.monitor_interval = 5  # Interv
     
     #Get stats of each core CPU
     # @property
@@ -66,7 +68,8 @@ class System:
         return result
     
 
-    property
+
+    @property
     def cpu_usage_within_quota(self):
         current_usage = self.current_cpu_usage
         return current_usage <= self.cpu_quota
@@ -75,8 +78,7 @@ class System:
     def memory_usage_within_quota(self):
         current_memory = self.memory_status
         return current_memory <= self.memory_quota
-    
-    @property
+
     def monitor_resources(self):
         while True:
             if not self.cpu_usage_within_quota:
@@ -86,18 +88,17 @@ class System:
                 # Memory usage exceeds the quota, take action (e.g., terminate a process)
                 self.take_action_on_memory_exceed()
             time.sleep(self.monitor_interval)
-    @property
+
     def take_action_on_cpu_exceed(self):
         # Implement your custom action here
         # For example, terminate a process consuming excessive CPU
         self.terminate_process_with_high_cpu()
-    @property
+
     def take_action_on_memory_exceed(self):
         # Implement your custom action here
         # For example, terminate a process consuming excessive memory
         self.terminate_process_with_high_memory()
 
-    @property
     def terminate_process_with_high_cpu(self):
         # Find the process consuming the most CPU and terminate it
         process_info = self.find_process_with_high_cpu()
@@ -106,8 +107,6 @@ class System:
             print(f"Terminating process {pid} consuming {cpu_percent}% CPU: {command}")
             os.kill(pid, signal.SIGKILL)
 
-
-    @property
     def terminate_process_with_high_memory(self):
         # Find the process consuming the most memory and terminate it
         process_info = self.find_process_with_high_memory()
@@ -116,16 +115,13 @@ class System:
             print(f"Terminating process {pid} consuming {mem_percent}% memory: {command}")
             os.kill(pid, signal.SIGKILL)
 
-
-    @property
     def find_process_with_high_cpu(self):
         output = runShell("ps -eo pid,%cpu,command --sort=-%cpu | awk 'NR==2{print $1,$2,$3}'")
         if output:
             pid, cpu_percent, command = output.split()
             return int(pid), float(cpu_percent), command
         return None
-    
-    @property
+
     def find_process_with_high_memory(self):
         output = runShell("ps -eo pid,%mem,command --sort=-%mem | awk 'NR==2{print $1,$2,$3}'")
         if output:
