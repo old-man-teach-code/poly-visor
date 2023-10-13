@@ -4,7 +4,6 @@
 	import LoadingScreen from '../../components/LoadingScreen.svelte';
 	import LoginModal from '../../components/LoginModal.svelte';
 	import { goto } from '$app/navigation';
-	import { startFetching } from '../../store/supstore';
 	interface Supervisor {
 		host: string;
 		name: string;
@@ -24,7 +23,6 @@
 
 	function handleSupervisorClick(supervisor: Supervisor) {
 		if (!supervisor.authentication) {
-			startFetching();
 			goto('/');
 			return;
 		}

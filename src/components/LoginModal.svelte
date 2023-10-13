@@ -2,7 +2,7 @@
 	import { createEventDispatcher, onDestroy } from 'svelte';
 	import { login } from '../store/action.js';
 	import { goto } from '$app/navigation';
-	import { startFetching } from '../store/supstore.js';
+	import { isAuthenticated, currentSupervisor } from '../store/supstore.js';
 
 	const dispatch = createEventDispatcher();
 	const close = () => dispatch('close');
@@ -50,7 +50,8 @@
 		if (accessToken !== 'Invalid username or password') {
 			document.cookie = `accessToken=${accessToken}`;
 			//redirect to '/'
-			startFetching(supervisorName);
+			isAuthenticated.set(true);
+			currentSupervisor.set(supervisorName);
 			goto('/');
 		}
 	}
