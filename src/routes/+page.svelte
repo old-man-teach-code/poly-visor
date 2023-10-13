@@ -8,15 +8,12 @@
 	import { ramChart } from '../store/supstore.js';
 	import Card from '../components/Card.svelte';
 	import CpuCore from '../components/CpuCore.svelte';
-	import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
 
 	let chart: any;
 	let textCpu: Boolean = true; //initial text color for CPU as orange
 	let textRam: Boolean;
 	let textCores: Boolean;
 	let chartState = true;
-
 
 	//Initial data for ChartJS
 	let data = {
@@ -153,7 +150,7 @@
 	</div>
 	{#if chartState}
 		<div class="flex flex-1 justify-center">
-			<div class="relative bg-white border-2 rounded-md w-3/4 h-4/5">
+			<div class="relative bg-white border-2 rounded-md h-4/5 w-11/12 lg:w-3/4 min-h-[300px]">
 				<canvas class="p-2" use:chartJS={data} id="myChart" />
 			</div>
 		</div>

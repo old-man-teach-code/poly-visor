@@ -1,8 +1,8 @@
 <script>
 	import Sidebar from '../components/SideBar.svelte';
 	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import { isAuthenticated } from '../store/supstore.js';
 
 	$: pathname = $page.url.pathname;
 
@@ -10,9 +10,8 @@
 	import LoadingScreen from '../components/LoadingScreen.svelte';
 
 	onMount(() => {
-		const token = document.cookie.split(';').find((row) => row.startsWith('accessToken'));
-		if (!token) {
-			goto('/login');
+		if ($isAuthenticated == 'false' && pathname != '/login') {
+			window.location.href = '/login';
 		}
 	});
 </script>
@@ -21,7 +20,7 @@
 {#if pathname == '/login'}
 	<slot />
 {:else}
-	<div class="flex flex-row w-full max-w-screen min-h-fit h-screen">
+	<div class="flex flex-row w-full min-h-screen ">
 		<Sidebar />
 		<LoadingScreen />
 		<slot />

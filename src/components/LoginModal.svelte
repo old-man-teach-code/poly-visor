@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher, onDestroy } from 'svelte';
 	import { login } from '../store/action.js';
-	import { goto } from '$app/navigation';
-	import { startFetching } from '../store/supstore.js';
+	import { isAuthenticated, currentSupervisor } from '../store/supstore.js';
 
 	const dispatch = createEventDispatcher();
 	const close = () => dispatch('close');
@@ -47,12 +46,16 @@
 		const formData = new FormData(e.target);
 		formData.append('supervisor', supervisorName);
 		const accessToken = await login(formData);
-		if (accessToken !== 'Invalid username or password') {
-			document.cookie = `accessToken=${accessToken}`;
-			//redirect to '/'
-			startFetching();
-			goto('/');
+		console.log(accessToken);
+		if (accessToken.message == 'Invalid username or password') {
+			alert('Invalid username or password');
+			return;
 		}
+		document.cookie = `accessToken=${accessToken}`;
+		//redirect to '/'
+		isAuthenticated.set(true);
+		currentSupervisor.set(supervisorName);
+		window.location.href = '/';
 	}
 </script>
 
