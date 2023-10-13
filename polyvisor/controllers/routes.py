@@ -362,7 +362,7 @@ except Exception as e:
 #stop supervisord instance by uid
 try:
     @app_routes.route('/api/supervisors/shutdown', methods=['POST'])
-    
+    @jwt_required( )
     def shutdown_supervisor_api():
         names = (
             str.strip(supervisor) for supervisor in request.form["supervisor"].split(",")
@@ -394,6 +394,7 @@ except Exception as e:
 # stop process by names
 try:
     @app_routes.route('/api/processes/stop', methods=['POST'])
+    @jwt_required( )
     def stop_process_by_name_api():
         names = request.form["uid"].split(",")
         result = stop_processes_by_name_model(*names)
@@ -406,6 +407,7 @@ except Exception as e:
 # restart process by names
 try:
     @app_routes.route('/api/processes/restart', methods=['POST'])
+    @jwt_required( )
     def restart_process_by_name_api():
         names = request.form["uid"].split(",")
         result = restart_processes_by_name_model(*names)
@@ -417,6 +419,7 @@ except Exception as e:
 # start process by names
 try:
     @app_routes.route('/api/processes/start', methods=['POST'])
+    @jwt_required( )
     def start_process_by_name_api():
         names = request.form["uid"].split(",")
         result =start_processes_by_name_model(*names)
@@ -427,6 +430,7 @@ except Exception as e:
 # stop all processes
 try:
     @app_routes.route('/api/processes/stop', methods=['GET'])
+    @jwt_required( )
     def stop_all_processes_api():
         result = stop_all_processes_model()
         return jsonify(result)
@@ -436,6 +440,7 @@ except Exception as e:
 # start all processes
 try:
     @app_routes.route('/api/processes/start', methods=['GET'])
+    @jwt_required( )
     def start_all_processes_api():
         result = start_all_processes_model()
         return jsonify(result)
