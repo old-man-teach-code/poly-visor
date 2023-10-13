@@ -1,9 +1,14 @@
 import hashlib
 from functools import wraps
-from flask import session, abort
-from polyvisor.finder import get_username_password, split_config_path
+import re
+import time
+from flask import logging, session, abort
+import requests
+from polyvisor.finder import configPolyvisorPath, get_username_password, split_config_path
 import glob,os
 import configparser
+
+
 
 
 #get the date of today
@@ -105,18 +110,123 @@ def get_username_password(file_path):
 
 
 
-def login_required():
+try:
+    def login_required(app):
+        def decorator(f):
+            @wraps(f)
+            def decorated_function(*args, **kwargs):
+                supervisor_name = request.form.get("supervisor")
+                # Add authentication logic here
+                if not session.get("logged_in"):
+                    abort(401)
+                elif not app.polyvisor.is_user_authorized(supervisor_name, session.get("username")):
+                    abort(403)  # Forbidden if the user is not authorized for the supervisor
+                return f(*args, **kwargs)
+
+            return decorated_function
+
+        return decorator
+except Exception as e:
+    print(f"Error login: {str(e)}")
+
+
+
+from functools import wraps
+from flask import request, abort
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
+def jwt_login_required():
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
+            # Get the JWT payload (user claims)
+            user_claims = get_jwt_identity()
 
-            authentication_required = check_authentication_required()
-            # Check if the username key 
-            if not authentication_required or 'username' in session:
+            # Check if the JWT contains the required claims for authentication
+            if "username" in user_claims and "password" in user_claims:
                 return f(*args, **kwargs)
             
-            abort(401)
+            abort(401)  # Return a 401 Unauthorized status if the claims are missing
 
-        return decorated_function
+        return jwt_required()(decorated_function)
 
     return decorator
+
+
+_PROTO_RE_STR = "(?P<protocol>\w+)\://"
+_HOST_RE_STR = "?P<host>([\w\-_]+\.)*[\w\-_]+|\*"
+_PORT_RE_STR = "\:(?P<port>\d{1,5})"
+
+
+URL_RE = re.compile(
+    "({protocol})?({host})?({port})?".format(
+        protocol=_PROTO_RE_STR, host=_HOST_RE_STR, port=_PORT_RE_STR
+    )
+)
+
+def sanitize_url(url, protocol=None, host=None, port=None):
+    match = URL_RE.match(url)
+    if match is None:
+        raise ValueError("Invalid URL: {!r}".format(url))
+    pars = match.groupdict()
+    _protocol, _host, _port = pars["protocol"], pars["host"], pars["port"]
+    protocol = protocol if _protocol is None else _protocol
+    host = host if _host is None else _host
+    port = port if _port is None else _port
+    protocol = "" if protocol is None else (protocol + "://")
+    port = "" if port is None else ":" + str(port)
+    return dict(
+        url="{}{}{}".format(protocol, host, port),
+        protocol=protocol,
+        host=host,
+        port=port,
+    )
+
+
+def parse_dict(obj):
+    """Returns a copy of `obj` where bytes from key/values was replaced by str"""
+    decoded = {}
+    for k, v in obj.items():
+        if isinstance(k, bytes):
+            k = k.decode("utf-8")
+        if isinstance(v, bytes):
+            v = v.decode("utf-8")
+        decoded[k] = v
+    return decoded
+
+
+def parse_obj(obj):
+    """Returns `obj` or a copy replacing recursively bytes by str
+
+    `obj` can be any objects, including list and dictionary"""
+    if isinstance(obj, bytes):
+        return obj.decode()
+    elif isinstance(obj, six.text_type):
+        return obj
+    elif isinstance(obj, abc.Mapping):
+        return {parse_obj(k): parse_obj(v) for k, v in obj.items()}
+    elif isinstance(obj, abc.Container):
+        return type(obj)(parse_obj(i) for i in obj)
+    return obj
+
+import logging
+
+log = logging.getLogger("polyvisor")
+
+def send_webhook_alert(webhook_url,event):
+        webhook_payload = {
+            "content": "Event '{}' has been triggered at '{}'".format(event, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())),
+        }
+        WEBHOOK_URL = "https://discord.com/api/webhooks/1157695978846027887/dTYWL9zZaq59Dhyy9nVmia-6YdZBZbJOBuPQS9qpDNjtUmuWAIJPyC8TbGktFCJw35El"
+        if webhook_url is not None :
+            try:
+                response = requests.post(webhook_url, json=webhook_payload)
+                if response.status_code == 200:
+                    log.info("Webhook alert sent successfully")
+                else:
+                    log.warning("Failed to send webhook alert. Status code: %s", response.status_code)
+            except Exception as e:
+                log.error("Failed to send webhook alert. Exception: %s", e)
+                
+        else:
+            log.warning("Webhook URL is empty. Webhook alert not sent.")        
