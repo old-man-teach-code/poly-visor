@@ -333,24 +333,27 @@ except Exception as e:
 
 # login to the application
 try:
-    @app_routes.route("/api/login", methods=["POST"])
+    @app.route("/api/login", methods=["POST"])
     def login():
-
         if not app_routes.polyvisor.use_authentication:
             return jsonify({"message": "Authentication not required"}), 200
-        
+
         username = request.form.get("username")
         password = request.form.get("password")
         supervisor_name = request.form.get("supervisor")
 
         if app_routes.polyvisor.is_login_valid(supervisor_name, username, password):
-            access_token = create_access_token(identity=username, expires_delta=timedelta(hours=1))
+            # Create an access token
+            access_token = create_access_token(identity=username)
             
-            session["logged_in"] = True
-            session["username"] = username
-            return jsonify(access_token=access_token)
+            # Set the JWT token as an HTTP-only cookie
+            response = jsonify({"message": "Login successful"})
+            response.set_cookie('access_token', access_token, httponly=True, samesite='Lax')
+            
+            return response, 200
         else:
             return jsonify({"message": "Invalid username or password"}), 401
+
 except Exception as e:
     logger_routes.debug(e)
 

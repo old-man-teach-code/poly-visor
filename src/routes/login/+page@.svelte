@@ -52,7 +52,7 @@
 				>
 					<div class=" flex flex-row items-center gap-3 truncate">
 						<span class="text-base md:text-lg font-semibold truncate"
-							>Polyvisor {supervisor?.name}aaaaaaaaaaaaaaaaaaaaaaaaa</span
+							>Supervisor {supervisor?.name}</span
 						>
 						<div
 							class="h-3 w-3 min-w-[12px] min-h-[12px] {supervisor?.running

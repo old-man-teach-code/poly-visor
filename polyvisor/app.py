@@ -8,7 +8,7 @@ from flask_session import Session
 
 app = Flask(__name__, static_folder="./build")
 CORS(app)
-jwt = JWTManager(app)
+
 
 # Set the session type and key
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -16,7 +16,12 @@ app.config["SESSION_PERMANENT"] = False
 app.config['SECRET_KEY'] = 'your_secret_key_here'
 # set the token expiration time
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
+# Configure JWT for cookies
+app.config['JWT_TOKEN_LOCATION'] = ['cookies']
+app.config['JWT_ACCESS_COOKIE_PATH'] = '/api'  # Path to protect with JWT cookies
+app.config['JWT_COOKIE_CSRF_PROTECT'] = False  
 
+jwt = JWTManager(app)
 # Initialize the session
 session = Session(app)
 
