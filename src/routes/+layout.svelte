@@ -2,7 +2,7 @@
 	import Sidebar from '../components/SideBar.svelte';
 	import { page } from '$app/stores';
 	import { beforeUpdate, onMount } from 'svelte';
-	import { isAuthenticated, startFetching } from '../store/supstore.js';
+	import { fetchProcesses, isAuthenticated, startFetching } from '../store/supstore.js';
 
 	$: pathname = $page.url.pathname;
 
@@ -14,6 +14,7 @@
 			window.location.href = '/login';
 		}
 		if ($isAuthenticated == 'true' && pathname != '/login') {
+			fetchProcesses();
 			startFetching();
 		}
 	});

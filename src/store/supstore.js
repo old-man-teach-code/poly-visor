@@ -45,13 +45,14 @@ const fetchAll = async () => {
 	}
 };
 
-async function fetchProcesses() {
+export async function fetchProcesses() {
 	// fetching processes data
 	try {
 		const supervisorName = get(currentSupervisor);
 		const resProcesses = await fetch(`/api/supervisor/${supervisorName}/processes`);
 		const data = await resProcesses.json();
 		const dataProcesses = data.processes;
+		console.log(dataProcesses);
 		const loadedProcesses = dataProcesses.map((data) => ({
 			description: data.description,
 			exitstatus: data.exitstatus,
@@ -90,8 +91,8 @@ async function fetchProcesses() {
 export function startFetching() {
 	const intervalId = setInterval(async () => {
 		fetchAll();
-		fetchProcesses();
-	}, 2000);
+		// fetchProcesses();
+	}, 6000);
 	if (get(isAuthenticated) == 'false') {
 		clearInterval(intervalId);
 	}

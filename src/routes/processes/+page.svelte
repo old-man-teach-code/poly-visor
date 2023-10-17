@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { processes, system } from '../../store/supstore';
+	import { currentSupervisor, processes, system } from '../../store/supstore';
 	import Pagination from '../../components/Pagination.svelte';
 	import StartButton from '../../components/Buttons/StartButton.svelte';
 	import StopButton from '../../components/Buttons/StopButton.svelte';
@@ -123,6 +123,7 @@
 									</td>
 									<td class="py-3 px-6 text-center relative">
 										<button
+											disabled={process.core_index && $system.cores ? false : true}
 											on:click={() => {
 												showModal = 'taskset';
 												modalContent = {
@@ -132,9 +133,8 @@
 											}}
 											class="bg-green-300 rounded-md px-3 py-1.5"
 										>
-											{process.core_index ? process.core_index.length : 0} / {Object.keys(
-												$system.cores
-											).length}
+											{process.core_index ? process.core_index.length : 0} / {$system.cores &&
+												Object.keys($system.cores).length}
 										</button>
 									</td>
 									<td class="py-3 px-6 text-center">
@@ -143,14 +143,30 @@
 												<ToolTip title="Stop this process">
 													<StopButton
 														spin
-														on:event={() => stopProcess(process.group + ':' + process.name)}
+														on:event={() =>
+															stopProcess(() => {
+																const form = new FormData();
+																form.append(
+																	'uid',
+																	$currentSupervisor + ':' + process.group + ':' + process.name
+																);
+																return form;
+															})}
 													/>
 												</ToolTip>
 											{:else}
 												<ToolTip title="Start this process">
 													<StartButton
 														spin
-														on:event={() => startProcess(process.group + ':' + process.name)}
+														on:event={() =>
+															startProcess(() => {
+																const form = new FormData();
+																form.append(
+																	'uid',
+																	$currentSupervisor + ':' + process.group + ':' + process.name
+																);
+																return form;
+															})}
 													/>
 												</ToolTip>
 											{/if}
