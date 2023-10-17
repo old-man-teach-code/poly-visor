@@ -14,7 +14,6 @@
 			window.location.href = '/logcasi in';
 		}
 		if ($isAuthenticated == 'true' && pathname != '/login') {
-			console.log(true);
 			startFetching();
 		}
 	});
