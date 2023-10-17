@@ -9,6 +9,14 @@ export const cpuCount = writable(0);
 export const cpuChart = writable(Array(31));
 export const ramChart = writable(Array(31));
 
+let systemInterval;
+let processesInterval;
+
+export const dashboardEnabled = writable(localStorage.dashboardEnabled || false);
+dashboardEnabled.subscribe((value) => {
+	localStorage.dashboardEnabled = value;
+});
+
 export const isAuthenticated = writable(localStorage.isAuthenticated || false);
 isAuthenticated.subscribe((value) => {
 	localStorage.isAuthenticated = value;
@@ -20,7 +28,8 @@ currentSupervisor.subscribe((value) => {
 });
 
 //fetch api
-const fetchAll = async () => {
+const fetchSystem = async () => {
+	console.log('fetching system data');
 	if (get(isAuthenticated) == 'true') {
 		try {
 			// fetching system data
@@ -49,7 +58,6 @@ async function fetchProcesses() {
 	// fetching processes data
 	try {
 		const supervisorName = get(currentSupervisor);
-		console.log(supervisorName);
 		const resProcesses = await fetch(`/api/supervisor/${supervisorName}/processes`);
 		const data = await resProcesses.json();
 		const dataProcesses = data.processes;
@@ -88,12 +96,23 @@ async function fetchProcesses() {
 	}
 }
 
-export function startFetching() {
-	const intervalId = setInterval(async () => {
-		fetchAll();
-		fetchProcesses();
-	}, 2000);
-	if (get(isAuthenticated) == 'false') {
-		clearInterval(intervalId);
+export function toggleSystemInterval() {
+	console.log(get(dashboardEnabled));
+	if (get(dashboardEnabled) == 'true') {
+		systemInterval = setInterval(async () => {
+			fetchSystem();
+		}, 2000);
+	} else {
+		clearInterval(systemInterval);
+	}
+}
+
+export function toggleProcessesInterval() {
+	if (get(isAuthenticated) == 'true') {
+		processesInterval = setInterval(async () => {
+			fetchProcesses();
+		}, 2000);
+	} else {
+		clearInterval(processesInterval);
 	}
 }

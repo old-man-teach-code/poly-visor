@@ -160,12 +160,8 @@ class Supervisor(dict):
         # get PID
         info["pid"] = server.getPID()
         info["running"] = True
-        info["authentication"] = self.check_authentication()
-        info["processes"] = processes = []
-        procInfo = server.getAllProcessInfo()
-        for proc in procInfo:
-            process = Process(self, parse_dict(proc))
-            processes.append(process)
+        info["authentication"] = True
+        info["processes"] = [Process(self, parse_dict(proc)) for proc in server.getAllProcessInfo()]
 
         return info
     

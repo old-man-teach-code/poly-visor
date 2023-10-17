@@ -195,8 +195,8 @@ def getSupervisor(uid):
 # get supervisord's processes by uid
 def getSupervisorProcesses(uid):
     
-    poly_visor.refresh()
     supervisor = poly_visor.get_supervisor_processes(uid)
+    # poly_visor.refresh()
 
     return supervisor
 

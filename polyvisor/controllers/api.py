@@ -20,17 +20,17 @@ logger_api = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(levelname)s %(name)s %(message)s')
 
-# get all processes and return a json object
-try:
-    @app_api.route('/api/processes', methods=['GET'])
-    def get_all_processes_api():
-        list_of_processes = get_all_processes_model()
-        list_of_processes_json = []
-        for process in list_of_processes:
-            list_of_processes_json.append(process.__dict__)
-        return jsonify(list_of_processes_json)
-except Exception as e:
-    logger_api.debug(e)
+# # get all processes and return a json object
+# try:
+#     @app_api.route('/api/processes', methods=['GET'])
+#     def get_all_processes_api():
+#         list_of_processes = get_all_processes_model()
+#         list_of_processes_json = []
+#         for process in list_of_processes:
+#             list_of_processes_json.append(process.__dict__)
+#         return jsonify(list_of_processes_json)
+# except Exception as e:
+#     logger_api.debug(e)
 
 # # get supervisor object and return a json object
 # try:
