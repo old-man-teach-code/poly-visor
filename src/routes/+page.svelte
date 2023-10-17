@@ -8,6 +8,10 @@
 	import { ramChart } from '../store/supstore.js';
 	import Card from '../components/Card.svelte';
 	import CpuCore from '../components/CpuCore.svelte';
+	import { onMount } from 'svelte';
+	import { isAuthenticated, startFetching } from '../store/supstore.js';
+	import { page } from '$app/stores';
+	$: pathname = $page.url.pathname;
 
 	let chart: any;
 	let textCpu: Boolean = true; //initial text color for CPU as orange
@@ -130,6 +134,8 @@
 	$: if ($cpuChart) {
 		data = data;
 	}
+
+
 </script>
 
 <div class="px-10 space-y-5 mb-5 flex flex-col w-full">

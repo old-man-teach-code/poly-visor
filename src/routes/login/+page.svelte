@@ -26,6 +26,8 @@
 		isAuthenticated.set(true);
 		currentSupervisor.set(supervisor.name);
 		if (!supervisor.authentication) {
+			isAuthenticated.set(true);
+			currentSupervisor.set(supervisor.name);
 			window.location.href = '/';
 			return;
 		}
