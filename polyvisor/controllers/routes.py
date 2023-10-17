@@ -401,7 +401,10 @@ try:
     def stop_process_by_name_api():
         names = request.form["uid"].split(",")
         result = stop_processes_by_name_model(*names)
-        return jsonify(result)
+        if(result):
+            return jsonify({'message': 'Process stopped successfully'})
+        else:
+            return jsonify({'message': 'Process not stopped'})
 
 except Exception as e:
     logger_routes.debug(e)
@@ -414,7 +417,10 @@ try:
     def restart_process_by_name_api():
         names = request.form["uid"].split(",")
         result = restart_processes_by_name_model(*names)
-        return jsonify(result)
+        if(result):
+            return jsonify({'message': 'Process restarted successfully'})
+        else:
+            return jsonify({'message': 'Process not restarted'})
     
 except Exception as e:
     logger_routes.debug(e)
@@ -426,7 +432,10 @@ try:
     def start_process_by_name_api():
         names = request.form["uid"].split(",")
         result =start_processes_by_name_model(*names)
-        return jsonify(result)
+        if(result):
+            return jsonify({'message': 'Process started successfully'})
+        else:
+            return jsonify({'message': 'Process not started'})
 except Exception as e:
     logger_routes.debug(e)
 
@@ -436,7 +445,10 @@ try:
     @jwt_required( )
     def stop_all_processes_api():
         result = stop_all_processes_model()
-        return jsonify(result)
+        if(result):
+            return jsonify({'message': 'All processes stopped successfully'})
+        else:
+            return jsonify({'message': 'All processes not stopped'})
 except Exception as e:
     logger_routes.debug(e)
 
@@ -446,6 +458,9 @@ try:
     @jwt_required( )
     def start_all_processes_api():
         result = start_all_processes_model()
-        return jsonify(result)
+        if(result):
+            return jsonify({'message': 'All processes started successfully'})
+        else:
+            return jsonify({'message': 'All processes not started'})
 except Exception as e:
     logger_routes.debug(e)
