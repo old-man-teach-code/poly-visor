@@ -23,6 +23,8 @@
 	});
 
 	function handleSupervisorClick(supervisor: Supervisor) {
+		isAuthenticated.set(true);
+		currentSupervisor.set(supervisor.name);
 		if (!supervisor.authentication) {
 			isAuthenticated.set(true);
 			currentSupervisor.set(supervisor.name);
@@ -33,7 +35,6 @@
 			alert('Supervisor is not running, please enable this supervisor instance!');
 			return;
 		}
-		selectedSupervisor = supervisor.name;
 		loginModal = true;
 	}
 </script>
