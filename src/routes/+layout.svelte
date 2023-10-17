@@ -2,7 +2,12 @@
 	import Sidebar from '../components/SiderBar/index.svelte';
 	import { page } from '$app/stores';
 	import { beforeUpdate, onMount } from 'svelte';
-	import { fetchProcesses, isAuthenticated, startFetching } from '../store/supstore.js';
+	import {
+		dashboardEnabled,
+		isAuthenticated,
+		toggleProcessesInterval,
+		toggleSystemInterval
+	} from '../store/supstore.js';
 
 	$: pathname = $page.url.pathname;
 
@@ -14,8 +19,9 @@
 			window.location.href = '/login';
 		}
 		if ($isAuthenticated == 'true' && pathname != '/login') {
-			fetchProcesses();
-			startFetching();
+			dashboardEnabled.set('true');
+			toggleProcessesInterval();
+			toggleSystemInterval();
 		}
 	});
 </script>

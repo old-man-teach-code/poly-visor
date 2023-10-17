@@ -97,7 +97,7 @@
 						<tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
 							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-left">Description</th>
 							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-center">Status</th>
-							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-left">Process name</th>
+							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-center">Process name</th>
 							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-center">Taskset</th>
 							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-center">Actions</th>
 						</tr>
@@ -112,12 +112,12 @@
 										</div>
 									</td>
 									<td class="py-3 px-6 text-left">
-										<div class="flex items-center">
+										<div class="flex justify-center">
 											<span>{process.description}</span>
 										</div>
 									</td>
-									<td class="py-3 px-6 text-center">
-										<span class="{process.stateColor} py-1 px-3 rounded-full text-xs"
+									<td class="py-3 px-6 text-center ">
+										<span class="{process.stateColor} py-1 px-3 mx-auto rounded-full text-xs"
 											>{process.statename}</span
 										>
 									</td>

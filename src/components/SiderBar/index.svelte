@@ -7,16 +7,16 @@
 </script>
 
 <!-- Side bar -->
-<div class="bg-sidebar z-50 fixed w-full sm:w-fit max-sm:bottom-0 sm:static">
-	<div class="sticky top-0 flex sm:flex-col flex-row h-full">
-		<div class="hidden sm:flex justify-center items-center gap-2 sm:mx-14 my-8">
+<div class="bg-sidebar z-50 w-full fixed lg:w-fit max-lg:bottom-0 lg:static">
+	<div class="sticky top-0 flex lg:flex-col flex-row h-full">
+		<div class="hidden lg:flex justify-center items-center gap-2 my-8">
 			<img class="w-8 h-8" src="/images/logo.png" alt="" />
 			<h1 class="text-text-logo text-xl whitespace-nowrap">Poly-Visor</h1>
 		</div>
 		<div
-			class="flex flex-row sm:flex-col gap-3 justify-between mx-5 sm:mx-0 max-sm:w-full sm:h-2/3 font-bold"
+			class="flex flex-row lg:flex-col gap-3 justify-between mx-5 lg:mx-0 max-lg:w-full lg:h-2/3 font-bold"
 		>
-			<ul class="flex sm:flex-col gap-2">
+			<ul class="flex lg:flex-col gap-2">
 				<li>
 					<SideBarButton path="/" text="Overview">
 						<OverviewIcon />
@@ -30,7 +30,7 @@
 				<li>
 					<!-- <a
 						href="/setting"
-						class="text-white text-sm justify-center py-5 max-sm:px-5 gap-2 flex hover:bg-gray-600 w-full {pathname ==
+						class="text-white text-sm justify-center py-5 max-lg:px-5 gap-2 flex hover:bg-gray-600 w-full {pathname ==
 						'/processes'
 							? 'bg-gray-600'
 							: 'bg-sidebar'}"
@@ -54,7 +54,7 @@
 							/>
 						</svg>
 
-						<p class="sm:block hidden">Setting</p></a
+						<p class="lg:block hidden">Setting</p></a
 					> -->
 					<SideBarButton path="/setting" text="Setting">
 						<SettingIcon />
@@ -62,10 +62,10 @@
 				</li>
 			</ul>
 			<div>
-				<div class="border-t hidden sm:block border-gray-600 mx-4" />
+				<div class="border-t hidden lg:block border-gray-600 mx-4" />
 				<!-- <button
 					on:click={handleLogout}
-					class="text-white text-sm justify-center py-5 max-sm:px-5 gap-2 flex hover:bg-gray-600 w-full"
+					class="text-white text-sm justify-center py-5 max-lg:px-5 gap-2 flex hover:bg-gray-600 w-full"
 					><svg
 						xmlns="http://www.w3.org/2000/svg"
 						viewBox="0 0 24 24"
@@ -78,7 +78,7 @@
 							clip-rule="evenodd"
 						/>
 					</svg>
-					<span class="hidden sm:block">Logout </span>
+					<span class="hidden lg:block">Logout </span>
 				</button> -->
 				<SideBarButton text="Logout" isLogout>
 					<LogoutIcon />
