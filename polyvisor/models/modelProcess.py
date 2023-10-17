@@ -109,26 +109,28 @@ class Process(dict):
     Null = {"running": False, "pid": None, "state": None, "statename": "UNKNOWN"}
 
     def __init__(self, supervisor, *args, **kwargs):
-        # take only important info from supervisor
+        # Initialize with default values
         super(Process, self).__init__(self.Null)
+        
+        # Update with arguments and keyword arguments
         if args:
             self.update(args[0])
         self.update(kwargs)
+
         supervisor_name = supervisor["name"]
-        full_name = self.get("group", "") + ":" + self.get("name", "")
-        uid = "{}:{}".format(supervisor_name, full_name)
+        full_name = f"{self.get('group', '')}:{self.get('name', '')}"
+        uid = f"{supervisor_name}:{full_name}"
+        
         self.log = log.getChild(uid)
         self.supervisor = weakref.proxy(supervisor)
         self["full_name"] = full_name
         self["running"] = self["state"] in RUNNING_STATES
         self["supervisor"] = supervisor_name
         self["host"] = supervisor["host"]
-        
         self["uid"] = uid
-        if self["pid"] :
-            self["core_index"] = get_process_affinity_CPU(self["pid"])
-        else:
-            self["core_index"] = None    
+
+        # Calculate core_index if pid is available
+        self["core_index"] = get_process_affinity_CPU(self["pid"]) if self["pid"] else None
 
         self["network_io_counters"] = self.get_network_io_counters()
         self["network_connections"] = self.get_network_connections()
