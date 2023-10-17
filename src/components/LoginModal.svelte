@@ -47,7 +47,7 @@
 		formData.append('supervisor', supervisorName);
 		const accessToken = await login(formData);
 		if (accessToken.message == 'Invalid username or password') {
-			alert('Invalid username or password');
+			alert(accessToken.message);
 			return;
 		}
 		//redirect to '/'
