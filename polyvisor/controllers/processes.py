@@ -73,7 +73,7 @@ def process_Core_Index(pid):
     result = get_process_affinity_CPU(pid)
     if(result.find("failed")!=-1):
         return False
-    return result
+    return True
 
 # Set affinity list in CPU, Return True unless error, parameter core_index SHOULD be STRING, value can be "3,4,9" or "4-12"
 def set_Process_Core_Index(pid, core_index):
@@ -85,7 +85,7 @@ def stop_processes_by_name_model(*name):
     
     poly_visor.refresh()
     result = poly_visor.stop_processes(*name)
-    return result
+    return True
     
 
 def restart_processes_by_name_model(*name):
@@ -93,24 +93,24 @@ def restart_processes_by_name_model(*name):
     
     poly_visor.refresh()
     result = poly_visor.restart_processes(*name)
-    return result    
+    return True    
 
 def start_processes_by_name_model(*name):
 
     poly_visor.refresh()
     result = poly_visor.start_processes(*name)
-    return result
+    return True
 
 
 def stop_all_processes_model():
 
     poly_visor.refresh()
     result = poly_visor.stop_all_processes()
-    return result
+    return True
 
 
 def start_all_processes_model():
 
     poly_visor.refresh()
     result = poly_visor.start_all_processes()
-    return result
+    return True

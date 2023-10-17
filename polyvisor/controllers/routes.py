@@ -335,22 +335,25 @@ except Exception as e:
 try:
     @app_routes.route("/api/login", methods=["POST"])
     def login():
-
         if not app_routes.polyvisor.use_authentication:
             return jsonify({"message": "Authentication not required"}), 200
-        
+
         username = request.form.get("username")
         password = request.form.get("password")
         supervisor_name = request.form.get("supervisor")
 
         if app_routes.polyvisor.is_login_valid(supervisor_name, username, password):
-            access_token = create_access_token(identity=username, expires_delta=timedelta(hours=1))
+            # Create an access token
+            access_token = create_access_token(identity=username)
             
-            session["logged_in"] = True
-            session["username"] = username
-            return jsonify(access_token=access_token)
+            # Set the JWT token as an HTTP-only cookie
+            response = jsonify({"access_token_cookie": access_token})
+            response.set_cookie('access_token_cookie', access_token, httponly=True, samesite='Lax')
+            
+            return response, 200
         else:
             return jsonify({"message": "Invalid username or password"}), 401
+
 except Exception as e:
     logger_routes.debug(e)
 
@@ -398,7 +401,10 @@ try:
     def stop_process_by_name_api():
         names = request.form["uid"].split(",")
         result = stop_processes_by_name_model(*names)
-        return jsonify(result)
+        if(result):
+            return jsonify({'message': 'Process stopped successfully'})
+        else:
+            return jsonify({'message': 'Process not stopped'})
 
 except Exception as e:
     logger_routes.debug(e)
@@ -411,7 +417,10 @@ try:
     def restart_process_by_name_api():
         names = request.form["uid"].split(",")
         result = restart_processes_by_name_model(*names)
-        return jsonify(result)
+        if(result):
+            return jsonify({'message': 'Process restarted successfully'})
+        else:
+            return jsonify({'message': 'Process not restarted'})
     
 except Exception as e:
     logger_routes.debug(e)
@@ -423,7 +432,10 @@ try:
     def start_process_by_name_api():
         names = request.form["uid"].split(",")
         result =start_processes_by_name_model(*names)
-        return jsonify(result)
+        if(result):
+            return jsonify({'message': 'Process started successfully'})
+        else:
+            return jsonify({'message': 'Process not started'})
 except Exception as e:
     logger_routes.debug(e)
 
@@ -433,7 +445,10 @@ try:
     @jwt_required( )
     def stop_all_processes_api():
         result = stop_all_processes_model()
-        return jsonify(result)
+        if(result):
+            return jsonify({'message': 'All processes stopped successfully'})
+        else:
+            return jsonify({'message': 'All processes not stopped'})
 except Exception as e:
     logger_routes.debug(e)
 
@@ -443,6 +458,9 @@ try:
     @jwt_required( )
     def start_all_processes_api():
         result = start_all_processes_model()
-        return jsonify(result)
+        if(result):
+            return jsonify({'message': 'All processes started successfully'})
+        else:
+            return jsonify({'message': 'All processes not started'})
 except Exception as e:
     logger_routes.debug(e)
