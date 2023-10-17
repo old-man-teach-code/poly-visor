@@ -65,8 +65,8 @@
 						</ToolTip>
 					</div>
 				</div>
-				<div class="flex justify-between mb-5">
-					<div class="ml-5 w-1/4">
+				<div class="flex justify-between mb-5 mx-5">
+					<div class="w-1/4">
 						<TextInput inputLabel="" inputPlaceholder="Search" bind:inputValue={search} />
 					</div>
 					<div class="flex flex-row gap-10 items-center">
@@ -121,21 +121,27 @@
 											>{process.statename}</span
 										>
 									</td>
-									<td class="py-3 px-6 text-center relative">
-										<button
-											disabled={process.core_index && $system.cores ? false : true}
-											on:click={() => {
-												showModal = 'taskset';
-												modalContent = {
-													cores: $system.cores,
-													process: process
-												};
-											}}
-											class="bg-green-300 rounded-md px-3 py-1.5"
+									<td class="py-3 px-6 flex items-center justify-center">
+										<ToolTip
+											title={$system.core
+												? 'Set affinity'
+												: 'Please enable system api at least once to use this function'}
 										>
-											{process.core_index ? process.core_index.length : 0} / {$system.cores &&
-												Object.keys($system.cores).length}
-										</button>
+											<button
+												disabled={process.core_index && $system.cores ? false : true}
+												on:click={() => {
+													showModal = 'taskset';
+													modalContent = {
+														cores: $system.cores,
+														process: process
+													};
+												}}
+												class="bg-green-300 rounded-md px-3 py-1.5"
+											>
+												{process.core_index ? process.core_index.length : 0} / {$system.cores &&
+													Object.keys($system.cores).length}
+											</button>
+										</ToolTip>
 									</td>
 									<td class="py-3 px-6 text-center">
 										<div class="flex item-center justify-center space-x-1">
