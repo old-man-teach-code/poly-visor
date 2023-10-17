@@ -3,7 +3,7 @@
 	import { getAllSupervisors } from '../../store/action';
 	import LoadingScreen from '../../components/LoadingScreen.svelte';
 	import LoginModal from '../../components/LoginModal.svelte';
-	import { isAuthenticated } from '../../store/supstore';
+	import { isAuthenticated, currentSupervisor } from '../../store/supstore';
 	interface Supervisor {
 		host: string;
 		name: string;
@@ -23,12 +23,14 @@
 	});
 
 	function handleSupervisorClick(supervisor: Supervisor) {
-		if (!supervisor.authentication) {
-			window.location.href = `/login/${supervisor.name}`;
-			return;
-		}
 		if (!supervisor.running) {
 			alert('Supervisor is not running, please enable this supervisor instance!');
+			return;
+		}
+		if (!supervisor.authentication) {
+			isAuthenticated.set(true);
+			currentSupervisor.set(supervisor.name);
+			window.location.href = '/';
 			return;
 		}
 		selectedSupervisor = supervisor.name;
@@ -52,7 +54,7 @@
 				>
 					<div class=" flex flex-row items-center gap-3 truncate">
 						<span class="text-base md:text-lg font-semibold truncate"
-							>Polyvisor {supervisor?.name}aaaaaaaaaaaaaaaaaaaaaaaaa</span
+							>Polyvisor {supervisor?.name}</span
 						>
 						<div
 							class="h-3 w-3 min-w-[12px] min-h-[12px] {supervisor?.running

@@ -39,54 +39,60 @@ const fetchAll = async () => {
 				items.push(dataSystem.memory);
 				return items;
 			});
-			fetchProcesses();
 		} catch (err) {
 			console.log(err);
 		}
 	}
 };
-// //First time calling api when the page loads
-// fetchAll();
-// //fetch api every 2 seconds
-setInterval(() => {
-	fetchAll();
-}, 2000);
 
 async function fetchProcesses() {
 	// fetching processes data
-	const supervisorName = get(currentSupervisor);
-	console.log(supervisorName);
-	const resProcesses = await fetch(`/api/supervisor/${supervisorName}/processes`);
-	const data = await resProcesses.json();
-	const dataProcesses = data.processes;
-	const loadedProcesses = dataProcesses.map((data) => ({
-		description: data.description,
-		exitstatus: data.exitstatus,
-		group: data.group,
-		logfile: data.logfile,
-		name: data.name,
-		pid: data.pid,
-		spawnerr: data.spawnerr,
-		start: data.start,
-		state: data.state,
-		statename: data.statename,
-		stderr_logfile: data.stderr_logfile,
-		stdout_logfile: data.stdout_logfile,
-		stop: data.stop,
-		stateColor:
-			data.statename == 'RUNNING' || data.statename == 'STARTING'
-				? 'bg-green-300'
-				: data.statname == 'BACKOFF'
-				? 'bg-yellow-300'
-				: 'bg-red-300',
-		core_index: data.core_index
-	}));
-	processes.set(loadedProcesses);
+	try {
+		const supervisorName = get(currentSupervisor);
+		const resProcesses = await fetch(`/api/supervisor/${supervisorName}/processes`);
+		const data = await resProcesses.json();
+		const dataProcesses = data.processes;
+		const loadedProcesses = dataProcesses.map((data) => ({
+			description: data.description,
+			exitstatus: data.exitstatus,
+			group: data.group,
+			logfile: data.logfile,
+			name: data.name,
+			pid: data.pid,
+			spawnerr: data.spawnerr,
+			start: data.start,
+			state: data.state,
+			statename: data.statename,
+			stderr_logfile: data.stderr_logfile,
+			stdout_logfile: data.stdout_logfile,
+			stop: data.stop,
+			stateColor:
+				data.statename == 'RUNNING' || data.statename == 'STARTING'
+					? 'bg-green-300'
+					: data.statname == 'BACKOFF'
+					? 'bg-yellow-300'
+					: 'bg-red-300',
+			core_index: data.core_index
+		}));
+		processes.set(loadedProcesses);
 
-	count.set(0);
-	for (let process of dataProcesses) {
-		if (process.state == 20) {
-			count.update((n) => n + 1);
+		count.set(0);
+		for (let process of dataProcesses) {
+			if (process.state == 20) {
+				count.update((n) => n + 1);
+			}
 		}
+	} catch (err) {
+		console.log(err);
+	}
+}
+
+export function startFetching() {
+	const intervalId = setInterval(async () => {
+		fetchAll();
+		fetchProcesses();
+	}, 2000);
+	if (get(isAuthenticated) == 'false') {
+		clearInterval(intervalId);
 	}
 }

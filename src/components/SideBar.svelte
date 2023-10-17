@@ -10,37 +10,40 @@
 
 <!-- Side bar -->
 <div class="bg-sidebar z-50 fixed w-full sm:w-fit max-sm:bottom-0 sm:static">
-	<div class="sticky top-0 flex flex-col max-sm:flex-row h-full">
+	<div class="sticky top-0 flex sm:flex-col flex-row h-full">
 		<div class="hidden sm:flex justify-center items-center gap-2 sm:mx-14 my-8">
 			<img class="w-8 h-8" src="/images/logo.png" alt="" />
 			<h1 class="text-text-logo text-xl whitespace-nowrap">Poly-Visor</h1>
 		</div>
-		<div class="flex flex-col justify-between h-2/3 font-bold">
-			<ul class="flex sm:flex-col flex-row  ">
+		<div
+			class="flex flex-row sm:flex-col gap-3 justify-between mx-5 sm:mx-0 max-sm:w-full sm:h-2/3 font-bold"
+		>
+			<ul class="flex sm:flex-col gap-3 flex-row  ">
 				<li class="text-center">
 					<a
 						href="/"
-						class="text-white text-sm py-5 max-sm:px-5 justify-center flex hover:bg-gray-600 {pathname ==
+						class="text-white text-sm justify-center h-full py-5 max-sm:px-5 gap-2 items-center flex hover:bg-gray-600 w-full {pathname ==
 						'/'
 							? 'bg-gray-600'
 							: 'bg-sidebar'}"
-						><img class="mr-2 w-5 h-5" src="/images/graph.png" alt="" />
-						<p class="max-sm:hidden">Overview</p>
+						><img class="sm:mr-2 w-5 h-5" src="/images/graph.png" alt="" />
+						<p class="hidden sm:block">Overview</p>
 					</a>
 				</li>
 				<li>
 					<a
 						href="/processes"
-						class="text-white text-sm justify-center py-5 max-sm:px-5  flex hover:bg-gray-600 {pathname ==
+						class="text-white text-sm justify-center h-full py-5 max-sm:px-5 gap-2 items-center flex hover:bg-gray-600 w-full {pathname ==
 						'/processes'
 							? 'bg-gray-600'
 							: 'bg-sidebar'}"
-						><img class=" mr-2 w-5 h-5 " src="/images/process.png" alt="" />
-						<p class="max-sm:hidden">Processes</p></a
+						><img class=" sm:mr-2 w-5 h-5 " src="/images/process.png" alt="" />
+						<p class="sm:block hidden">Processes</p></a
 					>
 				</li>
 			</ul>
-			<div class="border-t mx-4 border-gray-600">
+			<div>
+				<div class="border-t hidden sm:block border-gray-600 mx-4" />
 				<button
 					on:click={handleLogout}
 					class="text-white text-sm justify-center py-5 max-sm:px-5 gap-2  flex hover:bg-gray-600 w-full"
@@ -56,8 +59,8 @@
 							clip-rule="evenodd"
 						/>
 					</svg>
-					Logout</button
-				>
+					<span class="hidden sm:block">Logout </span>
+				</button>
 			</div>
 		</div>
 	</div>
