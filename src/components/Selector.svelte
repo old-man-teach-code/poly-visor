@@ -1,16 +1,16 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	export let options : any[];
-	export let title:string;
+	export let options: any[];
+	export let title: string;
 	let statename = false;
-	export let result:any[] = [];
+	export let result: any[] = [];
 	onMount(() => {
 		result = options;
 	});
 </script>
 
-<div class="flex justify-end pr-24 ">
+<div class="flex justify-end ">
 	{#if statename}
 		<div
 			class="fixed top-0 left-0 w-screen h-screen"

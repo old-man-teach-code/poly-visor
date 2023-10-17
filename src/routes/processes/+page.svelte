@@ -65,8 +65,8 @@
 						</ToolTip>
 					</div>
 				</div>
-				<div class="flex justify-between mb-5">
-					<div class="ml-5 w-1/4">
+				<div class="flex justify-between mb-5 mx-5">
+					<div class="w-1/4">
 						<TextInput inputLabel="" inputPlaceholder="Search" bind:inputValue={search} />
 					</div>
 					<div class="flex flex-row gap-10 items-center">
