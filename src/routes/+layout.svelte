@@ -11,10 +11,9 @@
 
 	onMount(() => {
 		if ($isAuthenticated == 'false' && pathname != '/login') {
-			window.location.href = '/logcasi in';
+			window.location.href = '/login';
 		}
 		if ($isAuthenticated == 'true' && pathname != '/login') {
-			console.log(true);
 			startFetching();
 		}
 	});

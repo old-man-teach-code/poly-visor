@@ -49,7 +49,6 @@ async function fetchProcesses() {
 	// fetching processes data
 	try {
 		const supervisorName = get(currentSupervisor);
-		console.log(supervisorName);
 		const resProcesses = await fetch(`/api/supervisor/${supervisorName}/processes`);
 		const data = await resProcesses.json();
 		const dataProcesses = data.processes;
