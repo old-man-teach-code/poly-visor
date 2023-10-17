@@ -1,5 +1,5 @@
 <script>
-	import Sidebar from '../components/SideBar.svelte';
+	import Sidebar from '../components/SiderBar/index.svelte';
 	import { page } from '$app/stores';
 	import { beforeUpdate, onMount } from 'svelte';
 	import { fetchProcesses, isAuthenticated, startFetching } from '../store/supstore.js';

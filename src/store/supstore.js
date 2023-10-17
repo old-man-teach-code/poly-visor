@@ -91,8 +91,8 @@ export async function fetchProcesses() {
 export function startFetching() {
 	const intervalId = setInterval(async () => {
 		fetchAll();
-		// fetchProcesses();
-	}, 6000);
+		fetchProcesses();
+	}, 2000);
 	if (get(isAuthenticated) == 'false') {
 		clearInterval(intervalId);
 	}
