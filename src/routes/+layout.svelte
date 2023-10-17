@@ -19,7 +19,6 @@
 			window.location.href = '/login';
 		}
 		if ($isAuthenticated == 'true' && pathname != '/login') {
-			dashboardEnabled.set('true');
 			toggleProcessesInterval();
 			toggleSystemInterval();
 		}
