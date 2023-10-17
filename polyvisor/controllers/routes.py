@@ -333,7 +333,7 @@ except Exception as e:
 
 # login to the application
 try:
-    @app.route("/api/login", methods=["POST"])
+    @app_routes.route("/api/login", methods=["POST"])
     def login():
         if not app_routes.polyvisor.use_authentication:
             return jsonify({"message": "Authentication not required"}), 200
@@ -347,8 +347,8 @@ try:
             access_token = create_access_token(identity=username)
             
             # Set the JWT token as an HTTP-only cookie
-            response = jsonify({"message": "Login successful"})
-            response.set_cookie('access_token', access_token, httponly=True, samesite='Lax')
+            response = jsonify({"access_token_cookie": access_token})
+            response.set_cookie('access_token_cookie', access_token, httponly=True, samesite='Lax')
             
             return response, 200
         else:
