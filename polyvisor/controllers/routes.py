@@ -1,7 +1,10 @@
 
 from datetime import timedelta
 import json
-from time import sleep
+from gevent import queue
+from blinker import signal
+
+
 
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, jwt_required
@@ -322,6 +325,32 @@ try:
 except Exception as e:
     logger_routes.debug(e)
 
+
+SIGNALS = [
+    "process_changed",
+    "supervisor_changed",
+    "notification",
+]
+
+
+class Dispatcher(object):
+    def __init__(self):
+        self.clients = []
+        for signal_name in SIGNALS:
+            signal(signal_name).connect(self.on_event)
+
+    def add_listener(self, client):
+        self.clients.append(client)
+
+    def remove_listener(self, client):
+        self.clients.remove(client)
+
+    def on_event(self, signal, payload):
+        data = json.dumps(dict(payload=payload, event=signal))
+        event = "data: {0}\n\n".format(data)
+        for client in self.clients:
+            client.put(event)
+
 # logout of the session
 try:
     @app_routes.route("/api/logout", methods=["POST"])
@@ -464,3 +493,23 @@ try:
             return jsonify({'message': 'All processes not started'})
 except Exception as e:
     logger_routes.debug(e)
+dispatcher = Dispatcher()
+try:
+    @app_routes.route("/api/stream")
+    
+    def stream():
+        def event_stream():
+            client = queue.Queue()
+            dispatcher.add_listener(client)
+            for event in client:
+                yield event
+            app.dispatcher.remove_listener(client)
+
+        return Response(event_stream(), mimetype="text/event-stream")
+except Exception as e:
+    logger_routes.debug(e)    
+
+
+
+ 
+    
