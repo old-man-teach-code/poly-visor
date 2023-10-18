@@ -23,18 +23,17 @@
 	});
 
 	function handleSupervisorClick(supervisor: Supervisor) {
-		isAuthenticated.set(true);
-		currentSupervisor.set(supervisor.name);
+		if (!supervisor.running) {
+			alert('Supervisor is not running, please enable this supervisor instance!');
+			return;
+		}
 		if (!supervisor.authentication) {
 			isAuthenticated.set(true);
 			currentSupervisor.set(supervisor.name);
 			window.location.href = '/';
 			return;
 		}
-		if (!supervisor.running) {
-			alert('Supervisor is not running, please enable this supervisor instance!');
-			return;
-		}
+		selectedSupervisor = supervisor.name;
 		loginModal = true;
 	}
 </script>

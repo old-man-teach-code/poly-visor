@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { processes, system } from '../../store/supstore';
+	import { currentSupervisor, processes, system } from '../../store/supstore';
 	import Pagination from '../../components/Pagination.svelte';
 	import StartButton from '../../components/Buttons/StartButton.svelte';
 	import StopButton from '../../components/Buttons/StopButton.svelte';
@@ -65,8 +65,8 @@
 						</ToolTip>
 					</div>
 				</div>
-				<div class="flex justify-between mb-5">
-					<div class="ml-5 w-1/4">
+				<div class="flex justify-between mb-5 mx-5">
+					<div class="w-1/4">
 						<TextInput inputLabel="" inputPlaceholder="Search" bind:inputValue={search} />
 					</div>
 					<div class="flex flex-row gap-10 items-center">
@@ -91,13 +91,13 @@
 				</div>
 			</div>
 
-			<div class="overflow-auto flex flex-col items-center">
+			<div class="flex flex-col items-center">
 				<table class=" w-full table-auto">
-					<thead class="sticky top-0">
+					<thead class="sticky top-0 z-10">
 						<tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
 							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-left">Description</th>
 							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-center">Status</th>
-							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-left">Process name</th>
+							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-center">Process name</th>
 							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-center">Taskset</th>
 							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-center">Actions</th>
 						</tr>
@@ -112,30 +112,36 @@
 										</div>
 									</td>
 									<td class="py-3 px-6 text-left">
-										<div class="flex items-center">
+										<div class="flex justify-center">
 											<span>{process.description}</span>
 										</div>
 									</td>
-									<td class="py-3 px-6 text-center">
-										<span class="{process.stateColor} py-1 px-3 rounded-full text-xs"
+									<td class="py-3 px-6 text-center ">
+										<span class="{process.stateColor} py-1 px-3 mx-auto rounded-full text-xs"
 											>{process.statename}</span
 										>
 									</td>
-									<td class="py-3 px-6 text-center relative">
-										<button
-											on:click={() => {
-												showModal = 'taskset';
-												modalContent = {
-													cores: $system.cores,
-													process: process
-												};
-											}}
-											class="bg-green-300 rounded-md px-3 py-1.5"
+									<td class="py-3 px-6 flex justify-center items-center">
+										<ToolTip
+											title={$system.core
+												? 'Toggle affinity'
+												: 'Please enable system api at least once to use this function'}
 										>
-											{process.core_index ? process.core_index.length : 0} / {Object.keys(
-												$system.cores
-											).length}
-										</button>
+											<button
+												disabled={process.core_index && $system.cores ? false : true}
+												on:click={() => {
+													showModal = 'taskset';
+													modalContent = {
+														cores: $system.cores,
+														process: process
+													};
+												}}
+												class="bg-green-300 rounded-md px-3 py-1.5 "
+											>
+												{process.core_index ? process.core_index.length : 0} / {$system.cores &&
+													Object.keys($system.cores).length}
+											</button>
+										</ToolTip>
 									</td>
 									<td class="py-3 px-6 text-center">
 										<div class="flex item-center justify-center space-x-1">
@@ -143,14 +149,30 @@
 												<ToolTip title="Stop this process">
 													<StopButton
 														spin
-														on:event={() => stopProcess(process.group + ':' + process.name)}
+														on:event={() =>
+															stopProcess(() => {
+																const form = new FormData();
+																form.append(
+																	'uid',
+																	$currentSupervisor + ':' + process.group + ':' + process.name
+																);
+																return form;
+															})}
 													/>
 												</ToolTip>
 											{:else}
 												<ToolTip title="Start this process">
 													<StartButton
 														spin
-														on:event={() => startProcess(process.group + ':' + process.name)}
+														on:event={() =>
+															startProcess(() => {
+																const form = new FormData();
+																form.append(
+																	'uid',
+																	$currentSupervisor + ':' + process.group + ':' + process.name
+																);
+																return form;
+															})}
 													/>
 												</ToolTip>
 											{/if}

@@ -46,9 +46,8 @@
 		const formData = new FormData(e.target);
 		formData.append('supervisor', supervisorName);
 		const accessToken = await login(formData);
-		console.log(accessToken);
 		if (accessToken.message == 'Invalid username or password') {
-			alert('Invalid username or password');
+			alert(accessToken.message);
 			return;
 		}
 		//redirect to '/'
