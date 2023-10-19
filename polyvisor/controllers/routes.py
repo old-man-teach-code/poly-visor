@@ -1,8 +1,11 @@
 
 from datetime import timedelta
 import json
-from gevent import queue
+from gevent import queue, sleep
 from blinker import signal
+from gevent.monkey import patch_all
+
+patch_all(thread=True)
 
 
 
@@ -496,7 +499,6 @@ except Exception as e:
 dispatcher = Dispatcher()
 try:
     @app_routes.route("/api/stream")
-    
     def stream():
         def event_stream():
             client = queue.Queue()
