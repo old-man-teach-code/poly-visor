@@ -91,9 +91,9 @@
 				</div>
 			</div>
 
-			<div class="overflow-auto flex flex-col items-center">
+			<div class="flex flex-col items-center">
 				<table class=" w-full table-auto">
-					<thead class="sticky top-0">
+					<thead class="sticky top-0 z-10">
 						<tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
 							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-left">Description</th>
 							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-center">Status</th>
@@ -121,10 +121,10 @@
 											>{process.statename}</span
 										>
 									</td>
-									<td class="py-3 px-6 flex items-center justify-center">
+									<td class="py-3 px-6 flex justify-center items-center">
 										<ToolTip
 											title={$system.core
-												? 'Set affinity'
+												? 'Toggle affinity'
 												: 'Please enable system api at least once to use this function'}
 										>
 											<button
@@ -136,7 +136,7 @@
 														process: process
 													};
 												}}
-												class="bg-green-300 rounded-md px-3 py-1.5"
+												class="bg-green-300 rounded-md px-3 py-1.5 "
 											>
 												{process.core_index ? process.core_index.length : 0} / {$system.cores &&
 													Object.keys($system.cores).length}

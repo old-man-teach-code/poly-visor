@@ -72,15 +72,17 @@ class Supervisor(dict):
         return attributes_equal and processes_equal
 
 
-    def run(self):
+    async def run(self):
         last_retry = time.time()
         while True:
             try:
                 self.log.info("(re)initializing...")
                 self.refresh()
-                for i, event in enumerate(self.server.event_stream()):
-                    # ignore first event. It serves only to trigger
-                    # connection and avoid TimeoutExpired
+
+                # Assuming you have an async method to get events
+                events = await self.server.get_events()
+
+                for i, event in enumerate(events):
                     if i != 0:
                         self.handle_event(event)
             except Exception as err:
