@@ -38,6 +38,12 @@
 	} else {
 		tableRows = $processes.filter((process: any) => filter.includes(process.statename));
 	}
+
+	function handleSubmitForm(group: string, name: string) {
+		const form = new FormData();
+		form.append('uid', $currentSupervisor + ':' + group + ':' + name);
+		return form;
+	}
 </script>
 
 <div class="w-full px-10">
@@ -149,15 +155,9 @@
 												<ToolTip title="Stop this process">
 													<StopButton
 														spin
-														on:event={() =>
-															stopProcess(() => {
-																const form = new FormData();
-																form.append(
-																	'uid',
-																	$currentSupervisor + ':' + process.group + ':' + process.name
-																);
-																return form;
-															})}
+														on:event={() => {
+															stopProcess(handleSubmitForm(process.group, process.name));
+														}}
 													/>
 												</ToolTip>
 											{:else}

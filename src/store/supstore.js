@@ -29,7 +29,6 @@ currentSupervisor.subscribe((value) => {
 
 //fetch api
 const fetchSystem = async () => {
-	console.log('fetching system data');
 	if (get(isAuthenticated) == 'true') {
 		try {
 			// fetching system data
@@ -57,6 +56,11 @@ const fetchSystem = async () => {
 async function fetchProcesses() {
 	// fetching processes data
 	try {
+		let eventSource = new EventSource('/api/stream');
+		eventSource.onmessage = (event) => {
+			let data = JSON.parse(event.data);
+			console.log(data);
+		};
 		const supervisorName = get(currentSupervisor);
 		const resProcesses = await fetch(`/api/supervisor/${supervisorName}/processes`);
 		const data = await resProcesses.json();
@@ -97,7 +101,6 @@ async function fetchProcesses() {
 }
 
 export function toggleSystemInterval() {
-	console.log(get(dashboardEnabled));
 	if (get(dashboardEnabled) == 'true') {
 		systemInterval = setInterval(async () => {
 			fetchSystem();
@@ -108,11 +111,12 @@ export function toggleSystemInterval() {
 }
 
 export function toggleProcessesInterval() {
-	if (get(isAuthenticated) == 'true') {
-		processesInterval = setInterval(async () => {
-			fetchProcesses();
-		}, 2000);
-	} else {
-		clearInterval(processesInterval);
-	}
+	fetchProcesses();
+	// if (get(isAuthenticated) == 'true') {
+	// 	processesInterval = setInterval(async () => {
+	// 		fetchProcesses();
+	// 	}, 2000);
+	// } else {
+	// 	clearInterval(processesInterval);
+	// }
 }

@@ -64,9 +64,10 @@ export async function startProcess(formData) {
 		.finally(() => loading.set(false));
 }
 export async function stopProcess(formData) {
+	console.log(formData);
 	if (get(loading)) return;
 	loading.set(true);
-	return fetch(`/api/process/stop`, {
+	return fetch(`/api/processes/stop`, {
 		method: 'POST',
 		body: formData
 	})
