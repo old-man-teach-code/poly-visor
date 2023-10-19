@@ -3,9 +3,9 @@ from datetime import timedelta
 import json
 from gevent import queue, sleep
 from blinker import signal
-from gevent.monkey import patch_all
+# from gevent.monkey import patch_all
 
-patch_all(thread=True)
+# patch_all(thread=True)
 
 
 
@@ -496,20 +496,20 @@ try:
             return jsonify({'message': 'All processes not started'})
 except Exception as e:
     logger_routes.debug(e)
-dispatcher = Dispatcher()
-try:
-    @app_routes.route("/api/stream")
-    def stream():
-        def event_stream():
-            client = queue.Queue()
-            dispatcher.add_listener(client)
-            for event in client:
-                yield event
-            app.dispatcher.remove_listener(client)
+# dispatcher = Dispatcher()
+# try:
+#     @app_routes.route("/api/stream")
+#     def stream():
+#         def event_stream():
+#             client = queue.Queue()
+#             dispatcher.add_listener(client)
+#             for event in client:
+#                 yield event
+#             app.dispatcher.remove_listener(client)
 
-        return Response(event_stream(), mimetype="text/event-stream")
-except Exception as e:
-    logger_routes.debug(e)    
+#         return Response(event_stream(), mimetype="text/event-stream")
+# except Exception as e:
+#     logger_routes.debug(e)    
 
 
 
