@@ -146,8 +146,8 @@ class PolyVisor(object):
 
     @property
     def processes(self):
-        procs = (svisor["processes"] for svisor in self.supervisors.values())
-        return {puid: proc for sprocs in procs for puid, proc in sprocs.items()}
+        procs = [svisor["processes"] for svisor in self.supervisors.values()]
+        return {p["uid"]: p for sprocs in procs for p in sprocs}
 
     # @property
     # def use_authentication(self):
