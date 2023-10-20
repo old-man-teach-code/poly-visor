@@ -1,5 +1,6 @@
 import os
 import concurrent.futures
+import signal
 import time
 import sys
 current = os.path.dirname(os.path.realpath(__file__))
@@ -9,7 +10,9 @@ from polyvisor.finder import runShell
 class System:
 
     def __init__(self):
-        pass 
+        self.cpu_quota = 80  # Define a CPU quota (80% in this example)
+        self.memory_quota = 80  # Define a memory quota (80% in this example)
+        self.monitor_interval = 5  # Interv
     
     #Get stats of each core CPU
     # @property
@@ -63,6 +66,68 @@ class System:
         result = (dict([line.split(': ') for line in result.splitlines()]))
         result["CPUs"]=int(os.cpu_count())
         return result
+    
+
+
+    @property
+    def cpu_usage_within_quota(self):
+        current_usage = self.current_cpu_usage
+        return current_usage <= self.cpu_quota
+
+    @property
+    def memory_usage_within_quota(self):
+        current_memory = self.memory_status
+        return current_memory <= self.memory_quota
+
+    def monitor_resources(self):
+        while True:
+            if not self.cpu_usage_within_quota:
+                # CPU usage exceeds the quota, take action (e.g., terminate a process)
+                self.take_action_on_cpu_exceed()
+            if not self.memory_usage_within_quota:
+                # Memory usage exceeds the quota, take action (e.g., terminate a process)
+                self.take_action_on_memory_exceed()
+            time.sleep(self.monitor_interval)
+
+    def take_action_on_cpu_exceed(self):
+        # Implement your custom action here
+        # For example, terminate a process consuming excessive CPU
+        self.terminate_process_with_high_cpu()
+
+    def take_action_on_memory_exceed(self):
+        # Implement your custom action here
+        # For example, terminate a process consuming excessive memory
+        self.terminate_process_with_high_memory()
+
+    def terminate_process_with_high_cpu(self):
+        # Find the process consuming the most CPU and terminate it
+        process_info = self.find_process_with_high_cpu()
+        if process_info:
+            pid, cpu_percent, command = process_info
+            print(f"Terminating process {pid} consuming {cpu_percent}% CPU: {command}")
+            os.kill(pid, signal.SIGKILL)
+
+    def terminate_process_with_high_memory(self):
+        # Find the process consuming the most memory and terminate it
+        process_info = self.find_process_with_high_memory()
+        if process_info:
+            pid, mem_percent, command = process_info
+            print(f"Terminating process {pid} consuming {mem_percent}% memory: {command}")
+            os.kill(pid, signal.SIGKILL)
+
+    def find_process_with_high_cpu(self):
+        output = runShell("ps -eo pid,%cpu,command --sort=-%cpu | awk 'NR==2{print $1,$2,$3}'")
+        if output:
+            pid, cpu_percent, command = output.split()
+            return int(pid), float(cpu_percent), command
+        return None
+
+    def find_process_with_high_memory(self):
+        output = runShell("ps -eo pid,%mem,command --sort=-%mem | awk 'NR==2{print $1,$2,$3}'")
+        if output:
+            pid, mem_percent, command = output.split()
+            return int(pid), float(mem_percent), command
+        return None
 def stats():
     cpuList={}
     file=open('/proc/stat','r') 

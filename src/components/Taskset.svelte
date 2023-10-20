@@ -65,7 +65,7 @@
 						}}
 						type="button"
 						class="{enabled.includes(parseInt(key)) ? 'bg-green-200' : 'bg-red-200'}
-					inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out "
+					inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out"
 						role="switch"
 						aria-checked="false"
 					>

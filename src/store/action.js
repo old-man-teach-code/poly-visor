@@ -51,30 +51,30 @@ export function destroyChart() {
 }
 
 //call start process api
-export async function startProcess(name) {
+export async function startProcess(formData) {
 	//if loading is true, return
 	if (get(loading)) return;
 	loading.set(true);
-	return fetch(`/api/process/start/${name}`)
-		.then((response) => response.json())
-		.then((data) => {
-			return data;
-		})
-		.catch((error) => {
-			console.error(error);
-		})
-		.finally(() => loading.set(false));
-}
-export async function stopProcess(name) {
-	if (get(loading)) return;
-	loading.set(true);
-	const res = fetch(`/api/process/stop/${name}`)
+	return fetch(`/api/process/start`, {
+		method: 'POST',
+		body: formData
+	})
 		.then((message) => message.json())
 		.catch((err) => console.log(err))
 		.finally(() => loading.set(false));
-	return res;
 }
-
+export async function stopProcess(formData) {
+	console.log(formData);
+	if (get(loading)) return;
+	loading.set(true);
+	return fetch(`/api/processes/stop`, {
+		method: 'POST',
+		body: formData
+	})
+		.then((message) => message.json())
+		.catch((err) => console.log(err))
+		.finally(() => loading.set(false));
+}
 export async function startAllProcess() {
 	if (get(loading)) return;
 	loading.set(true);
