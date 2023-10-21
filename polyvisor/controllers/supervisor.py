@@ -216,12 +216,7 @@ def restartSupervisors(*names):
     return result
 
 # start process by name
-def startProcesses(*names):
-    
-    result = poly_visor.start_processes(*names)
 
-    return result
-    
 
 
 

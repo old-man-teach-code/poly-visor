@@ -496,6 +496,8 @@ try:
             return jsonify({'message': 'All processes not started'})
 except Exception as e:
     logger_routes.debug(e)
+
+
 dispatcher = Dispatcher()
 try:
     @app_routes.route("/api/stream")
