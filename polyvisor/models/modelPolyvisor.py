@@ -205,11 +205,11 @@ class PolyVisor(object):
     def restart_processes(self, *patterns):
         self._do_processes(Process.restart, *patterns)
 
-    def stop_all_processes(self):
-        self._do_processes(Process.stopAll, "*")
+    def stop_all_processes_by_supervisor(self, *names):
+        self._do_processes(Process.stopAll, *names)
 
-    def start_all_processes(self):
-        self._do_processes(Process.startAll, "*")
+    def start_all_processes_by_supervisor(self, *names):
+        self._do_processes(Process.startAll, *names)
         
     def stop_processes(self, *patterns):
         self._do_processes(Process.stop, *patterns)
