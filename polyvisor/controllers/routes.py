@@ -13,7 +13,7 @@ from flask_jwt_extended import create_access_token, jwt_required
 from polyvisor import app
 from polyvisor.controllers.processes import restart_processes_by_name_model, start_all_processes_by_supervisor_model, start_processes_by_name_model, stop_all_processes_by_supervisor_model, set_Process_Core_Index, start_process_group_model, stop_process_group_model, stop_processes_by_name_model
 from polyvisor.controllers.supervisor import createConfig, restartSupervisors, shutdownSupervisors
-from flask import  jsonify, Blueprint, Response, request, send_from_directory, session
+from flask import  jsonify, Blueprint, Response, make_response, render_template, request, send_from_directory, session
 import base64
 
 

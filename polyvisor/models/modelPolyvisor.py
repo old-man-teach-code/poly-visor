@@ -178,10 +178,9 @@ class PolyVisor(object):
     def _do_supervisors(self, operation, *names):
         supervisors = (self.get_supervisor(name) for name in names)
         tasks = [spawn(operation, supervisor) for supervisor in supervisors]
-        
         joinall(tasks)
 
-    def _do_processes(self, operation, *patterns): 
+    def _do_processes(self, operation, *patterns):
         procs = self.processes
         puids = filter_patterns(procs, patterns)
         tasks = [spawn(operation, procs[puid]) for puid in puids]

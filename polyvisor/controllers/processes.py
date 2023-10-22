@@ -80,6 +80,7 @@ def set_Process_Core_Index(pid, core_index):
     return set_process_affinity_CPU(pid,core_index)
 
 poly_visor = PolyVisor({"config_file": configPolyvisorPath()})
+poly_visor.refresh()
 def stop_processes_by_name_model(*name):
 
     

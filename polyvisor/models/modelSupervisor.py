@@ -62,14 +62,6 @@ class Supervisor(dict):
         this, other = dict(self), dict(other)
         this_p = this.pop("processes")
         other_p = other.pop("processes")
-        
-        # # Compare the remaining attributes of the objects
-        # attributes_equal = this == other
-        
-        # # Compare the processes as lists
-        # processes_equal = sorted(this_p) == sorted(other_p)
-        
-        # return attributes_equal and processes_equal
         return this == other and list(this_p.keys()) == list(other_p.keys())
 
 
@@ -128,14 +120,17 @@ class Supervisor(dict):
         # get PID
         info["pid"] = server.getPID()
         info["running"] = True
-        info["processes"] = {}
+       
         info["authentication"] = self.check_authentication()
         
-        # procInfo = server.getAllProcessInfo()
-        # for proc in procInfo:
-        #     process = Process(self, parse_dict(proc))
-        #     processes[process["uid"]] = process
+        info["processes"] = processes = {}
+        procInfo = server.getAllProcessInfo()
+        for proc in procInfo:
+            process = Process(self, parse_dict(proc))
+            processes[process["uid"]] = process
         return info
+    
+        
         
 
     # read the polyvisor.ini file to check if the supervisor needed to be authenticated
@@ -171,7 +166,6 @@ class Supervisor(dict):
         info["pid"] = server.getPID()
         info["running"] = True
         info["authentication"] = True
-        # info["processes"] = [Process(self, parse_dict(proc)) for proc in server.getAllProcessInfo()]
         info["processes"] = processes = {}
         procInfo = server.getAllProcessInfo()
         for proc in procInfo:
@@ -191,7 +185,6 @@ class Supervisor(dict):
         else:
             self.update(info)
             send(self, "supervisor_changed")
-
 
     def refresh(self):
         try:
