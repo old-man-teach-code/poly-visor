@@ -34,7 +34,7 @@ class Supervisor(dict):
 
     Null = {
         
-        "processes": [],
+        "processes": {},
         "running": False,
         "pid": None,
         "authentication": False,
@@ -63,13 +63,14 @@ class Supervisor(dict):
         this_p = this.pop("processes")
         other_p = other.pop("processes")
         
-        # Compare the remaining attributes of the objects
-        attributes_equal = this == other
+        # # Compare the remaining attributes of the objects
+        # attributes_equal = this == other
         
-        # Compare the processes as lists
-        processes_equal = sorted(this_p) == sorted(other_p)
+        # # Compare the processes as lists
+        # processes_equal = sorted(this_p) == sorted(other_p)
         
-        return attributes_equal and processes_equal
+        # return attributes_equal and processes_equal
+        return this == other and list(this_p.keys()) == list(other_p.keys())
 
 
     async def run(self):
@@ -118,6 +119,7 @@ class Supervisor(dict):
         return dict(self.Null, name=self.name, url=self.url, host=self.host)
 
     def read_info(self):
+        from polyvisor.models.modelProcess import Process
         
         info = self.create_base_info()
         
@@ -126,9 +128,15 @@ class Supervisor(dict):
         # get PID
         info["pid"] = server.getPID()
         info["running"] = True
-        info["processes"] = processes = []
+        info["processes"] = {}
         info["authentication"] = self.check_authentication()
+        
+        # procInfo = server.getAllProcessInfo()
+        # for proc in procInfo:
+        #     process = Process(self, parse_dict(proc))
+        #     processes[process["uid"]] = process
         return info
+        
 
     # read the polyvisor.ini file to check if the supervisor needed to be authenticated
     def check_authentication(self):
@@ -163,8 +171,12 @@ class Supervisor(dict):
         info["pid"] = server.getPID()
         info["running"] = True
         info["authentication"] = True
-        info["processes"] = [Process(self, parse_dict(proc)) for proc in server.getAllProcessInfo()]
-
+        # info["processes"] = [Process(self, parse_dict(proc)) for proc in server.getAllProcessInfo()]
+        info["processes"] = processes = {}
+        procInfo = server.getAllProcessInfo()
+        for proc in procInfo:
+            process = Process(self, parse_dict(proc))
+            processes[process["uid"]] = process
         return info
     
     def update_info(self, info):
@@ -172,9 +184,9 @@ class Supervisor(dict):
         if self == info:
             this_p, info_p = self["processes"], info["processes"]
             if this_p != info_p:
-                for this_process, info_process in zip(this_p, info_p):
-                    if this_process != info_process:
-                        send(info_process, "process_changed")
+                for name, process in info_p.items():
+                    if process != this_p[name]:
+                        send(process, "process_changed")
             self.update(info)
         else:
             self.update(info)
