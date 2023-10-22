@@ -56,11 +56,7 @@ const fetchSystem = async () => {
 async function fetchProcesses() {
 	// fetching processes data
 	try {
-		// let eventSource = new EventSource('/api/stream');
-		// eventSource.onmessage = (event) => {
-		// 	let data = JSON.parse(event.data);
-		// 	console.log(data);
-		// };
+
 		const supervisorName = get(currentSupervisor);
 		const resProcesses = await fetch(`/api/supervisor/${supervisorName}/processes`);
 		const data = await resProcesses.json();
