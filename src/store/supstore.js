@@ -12,7 +12,7 @@ export const ramChart = writable(Array(31));
 let systemInterval;
 let processesInterval;
 
-export const dashboardEnabled = writable(localStorage.dashboardEnabled || false);
+export const dashboardEnabled = writable(localStorage.dashboardEnabled || true);
 dashboardEnabled.subscribe((value) => {
 	localStorage.dashboardEnabled = value;
 });
@@ -29,7 +29,6 @@ currentSupervisor.subscribe((value) => {
 
 //fetch api
 const fetchSystem = async () => {
-	console.log('fetching system data');
 	if (get(isAuthenticated) == 'true') {
 		try {
 			// fetching system data
@@ -57,10 +56,16 @@ const fetchSystem = async () => {
 async function fetchProcesses() {
 	// fetching processes data
 	try {
+		// let eventSource = new EventSource('/api/stream');
+		// eventSource.onmessage = (event) => {
+		// 	let data = JSON.parse(event.data);
+		// 	console.log(data);
+		// };
 		const supervisorName = get(currentSupervisor);
 		const resProcesses = await fetch(`/api/supervisor/${supervisorName}/processes`);
 		const data = await resProcesses.json();
-		const dataProcesses = data.processes;
+		//mapd data.processes to array
+		const dataProcesses = Object.values(data.processes);
 		const loadedProcesses = dataProcesses.map((data) => ({
 			description: data.description,
 			exitstatus: data.exitstatus,
@@ -97,7 +102,6 @@ async function fetchProcesses() {
 }
 
 export function toggleSystemInterval() {
-	console.log(get(dashboardEnabled));
 	if (get(dashboardEnabled) == 'true') {
 		systemInterval = setInterval(async () => {
 			fetchSystem();
@@ -108,6 +112,7 @@ export function toggleSystemInterval() {
 }
 
 export function toggleProcessesInterval() {
+	fetchProcesses();
 	if (get(isAuthenticated) == 'true') {
 		processesInterval = setInterval(async () => {
 			fetchProcesses();

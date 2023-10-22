@@ -90,7 +90,7 @@ class PolyVisor(object):
         config.read_string(self.config_file_content)
 
         section_name = f"supervisor:{supervisor_name}"
-        print(f"section_name: {section_name}")
+        
 
         if section_name in config:
             section_username = config.get(section_name, 'username', fallback=None)
@@ -180,7 +180,7 @@ class PolyVisor(object):
         tasks = [spawn(operation, supervisor) for supervisor in supervisors]
         joinall(tasks)
 
-    def _do_processes(self, operation, *patterns): 
+    def _do_processes(self, operation, *patterns):
         procs = self.processes
         puids = filter_patterns(procs, patterns)
         tasks = [spawn(operation, procs[puid]) for puid in puids]
@@ -204,11 +204,12 @@ class PolyVisor(object):
     def restart_processes(self, *patterns):
         self._do_processes(Process.restart, *patterns)
 
-    def stop_all_processes(self):
-        self._do_processes(Process.stopAll, "*")
+    def stop_all_processes_by_supervisor(self, *names):
+        self._do_processes(Process.stopAll, *names)
 
-    def start_all_processes(self):
-        self._do_processes(Process.startAll, "*")
+    def start_all_processes_by_supervisor(self, *names):
+        self._do_processes(Process.startAll, *names)
+        
     def stop_processes(self, *patterns):
         self._do_processes(Process.stop, *patterns)
         

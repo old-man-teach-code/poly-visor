@@ -1,16 +1,18 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { toggleProcessesInterval, toggleSystemInterval } from '../../store/supstore';
+	import { toggleSystemInterval, toggleProcessesInterval } from '../../store/supstore';
+	import { logout } from '../../store/action';
 	$: pathname = $page.url.pathname;
 
 	export let text: string;
 	export let isLogout: boolean = false;
 	export let path: string = '';
 
-	function handleLogout() {
+	async function handleLogout() {
 		localStorage.clear();
 		toggleProcessesInterval();
 		toggleSystemInterval();
+		await logout();
 		window.location.href = '/login';
 	}
 </script>
