@@ -2,9 +2,9 @@
 import json
 from gevent import queue, sleep
 from blinker import signal
-from gevent.monkey import patch_all
+# from gevent.monkey import patch_all
 
-patch_all(thread=True)
+# patch_all(thread=True)
 
 
 
@@ -13,7 +13,7 @@ from flask_jwt_extended import create_access_token, jwt_required
 from polyvisor import app
 from polyvisor.controllers.processes import restart_processes_by_name_model, start_all_processes_by_supervisor_model, start_processes_by_name_model, stop_all_processes_by_supervisor_model, set_Process_Core_Index, start_process_group_model, stop_process_group_model, stop_processes_by_name_model
 from polyvisor.controllers.supervisor import createConfig, restartSupervisors, shutdownSupervisors
-from flask import  jsonify, Blueprint, Response, request, send_from_directory, session
+from flask import  jsonify, Blueprint, Response, make_response, render_template, request, send_from_directory, session
 import base64
 
 
@@ -496,20 +496,20 @@ except Exception as e:
     logger_routes.debug(e)
 
 
-dispatcher = Dispatcher()
-try:
-    @app_routes.route("/api/stream")
-    def stream():
-        def event_stream():
-            client = queue.Queue()
-            dispatcher.add_listener(client)
-            for event in client:
-                yield event
-            app.dispatcher.remove_listener(client)
+# dispatcher = Dispatcher()
+# try:
+#     @app_routes.route("/api/stream")
+#     def stream():
+#         def event_stream():
+#             client = queue.Queue()
+#             dispatcher.add_listener(client)
+#             for event in client:
+#                 yield event
+#             app.dispatcher.remove_listener(client)
 
-        return Response(event_stream(), mimetype="text/event-stream")
-except Exception as e:
-    logger_routes.debug(e)    
+#         return Response(event_stream(), mimetype="text/event-stream")
+# except Exception as e:
+#     logger_routes.debug(e)    
 
 
 
