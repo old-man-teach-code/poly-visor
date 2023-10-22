@@ -64,7 +64,8 @@ async function fetchProcesses() {
 		const supervisorName = get(currentSupervisor);
 		const resProcesses = await fetch(`/api/supervisor/${supervisorName}/processes`);
 		const data = await resProcesses.json();
-		const dataProcesses = data.processes;
+		//mapd data.processes to array
+		const dataProcesses = Object.values(data.processes);
 		const loadedProcesses = dataProcesses.map((data) => ({
 			description: data.description,
 			exitstatus: data.exitstatus,

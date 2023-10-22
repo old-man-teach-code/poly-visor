@@ -90,7 +90,7 @@ class PolyVisor(object):
         config.read_string(self.config_file_content)
 
         section_name = f"supervisor:{supervisor_name}"
-        print(f"section_name: {section_name}")
+        
 
         if section_name in config:
             section_username = config.get(section_name, 'username', fallback=None)
@@ -146,8 +146,8 @@ class PolyVisor(object):
 
     @property
     def processes(self):
-        procs = [svisor["processes"] for svisor in self.supervisors.values()]
-        return {p["uid"]: p for sprocs in procs for p in sprocs}
+        procs = (svisor["processes"] for svisor in self.supervisors.values())
+        return {puid: proc for sprocs in procs for puid, proc in sprocs.items()}
 
     # @property
     # def use_authentication(self):
@@ -178,6 +178,7 @@ class PolyVisor(object):
     def _do_supervisors(self, operation, *names):
         supervisors = (self.get_supervisor(name) for name in names)
         tasks = [spawn(operation, supervisor) for supervisor in supervisors]
+        
         joinall(tasks)
 
     def _do_processes(self, operation, *patterns): 
@@ -204,11 +205,12 @@ class PolyVisor(object):
     def restart_processes(self, *patterns):
         self._do_processes(Process.restart, *patterns)
 
-    def stop_all_processes(self):
-        self._do_processes(Process.stopAll, "*")
+    def stop_all_processes_by_supervisor(self, *names):
+        self._do_processes(Process.stopAll, *names)
 
-    def start_all_processes(self):
-        self._do_processes(Process.startAll, "*")
+    def start_all_processes_by_supervisor(self, *names):
+        self._do_processes(Process.startAll, *names)
+        
     def stop_processes(self, *patterns):
         self._do_processes(Process.stop, *patterns)
         
