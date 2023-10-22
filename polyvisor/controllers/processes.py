@@ -83,7 +83,7 @@ poly_visor = PolyVisor({"config_file": configPolyvisorPath()})
 def stop_processes_by_name_model(*name):
 
     
-    poly_visor.refresh()
+    
     result = poly_visor.stop_processes(*name)
     return True
     
@@ -91,26 +91,25 @@ def stop_processes_by_name_model(*name):
 def restart_processes_by_name_model(*name):
 
     
-    poly_visor.refresh()
+    
     result = poly_visor.restart_processes(*name)
     return True    
 
 def start_processes_by_name_model(*name):
 
-    poly_visor.refresh()
+    
     result = poly_visor.start_processes(*name)
     return True
 
 
-def stop_all_processes_model():
+def stop_all_processes_by_supervisor_model(*name):
 
-    poly_visor.refresh()
-    result = poly_visor.stop_all_processes()
+    
+    result = poly_visor.stop_all_processes_by_supervisor(*name)
     return True
 
-
-def start_all_processes_model():
-
-    poly_visor.refresh()
-    result = poly_visor.start_all_processes()
+def start_all_processes_by_supervisor_model(*name):
+    
+        
+    result = poly_visor.start_all_processes_by_supervisor(*name)
     return True
