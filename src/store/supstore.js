@@ -12,7 +12,7 @@ export const ramChart = writable(Array(31));
 let systemInterval;
 let processesInterval;
 
-export const dashboardEnabled = writable(localStorage.dashboardEnabled || false);
+export const dashboardEnabled = writable(localStorage.dashboardEnabled || true);
 dashboardEnabled.subscribe((value) => {
 	localStorage.dashboardEnabled = value;
 });
@@ -56,11 +56,11 @@ const fetchSystem = async () => {
 async function fetchProcesses() {
 	// fetching processes data
 	try {
-		let eventSource = new EventSource('/api/stream');
-		eventSource.onmessage = (event) => {
-			let data = JSON.parse(event.data);
-			console.log(data);
-		};
+		// let eventSource = new EventSource('/api/stream');
+		// eventSource.onmessage = (event) => {
+		// 	let data = JSON.parse(event.data);
+		// 	console.log(data);
+		// };
 		const supervisorName = get(currentSupervisor);
 		const resProcesses = await fetch(`/api/supervisor/${supervisorName}/processes`);
 		const data = await resProcesses.json();
@@ -113,11 +113,11 @@ export function toggleSystemInterval() {
 
 export function toggleProcessesInterval() {
 	fetchProcesses();
-	// if (get(isAuthenticated) == 'true') {
-	// 	processesInterval = setInterval(async () => {
-	// 		fetchProcesses();
-	// 	}, 2000);
-	// } else {
-	// 	clearInterval(processesInterval);
-	// }
+	if (get(isAuthenticated) == 'true') {
+		processesInterval = setInterval(async () => {
+			fetchProcesses();
+		}, 2000);
+	} else {
+		clearInterval(processesInterval);
+	}
 }

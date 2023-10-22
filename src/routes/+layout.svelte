@@ -1,14 +1,12 @@
 <script>
 	import Sidebar from '../components/SiderBar/index.svelte';
 	import { page } from '$app/stores';
-	import { beforeUpdate, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import {
-		dashboardEnabled,
 		isAuthenticated,
 		toggleProcessesInterval,
 		toggleSystemInterval
 	} from '../store/supstore.js';
-
 	$: pathname = $page.url.pathname;
 
 	import '../app.css';

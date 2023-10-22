@@ -64,10 +64,10 @@
 					</div>
 					<div class="flex items-center gap-4">
 						<ToolTip title="Start all processes">
-							<StartButton spin={false} on:event={() => startAllProcess()} />
+							<StartButton spin={false} on:event={() => startAllProcess($currentSupervisor)} />
 						</ToolTip>
 						<ToolTip title="Stop all processes">
-							<StopButton spin={false} on:event={() => stopAllProcess()} />
+							<StopButton spin={false} on:event={() => stopAllProcess($currentSupervisor)} />
 						</ToolTip>
 					</div>
 				</div>
@@ -164,15 +164,9 @@
 												<ToolTip title="Start this process">
 													<StartButton
 														spin
-														on:event={() =>
-															startProcess(() => {
-																const form = new FormData();
-																form.append(
-																	'uid',
-																	$currentSupervisor + ':' + process.group + ':' + process.name
-																);
-																return form;
-															})}
+														on:event={() => {
+															startProcess(handleSubmitForm(process.group, process.name));
+														}}
 													/>
 												</ToolTip>
 											{/if}

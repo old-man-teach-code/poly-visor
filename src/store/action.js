@@ -55,7 +55,7 @@ export async function startProcess(formData) {
 	//if loading is true, return
 	if (get(loading)) return;
 	loading.set(true);
-	return fetch(`/api/process/start`, {
+	return fetch(`/api/processes/start`, {
 		method: 'POST',
 		body: formData
 	})
@@ -64,7 +64,6 @@ export async function startProcess(formData) {
 		.finally(() => loading.set(false));
 }
 export async function stopProcess(formData) {
-	console.log(formData);
 	if (get(loading)) return;
 	loading.set(true);
 	return fetch(`/api/processes/stop`, {
@@ -75,20 +74,20 @@ export async function stopProcess(formData) {
 		.catch((err) => console.log(err))
 		.finally(() => loading.set(false));
 }
-export async function startAllProcess() {
+export async function startAllProcess(supervisor) {
 	if (get(loading)) return;
 	loading.set(true);
-	const res = fetch(`/api/processes/start`)
+	const res = fetch(`/api/processes/startAll/${supervisor}`)
 		.then((message) => message.json())
 		.catch((err) => console.log(err))
 		.finally(() => loading.set(false));
 	return res;
 }
 
-export async function stopAllProcess() {
+export async function stopAllProcess(supervisor) {
 	if (get(loading)) return;
 	loading.set(true);
-	const res = fetch(`/api/processes/stop`)
+	const res = fetch(`/api/processes/stopAll/${supervisor}`)
 		.then((message) => message.json())
 		.catch((err) => console.log(err))
 		.finally(() => loading.set(false));
@@ -161,6 +160,21 @@ export async function login(formdata) {
 	})
 		.then((message) => message.json())
 		.then((data) => {
+			return data;
+		})
+		.catch((err) => console.log(err))
+		.finally(() => loading.set(false));
+}
+
+export async function logout() {
+	if (get(loading)) return;
+	loading.set(true);
+	return fetch(`/api/logout`, {
+		method: 'POST'
+	})
+		.then((message) => message.json())
+		.then((data) => {
+			console.log(data);
 			return data;
 		})
 		.catch((err) => console.log(err))
