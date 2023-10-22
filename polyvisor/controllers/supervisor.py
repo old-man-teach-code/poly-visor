@@ -173,11 +173,12 @@ def renderConfig(process_name):
         return 'File not found'
     
     
-poly_visor = PolyVisor({"config_file": configPolyvisorPath()})    
+poly_visor = PolyVisor({"config_file": configPolyvisorPath()})  
+poly_visor.refresh()
+
 
 # get multiple supervisord instance 
 def getMultipleSupervisors():
-    poly_visor.refresh()
     supervisors = poly_visor.get_supervisors
 
     return supervisors
