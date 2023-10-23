@@ -188,7 +188,14 @@ class Process(dict):
     def start(self):
         try:
             send_webhook_alert(self.supervisor.webhook_url, "Start process {}".format(self["uid"]))
-            self.server.startProcess(self.full_name)
+            result = self.server.startProcess(self.full_name)
+            if(result):
+                info("Start process {} successfully".format(self["uid"]))
+                return "The process {} has been started".format(self["uid"])
+            else:
+                info("Failed to start process {}".format(self["uid"]))
+                return "Failed to start {}".format(self["uid"])
+            
         except:
             message = "Error trying to start {}!".format(self)
             error(message)
@@ -199,8 +206,10 @@ class Process(dict):
             send_webhook_alert(self.supervisor.webhook_url, "Stop process {}".format(self["uid"]))
             result = self.server.stopProcess(self.full_name)
             if(result):
+                info("Stop process {} successfully".format(self["uid"]))
                 return "The process {} has been stopped".format(self["uid"])
             else:
+                info("Failed to stop process {}".format(self["uid"]))
                 return "Failed to stop {}".format(self["uid"])
 
         except:
@@ -212,12 +221,14 @@ class Process(dict):
         if self["running"]:
             self.stop()
         self.start()
+        info("Restart process {}".format(self["uid"]))
         send_webhook_alert(self.supervisor.webhook_url, "Restart process {}".format(self["uid"]))
 
     def stopAll(self):
         try:
             send_webhook_alert(self.supervisor.webhook_url, "Stop all processes")
             self.server.stopAllProcesses()
+            info("Stop all processes successfully")
         except:
             message = "Failed to stop all processes!"
             warning(message)
@@ -227,6 +238,7 @@ class Process(dict):
         try:
             send_webhook_alert(self.supervisor.webhook_url, "Start all processes")
             self.server.startAllProcesses()
+            info("Start all processes successfully")
         except:
             message = "Failed to start all processes!"
             warning(message)
