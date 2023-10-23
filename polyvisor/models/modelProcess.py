@@ -120,9 +120,11 @@ class Process(dict):
         supervisor_name = supervisor["name"]
         full_name = f"{self.get('group', '')}:{self.get('name', '')}"
         uid = f"{supervisor_name}:{full_name}"
+
         
         self.log = log.getChild(uid)
         self.supervisor = weakref.proxy(supervisor)
+        
         self["full_name"] = full_name
         self["running"] = self["state"] in RUNNING_STATES
         self["supervisor"] = supervisor_name
