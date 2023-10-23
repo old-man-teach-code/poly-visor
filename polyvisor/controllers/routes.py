@@ -243,6 +243,7 @@ try:
     @app_routes.route('/api/config/create', methods=['POST'])
     def create_config_post():
         data = request.get_json()
+        pid = data['pid']
         process_full_name = data['process_full_name']
         command = data['command']
         numprocs = data['numprocs']
@@ -275,6 +276,7 @@ try:
         edit = data['edit']
 
         result = createConfig(
+            pid=pid,
             process_full_name=process_full_name,
             command=command,
             numprocs=numprocs,
@@ -365,12 +367,15 @@ except Exception as e:
 try:
     @app_routes.route("/api/login", methods=["POST"])
     def login():
+        supervisor_name = request.form.get("supervisor")
         if not app_routes.polyvisor.use_authentication:
-            return jsonify({"message": "Authentication not required"}), 200
+            access_token = create_access_token(identity="guest")
+            response = jsonify({"access_token_cookie": access_token})
+            response.set_cookie('access_token_cookie', access_token, httponly=True, samesite='Lax')
+            return response, 200
 
         username = request.form.get("username")
         password = request.form.get("password")
-        supervisor_name = request.form.get("supervisor")
 
         if app_routes.polyvisor.is_login_valid(supervisor_name, username, password):
             # Create an access token
