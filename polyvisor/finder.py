@@ -29,8 +29,8 @@ def get_pid():
 
 
 # Get config file path of Supervisord when it running on machine
-def configPath():
-    pid = get_pid()
+def configPath(pid):
+    
     result = runShell("ps -p "+pid+" -o args")
     path = ""
     s = re.findall(r'(\/.*?\.[\w:]+)', result)
@@ -77,10 +77,10 @@ def configPolyvisorPath():
         return "Can't find polyvisor.ini in the folder of supervisord.conf"
 
 
-def get_proc_config_path():
+def get_proc_config_path(pid):
     config = configparser.RawConfigParser(
         dict_type=MultiOrderedDict, strict=False)
-    config.read(configPath())
+    config.read(configPath(pid))
     #path = config['include']['files']
     path = config.get("include", "files")
     return path
@@ -177,9 +177,9 @@ def start_getList_stats(seconds):
     thr1.start()
 
 # split the config path from the supervisor config file
-def split_config_path():
+def split_config_path(pid):
     
-    path = get_proc_config_path().replace(" ", "").replace(
+    path = get_proc_config_path(pid).replace(" ", "").replace(
         "\t", "").replace("*.ini", "").split("\n")
     if len(path) == 1:
         return path[0]

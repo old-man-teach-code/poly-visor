@@ -178,10 +178,9 @@ class PolyVisor(object):
     def _do_supervisors(self, operation, *names):
         supervisors = (self.get_supervisor(name) for name in names)
         tasks = [spawn(operation, supervisor) for supervisor in supervisors]
-        
         joinall(tasks)
 
-    def _do_processes(self, operation, *patterns): 
+    def _do_processes(self, operation, *patterns):
         procs = self.processes
         puids = filter_patterns(procs, patterns)
         tasks = [spawn(operation, procs[puid]) for puid in puids]
@@ -206,10 +205,10 @@ class PolyVisor(object):
         self._do_processes(Process.restart, *patterns)
 
     def stop_all_processes_by_supervisor(self, *names):
-        self._do_processes(Process.stopAll, *names)
+        self._do_processes(Process.stopAll, '*')
 
     def start_all_processes_by_supervisor(self, *names):
-        self._do_processes(Process.startAll, *names)
+        self._do_processes(Process.startAll, '*')
         
     def stop_processes(self, *patterns):
         self._do_processes(Process.stop, *patterns)

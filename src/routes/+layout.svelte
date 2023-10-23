@@ -1,20 +1,23 @@
 <script>
 	import Sidebar from '../components/SiderBar/index.svelte';
 	import { page } from '$app/stores';
-	import { beforeUpdate, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import {
-		dashboardEnabled,
 		isAuthenticated,
 		toggleProcessesInterval,
 		toggleSystemInterval
 	} from '../store/supstore.js';
-
 	$: pathname = $page.url.pathname;
 
 	import '../app.css';
 	import LoadingScreen from '../components/LoadingScreen.svelte';
 
 	onMount(() => {
+		let eventSource = new EventSource('/api/stream');
+		eventSource.onmessage = (event) => {
+			let data = JSON.parse(event.data);
+			console.log(data);
+		};
 		if ($isAuthenticated == 'false' && pathname != '/login') {
 			window.location.href = '/login';
 		}

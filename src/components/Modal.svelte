@@ -14,6 +14,7 @@
 	import { renderProcessConf } from '../store/action';
 	import EditButton from './Buttons/EditButton.svelte';
 	import Taskset from './Taskset.svelte';
+	import { currentSupervisor } from '../store/supstore';
 
 	const dispatch = createEventDispatcher();
 	const close = () => dispatch('close');
@@ -66,7 +67,7 @@
 
 	if (modalType === 'log') {
 		onMount(() => {
-			eventSource = new EventSource(`/api/process/${stream}/${name}`);
+			eventSource = new EventSource(`/api/process/${stream}/${$currentSupervisor}:${name}`);
 			eventSource.onmessage = (event) => {
 				let dataProcesses = JSON.parse(event.data);
 				if (logState) {

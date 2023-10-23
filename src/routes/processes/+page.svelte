@@ -38,6 +38,12 @@
 	} else {
 		tableRows = $processes.filter((process: any) => filter.includes(process.statename));
 	}
+
+	function handleSubmitForm(group: string, name: string) {
+		const form = new FormData();
+		form.append('uid', $currentSupervisor + ':' + group + ':' + name);
+		return form;
+	}
 </script>
 
 <div class="w-full px-10">
@@ -58,10 +64,10 @@
 					</div>
 					<div class="flex items-center gap-4">
 						<ToolTip title="Start all processes">
-							<StartButton spin={false} on:event={() => startAllProcess()} />
+							<StartButton spin={false} on:event={() => startAllProcess($currentSupervisor)} />
 						</ToolTip>
 						<ToolTip title="Stop all processes">
-							<StopButton spin={false} on:event={() => stopAllProcess()} />
+							<StopButton spin={false} on:event={() => stopAllProcess($currentSupervisor)} />
 						</ToolTip>
 					</div>
 				</div>
@@ -149,30 +155,18 @@
 												<ToolTip title="Stop this process">
 													<StopButton
 														spin
-														on:event={() =>
-															stopProcess(() => {
-																const form = new FormData();
-																form.append(
-																	'uid',
-																	$currentSupervisor + ':' + process.group + ':' + process.name
-																);
-																return form;
-															})}
+														on:event={() => {
+															stopProcess(handleSubmitForm(process.group, process.name));
+														}}
 													/>
 												</ToolTip>
 											{:else}
 												<ToolTip title="Start this process">
 													<StartButton
 														spin
-														on:event={() =>
-															startProcess(() => {
-																const form = new FormData();
-																form.append(
-																	'uid',
-																	$currentSupervisor + ':' + process.group + ':' + process.name
-																);
-																return form;
-															})}
+														on:event={() => {
+															startProcess(handleSubmitForm(process.group, process.name));
+														}}
 													/>
 												</ToolTip>
 											{/if}
