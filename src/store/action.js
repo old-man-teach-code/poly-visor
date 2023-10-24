@@ -116,6 +116,7 @@ export async function renderProcessConf(name) {
 	return fetch(`/api/config/render/${name}`)
 		.then((response) => response.json())
 		.then((data) => {
+			console.log(data);
 			return data;
 		})
 		.catch((error) => {

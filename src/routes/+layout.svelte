@@ -1,7 +1,7 @@
-<script>
+<script lang="ts">
 	import Sidebar from '../components/SiderBar/index.svelte';
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import {
 		isAuthenticated,
 		toggleProcessesInterval,
@@ -12,19 +12,26 @@
 	import '../app.css';
 	import LoadingScreen from '../components/LoadingScreen.svelte';
 
+	let eventSource: EventSource;
+
 	onMount(() => {
-		let eventSource = new EventSource('/api/stream');
+		eventSource = new EventSource('/api/stream');
 		eventSource.onmessage = (event) => {
 			let data = JSON.parse(event.data);
 			console.log(data);
 		};
-		if ($isAuthenticated == 'false' && pathname != '/login') {
-			window.location.href = '/login';
-		}
-		if ($isAuthenticated == 'true' && pathname != '/login') {
-			toggleProcessesInterval();
-			toggleSystemInterval();
-		}
+	});
+
+	$: if ($isAuthenticated == 'false' && pathname != '/login') {
+		window.location.href = '/login';
+	}
+	$: if ($isAuthenticated == 'true' && pathname != '/login') {
+		toggleProcessesInterval();
+		toggleSystemInterval();
+	}
+
+	onDestroy(() => {
+		eventSource.close();
 	});
 </script>
 

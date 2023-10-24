@@ -58,10 +58,11 @@ except Exception as e:
 
 # render the config file
 try:
-    @app_api.route('/api/config/render/<process_name>', methods=['GET'])
-    def render_config(process_name):
+    @app_api.route('/api/config/render/<pid>/<uid>', methods=['GET'])
+    def render_config(pid, uid):
+        process_name = uid.split(":")[2] if len(uid.split(":")) >= 3 else None
 
-        result = renderConfig(process_name)
+        result = renderConfig(process_name, pid)
 
         return jsonify(result)
 except Exception as e:

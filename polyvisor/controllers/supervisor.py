@@ -84,6 +84,7 @@ def reread_and_update():
 # Create config file for supervisor and check if file exist
 def createConfig(
         pid,
+        supervisor_name,
         process_full_name, 
         command, 
         process_name='%(program_name)s_%(process_num)02d',
@@ -116,9 +117,9 @@ def createConfig(
         environment='', 
         serverurl='AUTO', 
         directory='/tmp'):
-    # if (os.path.isfile(split_config_path() + process_full_name + '.ini')):
-    #     return False
-    # else:
+    
+        
+    
         config = configparser.ConfigParser(interpolation= None)
         process_full_name = process_full_name.split('_')[0]
         config['program:' + process_full_name] = {
@@ -156,18 +157,20 @@ def createConfig(
         }
         with open(split_config_path(pid) + process_full_name + '.ini', 'w') as config_file:
             config.write(config_file)
-        reread_and_update()
+        
+        poly_visor.reread_supervisors(supervisor_name)
+        poly_visor.update_supervisors(supervisor_name)
         return True
 
 
 
 # render config file
-def renderConfig(process_name):
+def renderConfig(process_name,pid):
     # remove the part after the '_' in the process_name and both the '_' 
-    if (os.path.isfile(split_config_path() + process_name + '.ini')):
+    if (os.path.isfile(split_config_path(pid) + process_name + '.ini')):
         # return the .ini file with dictionary format and omit the [program:process_name] header
         config = configparser.ConfigParser(interpolation=None)
-        config.read(split_config_path() + process_name + '.ini')
+        config.read(split_config_path(pid) + process_name + '.ini')
         return dict(config.items('program:' + process_name))
 
     else:

@@ -203,7 +203,7 @@
 												<EditButton
 													on:event={() => {
 														showModal = 'editProcess';
-														logName = process.group;
+														logName = process.group + ':' + process.name;
 													}}
 												/>
 											</ToolTip>

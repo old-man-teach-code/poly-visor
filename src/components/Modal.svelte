@@ -14,7 +14,7 @@
 	import { renderProcessConf } from '../store/action';
 	import EditButton from './Buttons/EditButton.svelte';
 	import Taskset from './Taskset.svelte';
-	import { currentSupervisor } from '../store/supstore';
+	import { currentSupervisor, currentPid } from '../store/supstore';
 
 	const dispatch = createEventDispatcher();
 	const close = () => dispatch('close');
@@ -31,6 +31,7 @@
 	const processLog = writable('');
 
 	let conf = {
+		pid: $currentPid,
 		process_full_name: '',
 		command: '',
 		numprocs: '1',
@@ -82,7 +83,7 @@
 		});
 	} else if (modalType === 'editProcess') {
 		//map the return of renderObjectConf to conf
-		renderProcessConf(name).then((data) => {
+		renderProcessConf(`${$currentSupervisor}:${name}`).then((data) => {
 			conf = data;
 			conf.process_full_name = name;
 			conf.edit = true;
@@ -241,6 +242,25 @@
 			<CloseButton on:event={close} />
 		</div>
 		<div class="p-10 flex flex-col space-y-5">
+			<div class="place-self-center">
+				{#if modalType === 'addProcess'}
+					<ToolTip title="Add process config">
+						<AddButton
+							on:event={() => {
+								addNewProcessConf(conf);
+							}}
+						/>
+					</ToolTip>
+				{:else if modalType === 'editProcess'}
+					<ToolTip title="Edit process config">
+						<EditButton
+							on:event={() => {
+								addNewProcessConf(conf);
+							}}
+						/>
+					</ToolTip>
+				{/if}
+			</div>
 			{#if modalType === 'addProcess'}
 				<Input
 					bind:inputValue={conf.process_full_name}
@@ -401,25 +421,6 @@
 					inputPlaceholder="Error log file location"
 				/>
 			{/if}
-			<div class="pt-5 place-self-center">
-				{#if modalType === 'addProcess'}
-					<ToolTip title="Add process config">
-						<AddButton
-							on:event={() => {
-								addNewProcessConf(conf);
-							}}
-						/>
-					</ToolTip>
-				{:else if modalType === 'editProcess'}
-					<ToolTip title="Edit process config">
-						<EditButton
-							on:event={() => {
-								addNewProcessConf(conf);
-							}}
-						/>
-					</ToolTip>
-				{/if}
-			</div>
 		</div>
 		<!-- svelte-ignore a11y-autofocus -->
 	</div>
@@ -459,8 +460,7 @@
 		left: 50%;
 		top: 50%;
 		width: calc(100vw - 4em);
-		height: fit-content;
-		max-height: 80%;
+		height: 80%;
 		max-width: 32em;
 		overflow: auto;
 		transform: translate(-50%, -50%);

@@ -6,7 +6,7 @@
 	}
 </script>
 
-<button on:click={handleEvent}>
+<button on:click={handleEvent} class="hover:opacity-80">
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
 		fill="none"
