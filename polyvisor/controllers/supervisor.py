@@ -84,6 +84,7 @@ def reread_and_update():
 # Create config file for supervisor and check if file exist
 def createConfig(
         pid,
+        supervisor_name,
         process_full_name, 
         command, 
         process_name='%(program_name)s_%(process_num)02d',
@@ -116,9 +117,9 @@ def createConfig(
         environment='', 
         serverurl='AUTO', 
         directory='/tmp'):
-    # if (os.path.isfile(split_config_path() + process_full_name + '.ini')):
-    #     return False
-    # else:
+    
+        
+    
         config = configparser.ConfigParser(interpolation= None)
         process_full_name = process_full_name.split('_')[0]
         config['program:' + process_full_name] = {
@@ -156,7 +157,9 @@ def createConfig(
         }
         with open(split_config_path(pid) + process_full_name + '.ini', 'w') as config_file:
             config.write(config_file)
-        reread_and_update()
+        
+        poly_visor.reread_supervisors(supervisor_name)
+        poly_visor.update_supervisors(supervisor_name)
         return True
 
 
