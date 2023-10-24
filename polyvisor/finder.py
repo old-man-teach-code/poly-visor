@@ -30,7 +30,7 @@ def get_pid():
 
 # Get config file path of Supervisord when it running on machine
 def configPath(pid):
-    
+    pid = str(pid)
     result = runShell("ps -p "+pid+" -o args")
     path = ""
     s = re.findall(r'(\/.*?\.[\w:]+)', result)

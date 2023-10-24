@@ -157,32 +157,8 @@ except Exception as e:
     logger_routes.debug(e)
 
 #
-try:
-    @app_routes.route('/api/config/create/<process_name>/<command>', methods=['GET'])
-    def create_config(process_name, command):
-
-        command = base64.b64decode(command).decode('utf-8')
-        result = createConfig(process_name, command)
-        if (result):
-            return jsonify({'message': 'Config file created successfully'})
-        else:
-            return jsonify({'message': 'Config file creation failed'})
-except Exception as e:
-    logger_routes.debug(e)
 
 # update the config file
-try:
-    @app_routes.route('/api/config/modify/<process_name>/<action>/<key>/', defaults={'value': ''}, methods=['GET'])
-    @app_routes.route('/api/config/modify/<process_name>/<action>/<key>/<value>', methods=['GET'])
-    def modify_config(process_name, action, key, value):
-        value = base64.b64decode(value).decode('utf-8')
-        result = modifyConfig(process_name, action, key, value)
-        if (result):
-            return jsonify({'message': 'Config file updated successfully'})
-        else:
-            return jsonify({'message': 'Config file update failed'})
-except Exception as e:
-    logger_routes.debug(e)
 
 
 # tail the /var/log/demo.out.log on the browser
@@ -248,6 +224,7 @@ try:
     def create_config_post():
         data = request.get_json()
         pid = data['pid']
+        supervisor_name = data['supervisor_name']
         process_full_name = data['process_full_name']
         command = data['command']
         numprocs = data['numprocs']
@@ -281,6 +258,7 @@ try:
 
         result = createConfig(
             pid=pid,
+            supervisor_name=supervisor_name,
             process_full_name=process_full_name,
             command=command,
             numprocs=numprocs,
