@@ -82,7 +82,7 @@
 		});
 	} else if (modalType === 'editProcess') {
 		//map the return of renderObjectConf to conf
-		renderProcessConf(name).then((data) => {
+		renderProcessConf(`${$currentSupervisor}:${name}`).then((data) => {
 			conf = data;
 			conf.process_full_name = name;
 			conf.edit = true;
@@ -459,8 +459,7 @@
 		left: 50%;
 		top: 50%;
 		width: calc(100vw - 4em);
-		height: fit-content;
-		max-height: 80%;
+		height: 80%;
 		max-width: 32em;
 		overflow: auto;
 		transform: translate(-50%, -50%);

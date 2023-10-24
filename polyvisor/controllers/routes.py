@@ -43,7 +43,7 @@ def proc():
     return send_from_directory('./build', "processes.html")
 
 @app_routes.route("/login")
-def login():    
+def login_route():    
     return send_from_directory('./build', "login.html")
     
 

@@ -56,7 +56,6 @@ const fetchSystem = async () => {
 async function fetchProcesses() {
 	// fetching processes data
 	try {
-
 		const supervisorName = get(currentSupervisor);
 		const resProcesses = await fetch(`/api/supervisor/${supervisorName}/processes`);
 		const data = await resProcesses.json();
@@ -108,7 +107,6 @@ export function toggleSystemInterval() {
 }
 
 export function toggleProcessesInterval() {
-	fetchProcesses();
 	if (get(isAuthenticated) == 'true') {
 		processesInterval = setInterval(async () => {
 			fetchProcesses();
