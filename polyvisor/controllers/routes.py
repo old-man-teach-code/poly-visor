@@ -4,7 +4,7 @@ from gevent import queue, sleep
 from blinker import signal
 from gevent.monkey import patch_all
 
-patch_all(thread=True)
+patch_all()
 
 
 
@@ -13,7 +13,7 @@ from flask_jwt_extended import create_access_token, jwt_required
 from polyvisor import app
 from polyvisor.controllers.processes import restart_processes_by_name_model, start_all_processes_by_supervisor_model, start_processes_by_name_model, stop_all_processes_by_supervisor_model, set_Process_Core_Index, start_process_group_model, stop_process_group_model, stop_processes_by_name_model
 from polyvisor.controllers.supervisor import createConfig, restartSupervisors, shutdownSupervisors
-from flask import  jsonify, Blueprint, Response, make_response, render_template, request, send_from_directory, session
+from flask import  jsonify, Blueprint, Response, make_response, redirect, render_template, request, send_from_directory, session, url_for
 import base64
 
 
@@ -42,6 +42,10 @@ def proc():
     # return render_template('./build',"index.html")
     return send_from_directory('./build', "processes.html")
 
+@app_routes.route("/login")
+def login():    
+    return send_from_directory('./build', "login.html")
+    
 
 @app_routes.route("/<path:path>")
 def base(path):
@@ -359,7 +363,9 @@ try:
     @app_routes.route("/api/logout", methods=["POST"])
     def logout():
         session.clear()
-        return jsonify({"message": "logged out"})
+        response = make_response(redirect(url_for("/login")))
+        response.set_cookie('access_token_cookie', '', expires=0)
+        return response, 200
 except Exception as e:
     logger_routes.debug(e)
 
