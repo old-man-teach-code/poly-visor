@@ -162,12 +162,12 @@ def createConfig(
 
 
 # render config file
-def renderConfig(process_name):
+def renderConfig(process_name,pid):
     # remove the part after the '_' in the process_name and both the '_' 
-    if (os.path.isfile(split_config_path() + process_name + '.ini')):
+    if (os.path.isfile(split_config_path(pid) + process_name + '.ini')):
         # return the .ini file with dictionary format and omit the [program:process_name] header
         config = configparser.ConfigParser(interpolation=None)
-        config.read(split_config_path() + process_name + '.ini')
+        config.read(split_config_path(pid) + process_name + '.ini')
         return dict(config.items('program:' + process_name))
 
     else:
