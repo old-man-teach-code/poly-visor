@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { getAllSupervisors } from '../../store/action';
+	import { getAllSupervisors, login } from '../../store/action';
 	import LoadingScreen from '../../components/LoadingScreen.svelte';
 	import LoginModal from '../../components/LoginModal.svelte';
 	import { isAuthenticated, currentSupervisor } from '../../store/supstore';
@@ -22,12 +22,13 @@
 		supervisors = await getAllSupervisors();
 	});
 
-	function handleSupervisorClick(supervisor: Supervisor) {
+	async function handleSupervisorClick(supervisor: Supervisor) {
 		if (!supervisor.running) {
 			alert('Supervisor is not running, please enable this supervisor instance!');
 			return;
 		}
 		if (!supervisor.authentication) {
+			await login({ supervisor: supervisor.name });
 			isAuthenticated.set(true);
 			currentSupervisor.set(supervisor.name);
 			window.location.href = '/';

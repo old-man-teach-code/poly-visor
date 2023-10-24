@@ -14,7 +14,7 @@
 	import { renderProcessConf } from '../store/action';
 	import EditButton from './Buttons/EditButton.svelte';
 	import Taskset from './Taskset.svelte';
-	import { currentSupervisor } from '../store/supstore';
+	import { currentSupervisor, currentPid } from '../store/supstore';
 
 	const dispatch = createEventDispatcher();
 	const close = () => dispatch('close');
@@ -31,6 +31,7 @@
 	const processLog = writable('');
 
 	let conf = {
+		pid: $currentPid,
 		process_full_name: '',
 		command: '',
 		numprocs: '1',

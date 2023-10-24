@@ -27,6 +27,11 @@ currentSupervisor.subscribe((value) => {
 	localStorage.currentSupervisor = value;
 });
 
+export const currentPid = writable(localStorage.currentPid || -1);
+currentPid.subscribe((value) => {
+	localStorage.currentPid = value;
+});
+
 //fetch api
 const fetchSystem = async () => {
 	if (get(isAuthenticated) == 'true') {
@@ -59,7 +64,10 @@ async function fetchProcesses() {
 		const supervisorName = get(currentSupervisor);
 		const resProcesses = await fetch(`/api/supervisor/${supervisorName}/processes`);
 		const data = await resProcesses.json();
-		//mapd data.processes to array
+		if (get(currentPid) == -1 && get(currentPid) != data.pid) {
+			currentPid.set(data.pid);
+		}
+		//map data.processes to array
 		const dataProcesses = Object.values(data.processes);
 		const loadedProcesses = dataProcesses.map((data) => ({
 			description: data.description,

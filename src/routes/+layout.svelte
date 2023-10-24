@@ -20,14 +20,15 @@
 			let data = JSON.parse(event.data);
 			console.log(data);
 		};
-		if ($isAuthenticated == 'false' && pathname != '/login') {
-			window.location.href = '/login';
-		}
-		if ($isAuthenticated == 'true' && pathname != '/login') {
-			toggleProcessesInterval();
-			toggleSystemInterval();
-		}
 	});
+
+	$: if ($isAuthenticated == 'false' && pathname != '/login') {
+		window.location.href = '/login';
+	}
+	$: if ($isAuthenticated == 'true' && pathname != '/login') {
+		toggleProcessesInterval();
+		toggleSystemInterval();
+	}
 
 	onDestroy(() => {
 		eventSource.close();
