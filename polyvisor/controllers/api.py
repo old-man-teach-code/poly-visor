@@ -60,7 +60,7 @@ except Exception as e:
 try:
     @app_api.route('/api/config/render/<pid>/<uid>', methods=['GET'])
     def render_config(pid, uid):
-        process_name = uid.split(":")[2] if len(uid.split(":")) >= 3 else None
+        process_name = uid.split(":")[1] if len(uid.split(":")) >= 3 else None
 
         result = renderConfig(process_name, pid)
 
