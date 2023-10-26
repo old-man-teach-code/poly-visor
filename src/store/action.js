@@ -12,7 +12,7 @@ import {
 	Title,
 	Tooltip
 } from 'chart.js';
-import { loading } from './supstore.js';
+import { currentPid, loading } from './supstore.js';
 import { get } from 'svelte/store';
 // import chartjs from 'chart.js/auto';
 // const { Chart, LineElement, PointElement, LineController, CategoryScale, LinearScale, Filler, Legend, Title, Tooltip } = chartjs;
@@ -113,7 +113,7 @@ export async function addNewProcessConf(conf) {
 export async function renderProcessConf(name) {
 	if (get(loading)) return;
 	loading.set(true);
-	return fetch(`/api/config/render/${name}`)
+	return fetch(`/api/config/render/${get(currentPid)}/${name}`)
 		.then((response) => response.json())
 		.then((data) => {
 			console.log(data);
