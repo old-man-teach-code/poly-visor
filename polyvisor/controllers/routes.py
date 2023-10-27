@@ -341,10 +341,10 @@ try:
     @app_routes.route("/api/logout", methods=["POST"])
     def logout():
         session.clear()
-        #resonse without redirect
-        response = make_response(jsonify({"status": 200,"message": "Logout successful"}), 200)
-        response.set_cookie('access_token_cookie', '', expires=0)
-        return response
+        response = make_response(redirect(url_for("/login")))
+        response.set_cookie('access_token_cookie', '', expires=0, secure=True)
+
+        return jsonify({"status": 200, "data": {"message": "Logout successfully"}}), 200
 except Exception as e:
     logger_routes.debug(e)
 
@@ -355,9 +355,9 @@ try:
         supervisor_name = request.form.get("supervisor")
         if not app_routes.polyvisor.use_authentication:
             access_token = create_access_token(identity="guest")
-            response = jsonify({"status": 200,"access_token_cookie": access_token})
-            response.set_cookie('access_token_cookie', access_token, httponly=True, samesite='Lax')
-            return response, 200
+            response = jsonify({"access_token_cookie": access_token})
+            response.set_cookie('access_token_cookie', access_token, httponly=True, samesite='Lax', secure=True)
+            return jsonify({"status": 200, "data": {"message": "Login successfully"}})
 
         username = request.form.get("username")
         password = request.form.get("password")
@@ -368,11 +368,11 @@ try:
             
             # Set the JWT token as an HTTP-only cookie
             response = jsonify({"access_token_cookie": access_token})
-            response.set_cookie('access_token_cookie', access_token, httponly=True, samesite='Lax')
-            
-            return response, 200
+            response.set_cookie('access_token_cookie', access_token, httponly=True, samesite='Lax', secure=True)
+
+            return jsonify({"status": 200, "data": {"message": "Login successfully"}}), 200
         else:
-            return jsonify({"message": "Invalid username or password"}), 401
+            return jsonify({"status": 401, "data": {"message": "Invalid username or password"}}), 401
 
 except Exception as e:
     logger_routes.debug(e)
