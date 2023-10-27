@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { dashboardEnabled, toggleSystemInterval } from '../../store/supstore';
+	import { dashboardEnabled } from '../../store/supstore';
 
 	function handleDasboardToggle() {
 		dashboardEnabled.set($dashboardEnabled == 'true' ? 'false' : 'true');
-		toggleSystemInterval();
 	}
 </script>
 

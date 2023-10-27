@@ -341,9 +341,10 @@ try:
     @app_routes.route("/api/logout", methods=["POST"])
     def logout():
         session.clear()
-        response = make_response(redirect(url_for("/login")))
+        #resonse without redirect
+        response = make_response(jsonify({"status": 200,"message": "Logout successful"}), 200)
         response.set_cookie('access_token_cookie', '', expires=0)
-        return response, 200
+        return response
 except Exception as e:
     logger_routes.debug(e)
 
@@ -354,7 +355,7 @@ try:
         supervisor_name = request.form.get("supervisor")
         if not app_routes.polyvisor.use_authentication:
             access_token = create_access_token(identity="guest")
-            response = jsonify({"access_token_cookie": access_token})
+            response = jsonify({"status": 200,"access_token_cookie": access_token})
             response.set_cookie('access_token_cookie', access_token, httponly=True, samesite='Lax')
             return response, 200
 

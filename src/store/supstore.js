@@ -33,7 +33,7 @@ currentPid.subscribe((value) => {
 });
 
 //fetch api
-const fetchSystem = async () => {
+export const fetchSystem = async () => {
 	if (get(isAuthenticated) == 'true') {
 		try {
 			// fetching system data
@@ -58,7 +58,7 @@ const fetchSystem = async () => {
 	}
 };
 
-async function fetchProcesses() {
+export async function fetchProcesses() {
 	// fetching processes data
 	try {
 		const supervisorName = get(currentSupervisor);
@@ -101,25 +101,5 @@ async function fetchProcesses() {
 		}
 	} catch (err) {
 		console.log(err);
-	}
-}
-
-export function toggleSystemInterval() {
-	if (get(dashboardEnabled) == 'true') {
-		systemInterval = setInterval(async () => {
-			fetchSystem();
-		}, 2000);
-	} else {
-		clearInterval(systemInterval);
-	}
-}
-
-export function toggleProcessesInterval() {
-	if (get(isAuthenticated) == 'true') {
-		processesInterval = setInterval(async () => {
-			fetchProcesses();
-		}, 2000);
-	} else {
-		clearInterval(processesInterval);
 	}
 }
