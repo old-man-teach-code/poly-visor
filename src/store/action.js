@@ -57,10 +57,10 @@ async function makeApiRequest(url, method, body) {
 
 		const data = await response.json();
 
-		// if (response.status === 401) {
-		// 	window.location.href = '/login';
-		// 	alert('Unauthorized');
-		// }
+		if (data.status === 401) {
+			window.location.href = '/login';
+			alert('Unauthorized');
+		}
 
 		return data;
 	} catch (error) {

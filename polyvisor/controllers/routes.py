@@ -341,13 +341,9 @@ try:
     @app_routes.route("/api/logout", methods=["POST"])
     def logout():
         session.clear()
-        response = make_response(redirect(url_for("/login")))
+        response = make_response(jsonify({"status": 200, "data": {"message": "Logout successfully"}}))
         response.set_cookie('access_token_cookie', '', expires=0, secure=True)
-        json_response = jsonify({"status": 200, "data": {"message": "Logout successfully"}})
-
         # Include the JSON response in the 'response' object
-        response.data = json_response.data
-        response.content_type = json_response.content_type
         return response, 200
 
 except Exception as e:
