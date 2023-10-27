@@ -342,7 +342,7 @@ try:
     def logout():
         session.clear()
         response = make_response(redirect(url_for("/login")))
-        response.set_cookie('access_token_cookie', '', expires=0)
+        response.set_cookie('access_token_cookie', '', expires=0, secure=True)
         return response, 200
 except Exception as e:
     logger_routes.debug(e)
