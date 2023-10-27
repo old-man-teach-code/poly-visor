@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { toggleSystemInterval, toggleProcessesInterval } from '../../store/supstore';
 	import { logout } from '../../store/action';
 	$: pathname = $page.url.pathname;
 
@@ -9,11 +8,11 @@
 	export let path: string = '';
 
 	async function handleLogout() {
-		localStorage.clear();
-		toggleProcessesInterval();
-		toggleSystemInterval();
-		await logout();
-		window.location.href = '/login';
+		const status = (await logout())?.status;
+		if (status === 200) {
+			localStorage.clear();
+			window.location.href = '/login';
+		}
 	}
 </script>
 

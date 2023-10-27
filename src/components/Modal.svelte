@@ -31,6 +31,7 @@
 	const processLog = writable('');
 
 	let conf = {
+		supervisor_name: $currentSupervisor,
 		pid: $currentPid,
 		process_full_name: '',
 		command: '',
@@ -87,6 +88,7 @@
 			conf = data;
 			conf.process_full_name = name;
 			conf.edit = true;
+			conf.pid = $currentPid;
 		});
 	}
 	const scrollToBottom = async (node: any) => {

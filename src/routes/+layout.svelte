@@ -3,9 +3,10 @@
 	import { page } from '$app/stores';
 	import { onDestroy, onMount } from 'svelte';
 	import {
+		fetchProcesses,
 		isAuthenticated,
-		toggleProcessesInterval,
-		toggleSystemInterval
+		dashboardEnabled,
+		fetchSystem
 	} from '../store/supstore.js';
 	$: pathname = $page.url.pathname;
 
@@ -14,7 +15,24 @@
 
 	let eventSource: EventSource;
 
+	let systemInterval: NodeJS.Timeout;
+	let processInterval: NodeJS.Timeout;
+
+	$: if ($dashboardEnabled == 'true') {
+		systemInterval = setInterval(fetchSystem, 2000);
+	} else {
+		clearInterval(systemInterval);
+	}
+
+	$: if ($isAuthenticated == 'true') {
+		processInterval = setInterval(fetchProcesses, 2000);
+	} else {
+		clearInterval(processInterval);
+	}
+
 	onMount(() => {
+		//console log cookie
+		console.log(document.cookie);
 		eventSource = new EventSource('/api/stream');
 		eventSource.onmessage = (event) => {
 			let data = JSON.parse(event.data);
@@ -24,10 +42,6 @@
 
 	$: if ($isAuthenticated == 'false' && pathname != '/login') {
 		window.location.href = '/login';
-	}
-	$: if ($isAuthenticated == 'true' && pathname != '/login') {
-		toggleProcessesInterval();
-		toggleSystemInterval();
 	}
 
 	onDestroy(() => {

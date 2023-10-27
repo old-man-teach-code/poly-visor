@@ -18,6 +18,7 @@
 	let selectedSupervisor: string = '';
 
 	onMount(async () => {
+		localStorage.clear();
 		if ($isAuthenticated == 'true') window.location.href = '/';
 		supervisors = await getAllSupervisors();
 	});

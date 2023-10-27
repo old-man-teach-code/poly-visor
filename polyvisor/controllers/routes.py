@@ -341,40 +341,63 @@ try:
     @app_routes.route("/api/logout", methods=["POST"])
     def logout():
         session.clear()
-        response = make_response(redirect(url_for("/login")))
-        response.set_cookie('access_token_cookie', '', expires=0)
+        response = make_response(jsonify({"status": 200, "data": {"message": "Logout successfully"}}))
+        response.set_cookie('access_token_cookie', '', expires=0, secure=True)
+        # Include the JSON response in the 'response' object
         return response, 200
+
 except Exception as e:
     logger_routes.debug(e)
 
 # login to the application
-try:
-    @app_routes.route("/api/login", methods=["POST"])
-    def login():
+from flask import jsonify
+
+@app_routes.route("/api/login", methods=["POST"])
+def login():
+    try:
         supervisor_name = request.form.get("supervisor")
         if not app_routes.polyvisor.use_authentication:
             access_token = create_access_token(identity="guest")
             response = jsonify({"access_token_cookie": access_token})
-            response.set_cookie('access_token_cookie', access_token, httponly=True, samesite='Lax')
-            return response, 200
+            response.set_cookie('access_token_cookie', access_token, httponly=True, samesite='Lax', secure=True)
 
-        username = request.form.get("username")
-        password = request.form.get("password")
+            json_response = jsonify({"status": 200, "data": {"message": "Login successfully"}})
 
-        if app_routes.polyvisor.is_login_valid(supervisor_name, username, password):
-            # Create an access token
-            access_token = create_access_token(identity=username)
-            
-            # Set the JWT token as an HTTP-only cookie
-            response = jsonify({"access_token_cookie": access_token})
-            response.set_cookie('access_token_cookie', access_token, httponly=True, samesite='Lax')
-            
-            return response, 200
+            # Include the JSON response in the 'response' object
+            response.data = json_response.data
+            response.content_type = json_response.content_type
+
+            return response
         else:
-            return jsonify({"message": "Invalid username or password"}), 401
+            username = request.form.get("username")
+            password = request.form.get("password")
 
-except Exception as e:
-    logger_routes.debug(e)
+            if app_routes.polyvisor.is_login_valid(supervisor_name, username, password):
+                # Create an access token
+                access_token = create_access_token(identity=username)
+                
+                # Set the JWT token as an HTTP-only cookie
+                response = jsonify({"access_token_cookie": access_token})
+                response.set_cookie('access_token_cookie', access_token, httponly=True, samesite='Lax', secure=True)
+
+                json_response = jsonify({"status": 200, "data": {"message": "Login successfully"}})
+
+                # Include the JSON response in the 'response' object
+                response.data = json_response.data
+                response.content_type = json_response.content_type
+
+                return response, 200
+            else:
+                json_response = jsonify({"status": 401, "data": {"message": "Invalid username or password"}})
+
+                # Include the JSON response in the 'response' object
+                response.data = json_response.data
+                response.content_type = json_response.content_type
+
+                return response, 401
+    except Exception as e:
+        logger_routes.debug(e)
+
 
 
 
