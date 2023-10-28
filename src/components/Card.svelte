@@ -15,6 +15,6 @@
 		: ''}"
 	on:click={handleEvent}
 >
-	<h1 class="text-sm sm:text-lg text-[#9FA2B4] whitespace-nowrap">{title}</h1>
+	<h1 class="text-sm sm:text-lg text-[#9FA2B4]">{title}</h1>
 	<span class="text-xl sm:text-3xl">{content}</span>
 </button>

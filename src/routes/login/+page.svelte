@@ -29,10 +29,16 @@
 			return;
 		}
 		if (!supervisor.authentication) {
-			await login({ supervisor: supervisor.name });
-			isAuthenticated.set(true);
-			currentSupervisor.set(supervisor.name);
-			window.location.href = '/';
+			const formData = new FormData();
+			formData.append('supervisor', supervisor.name);
+			const res = await login(formData);
+			if (res?.status == 200) {
+				isAuthenticated.set(true);
+				currentSupervisor.set(supervisor.name);
+				window.location.href = '/';
+			} else {
+				alert(res?.message);
+			}
 			return;
 		}
 		selectedSupervisor = supervisor.name;
