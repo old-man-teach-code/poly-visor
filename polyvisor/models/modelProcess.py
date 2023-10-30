@@ -377,13 +377,14 @@ def get_process_affinity_CPU(pid):
         return False
     else:
         output = runShell("taskset -cp "+str(pid))
-        if("failed" in output):
+        if("failed to"in output):
             return False
         
         char_index= output.find(":")
         output=output[char_index+2::].replace('\n','')
         # Split the output by comma first
         parts = output.split(',')
+        
 
         # Initialize an empty list to store the final result
         result = []
@@ -392,6 +393,9 @@ def get_process_affinity_CPU(pid):
             if '-' in part:
                 start, end = map(int, part.split('-'))
                 result.extend(range(start, end + 1))
+            # if the part is only [''] return empty list
+            elif part == '':
+                return False 
             else:
                 result.append(int(part))
 
