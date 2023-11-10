@@ -45,10 +45,14 @@
 		//create formdata
 		const formData = new FormData(e.target);
 		formData.append('supervisor', supervisorName);
-		const message = await login(formData);
-		isAuthenticated.set(true);
-		currentSupervisor.set(supervisorName);
-		window.location.href = '/';
+		const res = await login(formData);
+		if (res?.status == 200) {
+			isAuthenticated.set(true);
+			currentSupervisor.set(supervisorName);
+			window.location.href = '/';
+		} else {
+			alert(res);
+		}
 	}
 </script>
 

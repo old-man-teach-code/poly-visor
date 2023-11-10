@@ -60,6 +60,7 @@ async function makeApiRequest(url, method, body) {
 		if (data.status === 401) {
 			window.location.href = '/login';
 			alert('Unauthorized');
+			return;
 		}
 
 		return data;

@@ -82,13 +82,17 @@
 				scrollToBottom(modal);
 			}
 		});
-	} else if (modalType === 'editProcess') {
+	}
+	if (modalType === 'editProcess') {
 		//map the return of renderObjectConf to conf
-		renderProcessConf(`${$currentSupervisor}:${name}`).then((data) => {
-			conf = data;
-			conf.process_full_name = name;
+		onMount(async () => {
+			const renderedConf = await renderProcessConf(`${$currentSupervisor}:${name}`);
+			if (!renderedConf) {
+				return;
+			}
+			console.log(renderedConf);
+			conf = renderedConf;
 			conf.edit = true;
-			conf.pid = $currentPid;
 		});
 	}
 	const scrollToBottom = async (node: any) => {

@@ -53,7 +53,7 @@
 	<div
 		class="{statename
 			? 'transform opacity-100 scale-100 translate-y-5'
-			: 'transform opacity-0 scale-95 -translate-x-full invisible'} absolute z-10 mt-2 origin-top-right rounded-md bg-white p-4 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none"
+			: 'transform opacity-0 scale-95 -translate-x-full invisible'} absolute z-20 mt-2 origin-top-right rounded-md bg-white p-4 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none"
 	>
 		<form class="space-y-4">
 			{#each options as option}
