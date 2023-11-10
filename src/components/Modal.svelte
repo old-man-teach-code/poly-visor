@@ -430,7 +430,27 @@
 		</div>
 		<!-- svelte-ignore a11y-autofocus -->
 	</div>
-{:else if modalType == 'taskset'}
+{:else if modalType === 'io'}
+	<div class="modal-background" on:click={close} />
+	<div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
+		<div class="sticky top-0 bg-orange-200 py-5 z-10 flex items-center justify-between px-10">
+			<h1 class="font-bold text-xl">
+				Input/Output
+				<span class="text-green-600">
+					{content?.name}
+				</span>
+			</h1>
+			<CloseButton on:event={close} />
+		</div>
+		<ul class="py-6 px-10 space-y-3">
+			{#each content?.network_io_counters as item}
+				<li>
+					{item.key}: {item.value}
+				</li>
+			{/each}
+		</ul>
+	</div>
+{:else if modalType === 'taskset'}
 	<div class="modal-background" on:click={close} />
 	<div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
 		<div class="sticky top-0 bg-orange-200 py-5 z-10 flex items-center justify-between px-10">
