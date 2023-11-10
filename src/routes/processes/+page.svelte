@@ -199,6 +199,15 @@
 													}}
 												/>
 											</ToolTip>
+											<ToolTip title="View process network">
+												<ViewButton
+													spin={false}
+													on:event={() => {
+														showModal = 'io';
+														modalContent = process;
+													}}
+												/>
+											</ToolTip>
 											<ToolTip title="Edit process config">
 												<EditButton
 													on:event={() => {
@@ -249,7 +258,15 @@
 							name={logName}
 							on:close={() => (showModal = 'close')}
 						/>
-					{:else if (showModal = 'taskset')}
+					{:else if showModal == 'io'}
+						<Modal
+							content={modalContent}
+							modalType="io"
+							stream=""
+							name=""
+							on:close={() => (showModal = 'close')}
+						/>
+					{:else if showModal == 'taskset'}
 						<Modal
 							content={modalContent}
 							modalType="taskset"

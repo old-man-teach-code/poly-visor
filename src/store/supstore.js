@@ -83,6 +83,32 @@ export async function fetchProcesses() {
 			stderr_logfile: data.stderr_logfile,
 			stdout_logfile: data.stdout_logfile,
 			stop: data.stop,
+			network_io_counters: [
+				{
+					key: 'read counter',
+					value: data?.network_io_counters[0] || 'Unavailable'
+				},
+				{
+					key: 'write counter',
+					value: data?.network_io_counters[1] || 'Unavailable'
+				},
+				{
+					key: 'read bytes',
+					value: data?.network_io_counters[2] || 'Unavailable'
+				},
+				{
+					key: 'write bytes',
+					value: data?.network_io_counters[3] || 'Unavailable'
+				},
+				{
+					key: 'read chars',
+					value: data?.network_io_counters[4] || 'Unavailable'
+				},
+				{
+					key: 'write chars',
+					value: data?.network_io_counters[5] || 'Unavailable'
+				}
+			],
 			stateColor:
 				data.statename == 'RUNNING' || data.statename == 'STARTING'
 					? 'bg-green-300'
