@@ -256,9 +256,13 @@ class Process(dict):
         try:
             process = psutil.Process(self["pid"])
             network_counters = process.io_counters()
-            return network_counters
+            if network_counters is None:
+                #  return an array with 6 elements of 0
+                return [0,0,0,0,0,0]
+            else :
+                return network_counters
         except psutil.NoSuchProcess:
-            return None
+            return [0,0,0,0,0,0]
 
     def get_network_connections(self):
         """
