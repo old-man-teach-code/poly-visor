@@ -8,6 +8,7 @@ import {
 	Filler,
 	Legend,
 	Title,
+	SubTitle,
 	Tooltip
 } from 'chart.js';
 import { currentPid, loading } from './supstore.js';
@@ -22,6 +23,7 @@ Chart.register(
 	Filler,
 	Legend,
 	Title,
+	SubTitle,
 	Tooltip
 );
 
