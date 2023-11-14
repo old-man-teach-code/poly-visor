@@ -6,11 +6,17 @@ export const loading = writable(false);
 export const processes = writable([]);
 export const count = writable(0);
 export const cpuCount = writable(0);
-export const cpuChart = writable(Array(31));
-export const ramChart = writable(Array(31));
 
 let systemInterval;
 let processesInterval;
+
+export const chartInstances = writable(localStorage.chartInstances || 30);
+chartInstances.subscribe((value) => {
+	localStorage.chartInstances = value;
+});
+
+export const cpuChart = writable(Array(Number(localStorage.chartInstances)));
+export const ramChart = writable(Array(Number(localStorage.chartInstances)));
 
 export const dashboardEnabled = writable(localStorage.dashboardEnabled || true);
 dashboardEnabled.subscribe((value) => {

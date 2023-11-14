@@ -15,45 +15,14 @@
 	let textRam: Boolean;
 	let textCores: Boolean;
 	let chartState = true;
+	let labels;
 
 	//Initial data for ChartJS
 	let data = {
 		type: 'line',
 		data: {
 			//X axis data label
-			labels: [
-				'60s',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'0s'
-			],
+			labels: Array($cpuChart.length).fill(''),
 			//set default dataset as CPU
 			datasets: [
 				{
@@ -66,9 +35,9 @@
 		},
 		options: {
 			fill: true,
+			resizeDelay: 0,
 			responsive: true,
 			maintainAspectRatio: false,
-			resizeDelay: 0,
 			plugins: {
 				legend: {
 					position: 'top'
@@ -76,6 +45,11 @@
 				title: {
 					display: true,
 					text: 'Overall CPU usage'
+				},
+				subtitle: {
+					display: true,
+					text: '2 seconds interval',
+					position: 'bottom'
 				}
 			},
 			scales: {
@@ -150,8 +124,10 @@
 		</div>
 	</div>
 	{#if chartState}
-		<div class="flex flex-1 justify-center">
-			<div class="relative bg-white border-2 rounded-md h-4/5 w-11/12 lg:w-3/4 min-h-[300px]">
+		<div
+			class="max-w-[80vw] md:max-w-[60vw] aspect-video md:aspect-[21/9] sm:w-[60vw] w-[80vw] mx-auto overflow-auto"
+		>
+			<div class="bg-white border-2 h-full rounded-md">
 				<canvas class="p-2" use:chartJS={data} id="myChart" />
 			</div>
 		</div>
