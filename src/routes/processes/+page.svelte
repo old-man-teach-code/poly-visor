@@ -102,7 +102,8 @@
 				<table class=" w-full table-auto">
 					<thead class="sticky top-0 z-10">
 						<tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-left">Description</th>
+							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-left">Name</th>
+							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-center">Description</th>
 							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-center">Status</th>
 							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-center">Process name</th>
 							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-center">Taskset</th>
