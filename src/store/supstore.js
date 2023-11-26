@@ -7,9 +7,6 @@ export const processes = writable([]);
 export const count = writable(0);
 export const cpuCount = writable(0);
 
-let systemInterval;
-let processesInterval;
-
 export const chartInstances = writable(localStorage.chartInstances || 30);
 chartInstances.subscribe((value) => {
 	localStorage.chartInstances = value;

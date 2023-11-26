@@ -16,6 +16,7 @@
 	import TextInput from '../../components/TextInput.svelte';
 	import DropListButton from '../../components/Buttons/DropListButton.svelte';
 	import EditButton from '../../components/Buttons/EditButton.svelte';
+	import NetworkButton from '../../components/Buttons/NetworkButton.svelte';
 
 	let values: any;
 	let showModal = 'close';
@@ -200,8 +201,7 @@
 												/>
 											</ToolTip>
 											<ToolTip title="View process network">
-												<ViewButton
-													spin={false}
+												<NetworkButton
 													on:event={() => {
 														showModal = 'io';
 														modalContent = process;
