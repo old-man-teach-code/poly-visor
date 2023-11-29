@@ -131,6 +131,26 @@ class PolyVisor(object):
             result_array.append(value)
 
         return result_array
+    def get_supervisor(self, name):
+        return self.supervisors[name]
+    def get_supervisor_processes(self, name):
+        return self.supervisors[name].get_processes()
+
+
+    def get_process(self, uid):
+        supervisor, _ = uid.split(":", 1)
+        return self.supervisors[supervisor]["processes"][uid]
+
+    def _do_supervisors(self, operation, *names):
+        supervisors = (self.get_supervisor(name) for name in names)
+        tasks = [spawn(operation, supervisor) for supervisor in supervisors]
+        joinall(tasks)
+
+    def _do_processes(self, operation, *patterns):
+        procs = self.processes
+        puids = filter_patterns(procs, patterns)
+        tasks = [spawn(operation, procs[puid]) for puid in puids]
+        joinall(tasks)
 
     # Property to get all processes from supervisors.
     @property

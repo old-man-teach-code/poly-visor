@@ -309,7 +309,7 @@ class Process(dict):
         return "{0} on {1}".format(self["name"], self["supervisor"])
 
     # Equality comparison for processes.
-    def __eq__(self, proc):
+    def equal(self, proc):
         p1, p2 = dict(self), dict(proc)
         p1.pop("description")
         p1.pop("now")
@@ -318,7 +318,7 @@ class Process(dict):
         return p1 == p2
 
     # Inequality comparison for processes.
-    def __ne__(self, proc):
+    def notEqual(self, proc):
         return not self == proc
 
 # start all processes, return array result

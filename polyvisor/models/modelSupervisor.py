@@ -64,7 +64,7 @@ class Supervisor(dict):
         return "{}(name={})".format(self.__class__.__name__, self.name)
 
     # Equality comparison method for two Supervisor objects.
-    def __eq__(self, other):
+    def equal(self, other):
         this, other = dict(self), dict(other)
         this_p = this.pop("processes")
         other_p = other.pop("processes")
