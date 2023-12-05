@@ -220,7 +220,7 @@ except Exception as e:
 try:
     @app_routes.route('/api/config/create', methods=['POST'])
     def create_config_post():
-        data = request.get_json()
+        data = request.get_json(force=True)
         pid = data['pid']
         supervisor_name = data['supervisor_name']
         process_full_name = data['process_full_name']
