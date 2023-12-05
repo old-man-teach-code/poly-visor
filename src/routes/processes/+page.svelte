@@ -16,6 +16,7 @@
 	import TextInput from '../../components/TextInput.svelte';
 	import DropListButton from '../../components/Buttons/DropListButton.svelte';
 	import EditButton from '../../components/Buttons/EditButton.svelte';
+	import NetworkButton from '../../components/Buttons/NetworkButton.svelte';
 
 	let values: any;
 	let showModal = 'close';
@@ -101,9 +102,9 @@
 				<table class=" w-full table-auto">
 					<thead class="sticky top-0 z-10">
 						<tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-left">Description</th>
+							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-left">Name</th>
+							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-center">Description</th>
 							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-center">Status</th>
-							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-center">Process name</th>
 							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-center">Taskset</th>
 							<th class=" py-2 px-3 lg:py-3 lg:px-6 text-center">Actions</th>
 						</tr>
@@ -200,8 +201,7 @@
 												/>
 											</ToolTip>
 											<ToolTip title="View process network">
-												<ViewButton
-													spin={false}
+												<NetworkButton
 													on:event={() => {
 														showModal = 'io';
 														modalContent = process;

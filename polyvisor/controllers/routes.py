@@ -2,15 +2,13 @@
 import json
 from gevent import queue, sleep
 from blinker import signal
-from gevent.monkey import patch_all
 
-patch_all()
 
 
 
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, jwt_required
-from polyvisor import app
+# from polyvisor import app
 from polyvisor.controllers.processes import restart_processes_by_name_model, start_all_processes_by_supervisor_model, start_processes_by_name_model, stop_all_processes_by_supervisor_model, set_Process_Core_Index, start_process_group_model, stop_process_group_model, stop_processes_by_name_model
 from polyvisor.controllers.supervisor import createConfig, restartSupervisors, shutdownSupervisors
 from flask import  jsonify, Blueprint, Response, make_response, redirect, render_template, request, send_from_directory, session, url_for
@@ -222,7 +220,7 @@ except Exception as e:
 try:
     @app_routes.route('/api/config/create', methods=['POST'])
     def create_config_post():
-        data = request.get_json()
+        data = request.get_json(force=True)
         pid = data['pid']
         supervisor_name = data['supervisor_name']
         process_full_name = data['process_full_name']
@@ -299,7 +297,7 @@ try:
             else:
                 return jsonify({'message': 'Config file creation failed'})
 except Exception as e:
-    logger_routes.debug(e)
+     jsonify({'message': 'Config file creation failed'})
 
 # Set affinity list in CPU
 try:
@@ -318,23 +316,23 @@ SIGNALS = [
 ]
 
 
-class Dispatcher(object):
-    def __init__(self):
-        self.clients = []
-        for signal_name in SIGNALS:
-            signal(signal_name).connect(self.on_event)
+# class Dispatcher(object):
+#     def __init__(self):
+#         self.clients = []
+#         for signal_name in SIGNALS:
+#             signal(signal_name).connect(self.on_event)
 
-    def add_listener(self, client):
-        self.clients.append(client)
+#     def add_listener(self, client):
+#         self.clients.append(client)
 
-    def remove_listener(self, client):
-        self.clients.remove(client)
+#     def remove_listener(self, client):
+#         self.clients.remove(client)
 
-    def on_event(self, signal, payload):
-        data = json.dumps(dict(payload=payload, event=signal))
-        event = "data: {0}\n\n".format(data)
-        for client in self.clients:
-            client.put(event)
+#     def on_event(self, signal, payload):
+#         data = json.dumps(dict(payload=payload, event=signal))
+#         event = "data: {0}\n\n".format(data)
+#         for client in self.clients:
+#             client.put(event)
 
 # logout of the session
 try:
@@ -356,48 +354,37 @@ from flask import jsonify
 def login():
     try:
         supervisor_name = request.form.get("supervisor")
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        # Initialize the response variable
+        response = jsonify()
+
         if not app_routes.polyvisor.use_authentication:
             access_token = create_access_token(identity="guest")
-            response = jsonify({"access_token_cookie": access_token})
-            response.set_cookie('access_token_cookie', access_token, httponly=True, samesite='Lax', secure=True)
-
-            json_response = jsonify({"status": 200, "data": {"message": "Login successfully"}})
-
-            # Include the JSON response in the 'response' object
-            response.data = json_response.data
-            response.content_type = json_response.content_type
-
-            return response
         else:
-            username = request.form.get("username")
-            password = request.form.get("password")
-
             if app_routes.polyvisor.is_login_valid(supervisor_name, username, password):
                 # Create an access token
                 access_token = create_access_token(identity=username)
-                
-                # Set the JWT token as an HTTP-only cookie
-                response = jsonify({"access_token_cookie": access_token})
-                response.set_cookie('access_token_cookie', access_token, httponly=True, samesite='Lax', secure=True)
-
-                json_response = jsonify({"status": 200, "data": {"message": "Login successfully"}})
-
-                # Include the JSON response in the 'response' object
-                response.data = json_response.data
-                response.content_type = json_response.content_type
-
-                return response, 200
             else:
                 json_response = jsonify({"status": 401, "data": {"message": "Invalid username or password"}})
-
-                # Include the JSON response in the 'response' object
                 response.data = json_response.data
                 response.content_type = json_response.content_type
-
                 return response, 401
+
+        # Set the JWT token as an HTTP-only cookie
+        response.set_cookie('access_token_cookie', access_token, httponly=True, samesite='Lax', secure=True)
+
+        json_response = jsonify({"status": 200, "data": {"message": "Login successfully"}})
+
+        # Include the JSON response in the 'response' object
+        response.data = json_response.data
+        response.content_type = json_response.content_type
+
+        return response, 200
+
     except Exception as e:
         logger_routes.debug(e)
-
 
 
 
@@ -508,20 +495,8 @@ except Exception as e:
     logger_routes.debug(e)
 
 
-dispatcher = Dispatcher()
-try:
-    @app_routes.route("/api/stream")
-    def stream():
-        def event_stream():
-            client = queue.Queue()
-            dispatcher.add_listener(client)
-            for event in client:
-                yield event
-            app.dispatcher.remove_listener(client)
 
-        return Response(event_stream(), mimetype="text/event-stream")
-except Exception as e:
-    logger_routes.debug(e)    
+  
 
 
 

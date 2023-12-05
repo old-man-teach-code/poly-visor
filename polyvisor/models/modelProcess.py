@@ -80,6 +80,7 @@ log = logging.getLogger("polyvisor")
             
                 
 #         return processList
+# Enumeration class defining various process states.
 class ProcessStates:
     STOPPED = 0
     STARTING = 10
@@ -90,28 +91,39 @@ class ProcessStates:
     FATAL = 200
     UNKNOWN = 1000
 
-STOPPED_STATES = (ProcessStates.STOPPED,
-                  ProcessStates.EXITED,
-                  ProcessStates.FATAL,
-                  ProcessStates.UNKNOWN)
+# Tuple of states representing processes that are stopped.
+STOPPED_STATES = (
+    ProcessStates.STOPPED,
+    ProcessStates.EXITED,
+    ProcessStates.FATAL,
+    ProcessStates.UNKNOWN
+)
 
-RUNNING_STATES = (ProcessStates.RUNNING,
-                  ProcessStates.BACKOFF,
-                  ProcessStates.STARTING)
+# Tuple of states representing processes that are running or starting.
+RUNNING_STATES = (
+    ProcessStates.RUNNING,
+    ProcessStates.BACKOFF,
+    ProcessStates.STARTING
+)
 
-SIGNALLABLE_STATES = (ProcessStates.RUNNING,
-                     ProcessStates.STARTING,
-                     ProcessStates.STOPPING)
+# Tuple of states representing processes that are signallable (can be started, stopped, etc.).
+SIGNALLABLE_STATES = (
+    ProcessStates.RUNNING,
+    ProcessStates.STARTING,
+    ProcessStates.STOPPING
+)
 
-
+# Class representing a process, inheriting from the built-in dict class.
 class Process(dict):
 
+    # Null values for a process.
     Null = {"running": False, "pid": None, "state": None, "statename": "UNKNOWN"}
 
+    # Constructor for the Process class.
     def __init__(self, supervisor, *args, **kwargs):
         # Initialize with default values
         super(Process, self).__init__(self.Null)
-        
+
         # Update with arguments and keyword arguments
         if args:
             self.update(args[0])
@@ -121,10 +133,9 @@ class Process(dict):
         full_name = f"{self.get('group', '')}:{self.get('name', '')}"
         uid = f"{supervisor_name}:{full_name}"
 
-        
         self.log = log.getChild(uid)
         self.supervisor = weakref.proxy(supervisor)
-        
+
         self["full_name"] = full_name
         self["running"] = self["state"] in RUNNING_STATES
         self["supervisor"] = supervisor_name
@@ -139,14 +150,17 @@ class Process(dict):
         self["network_interface_addrs"] = self.get_network_interface_addrs()
         self["network_interface_stats"] = self.get_network_interface_stats()
 
+    # Property to access the supervisor's server.
     @property
     def server(self):
         return self.supervisor.server.supervisor
 
+    # Property to get the full name of the process.
     @property
     def full_name(self):
         return self["full_name"]
 
+    # Method to handle supervisor events related to the process.
     def handle_event(self, event):
         event_name = event["eventname"]
         if event_name.startswith("PROCESS_STATE"):
@@ -165,6 +179,7 @@ class Process(dict):
                             )
                         )
 
+    # Method to read information about the process from the supervisor.
     def read_info(self):
         proc_info = dict(self.Null)
         try:
@@ -174,38 +189,42 @@ class Process(dict):
             self.log.warn("Failed to read info from %s: %s", self["uid"], err)
         return proc_info
 
+    # Method to update process information based on the provided info.
     def update_info(self, proc_info):
         old = dict(self)
         proc_info["running"] = proc_info["state"] in RUNNING_STATES
         self.update(proc_info)
         return old
 
+    # Method to refresh process information by reading from the supervisor.
     def refresh(self):
         proc_info = self.read_info()
         proc_info = parse_dict(proc_info)
         self.update_info(proc_info)
 
+    # Method to start the process.
     def start(self):
         try:
             send_webhook_alert(self.supervisor.webhook_url, "Start process {}".format(self["uid"]))
             result = self.server.startProcess(self.full_name)
-            if(result):
+            if result:
                 info("Start process {} successfully".format(self["uid"]))
                 return "The process {} has been started".format(self["uid"])
             else:
                 info("Failed to start process {}".format(self["uid"]))
                 return "Failed to start {}".format(self["uid"])
-            
+
         except:
             message = "Error trying to start {}!".format(self)
             error(message)
             self.log.exception(message)
 
+    # Method to stop the process.
     def stop(self):
         try:
             send_webhook_alert(self.supervisor.webhook_url, "Stop process {}".format(self["uid"]))
             result = self.server.stopProcess(self.full_name)
-            if(result):
+            if result:
                 info("Stop process {} successfully".format(self["uid"]))
                 return "The process {} has been stopped".format(self["uid"])
             else:
@@ -217,6 +236,7 @@ class Process(dict):
             warning(message)
             self.log.exception(message)
 
+    # Method to restart the process.
     def restart(self):
         if self["running"]:
             self.stop()
@@ -224,6 +244,7 @@ class Process(dict):
         info("Restart process {}".format(self["uid"]))
         send_webhook_alert(self.supervisor.webhook_url, "Restart process {}".format(self["uid"]))
 
+    # Method to stop all processes.
     def stopAll(self):
         try:
             send_webhook_alert(self.supervisor.webhook_url, "Stop all processes")
@@ -234,6 +255,7 @@ class Process(dict):
             warning(message)
             self.log.exception(message)
 
+    # Method to start all processes.
     def startAll(self):
         try:
             send_webhook_alert(self.supervisor.webhook_url, "Start all processes")
@@ -244,33 +266,21 @@ class Process(dict):
             warning(message)
             self.log.exception(message)
 
-
- 
+    # Method to get network I/O counters for the process.
     def get_network_io_counters(self):
-        """
-        Get network I/O statistics for the process.
-
-        Returns:
-            network_counters (psutil._common.snetio): Network I/O statistics for the process.
-        """
         try:
             process = psutil.Process(self["pid"])
             network_counters = process.io_counters()
             if network_counters is None:
-                #  return an array with 6 elements of 0
-                return [0,0,0,0,0,0]
-            else :
+                # return an array with 6 elements of 0
+                return [0, 0, 0, 0, 0, 0]
+            else:
                 return network_counters
         except psutil.NoSuchProcess:
-            return [0,0,0,0,0,0]
+            return [0, 0, 0, 0, 0, 0]
 
+    # Method to get network connections associated with the process.
     def get_network_connections(self):
-        """
-        Get network connections associated with the process.
-
-        Returns:
-            connections (list): List of named tuples representing network connections.
-        """
         try:
             process = psutil.Process(self["pid"])
             connections = process.connections(kind='inet')  # Filter by IPv4 connections
@@ -278,39 +288,28 @@ class Process(dict):
         except psutil.NoSuchProcess:
             return []
 
+    # Method to get network interface addresses.
     def get_network_interface_addrs(self):
-        """
-        Get addresses associated with network interfaces.
-
-        Returns:
-            interface_addrs (dict): Dictionary where keys are network interface names, and values are lists of named tuples representing addresses.
-        """
         try:
             interface_addrs = psutil.net_if_addrs()
             return interface_addrs
         except Exception as e:
             return {}
 
+    # Method to get network interface statistics.
     def get_network_interface_stats(self):
-        """
-        Get statistics for network interfaces.
-
-        Returns:
-            interface_stats (dict): Dictionary where keys are network interface names, and values are named tuples representing interface statistics.
-        """
         try:
             interface_stats = psutil.net_if_stats()
             return interface_stats
         except Exception as e:
             return {}
 
-    
-
-
+    # String representation of the process.
     def __str__(self):
         return "{0} on {1}".format(self["name"], self["supervisor"])
 
-    def __eq__(self, proc):
+    # Equality comparison for processes.
+    def equal(self, proc):
         p1, p2 = dict(self), dict(proc)
         p1.pop("description")
         p1.pop("now")
@@ -318,9 +317,9 @@ class Process(dict):
         p2.pop("now")
         return p1 == p2
 
-    def __ne__(self, proc):
+    # Inequality comparison for processes.
+    def notEqual(self, proc):
         return not self == proc
-
 
 # start all processes, return array result
 def startAllProcesses():

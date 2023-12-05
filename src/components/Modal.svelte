@@ -97,7 +97,7 @@
 	}
 	const scrollToBottom = async (node: any) => {
 		node.scroll({ top: node.scrollHeight });
-	};
+		};
 
 	const handle_keydown = (e: any) => {
 		if (e.key === 'Escape') {
