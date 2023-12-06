@@ -30,16 +30,6 @@
 		clearInterval(processInterval);
 	}
 
-	onMount(() => {
-		//console log cookie
-		console.log(document.cookie);
-		eventSource = new EventSource('/api/stream');
-		eventSource.onmessage = (event) => {
-			let data = JSON.parse(event.data);
-			console.log(data);
-		};
-	});
-
 	$: if ($isAuthenticated == 'false' && pathname != '/login') {
 		window.location.href = '/login';
 	}

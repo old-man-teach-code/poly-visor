@@ -90,14 +90,14 @@
 			if (!renderedConf) {
 				return;
 			}
-			console.log(renderedConf);
-			conf = renderedConf;
+			console.log(conf);
+			conf = { ...conf, ...renderedConf}
 			conf.edit = true;
 		});
 	}
 	const scrollToBottom = async (node: any) => {
 		node.scroll({ top: node.scrollHeight });
-		};
+	};
 
 	const handle_keydown = (e: any) => {
 		if (e.key === 'Escape') {
@@ -242,7 +242,7 @@
 				<h1 class="font-bold text-xl">Add new process</h1>
 			{:else if modalType === 'editProcess'}
 				<h1 class="font-bold text-xl">
-					Edit <span class="text-orange-400">{conf.process_full_name} </span>process
+					Edit <span class="text-orange-400">{name} </span>process
 				</h1>
 			{/if}
 			<CloseButton on:event={close} />
