@@ -64,7 +64,7 @@
 		directory: '/tmp',
 		stdout_logfile: 'AUTO',
 		stderr_logfile: 'AUTO',
-		edit: false
+		edit: "false"
 	};
 
 	if (modalType === 'log') {
@@ -92,7 +92,7 @@
 			}
 			console.log(conf);
 			conf = { ...conf, ...renderedConf}
-			conf.edit = true;
+			conf.edit = "true";
 		});
 	}
 	const scrollToBottom = async (node: any) => {
