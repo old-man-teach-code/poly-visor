@@ -64,7 +64,7 @@
 		directory: '/tmp',
 		stdout_logfile: 'AUTO',
 		stderr_logfile: 'AUTO',
-		edit: "false"
+		edit: 'false'
 	};
 
 	if (modalType === 'log') {
@@ -91,8 +91,13 @@
 				return;
 			}
 			console.log(conf);
-			conf = { ...conf, ...renderedConf}
-			conf.edit = "true";
+			conf = { ...conf, ...renderedConf };
+			conf.edit = 'true';
+			if (!name.includes(content.group)) {
+				alert('This process may not exist, please check its configuration file');
+			} else {
+				conf.process_full_name = content.group;
+			}
 		});
 	}
 	const scrollToBottom = async (node: any) => {

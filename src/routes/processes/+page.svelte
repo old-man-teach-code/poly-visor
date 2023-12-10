@@ -213,6 +213,7 @@
 													on:event={() => {
 														showModal = 'editProcess';
 														logName = process.group + ':' + process.name;
+														modalContent = process;
 													}}
 												/>
 											</ToolTip>
@@ -252,7 +253,7 @@
 						/>
 					{:else if showModal == 'editProcess'}
 						<Modal
-							content=""
+							content={modalContent}
 							modalType="editProcess"
 							stream=""
 							name={logName}
