@@ -80,7 +80,10 @@ def reread_and_update():
     os.system(commandReread)
     os.system(commandUpdate)
 
-    
+
+
+poly_visor = PolyVisor({"config_file": configPolyvisorPath()})  
+poly_visor.refresh()
 # Create config file for supervisor and check if file exist
 def createConfig(
         pid,
@@ -177,8 +180,7 @@ def renderConfig(process_name,pid):
         return 'File not found'
     
     
-poly_visor = PolyVisor({"config_file": configPolyvisorPath()})  
-poly_visor.refresh()
+
 
 
 # get multiple supervisord instance 
