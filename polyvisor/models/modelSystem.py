@@ -139,7 +139,7 @@ def stats():
             idle=int(line[4])+int(line[5])
             usage=total-idle
             cpuList[line[0]]=[total,idle,usage]
-    #cpuList.pop(0)
+    #cpuList.pop(0
     return cpuList
 
 def cpu_Stats(time_Sec):
