@@ -161,23 +161,23 @@ class Process(dict):
         return self["full_name"]
 
     # Method to handle supervisor events related to the process.
-    # def handle_event(self, event):
-    #     event_name = event["eventname"]
-    #     if event_name.startswith("PROCESS_STATE"):
-    #         payload = event["payload"]
-    #         proc_info = payload.get("process")
-    #         if proc_info is not None:
-    #             proc_info = parse_dict(proc_info)
-    #             old = self.update_info(proc_info)
-    #             if old != self:
-    #                 old_state, new_state = old["statename"], self["statename"]
-    #                 send(self, event="process_changed")
-    #                 if old_state != new_state:
-    #                     info(
-    #                         "{} changed from {} to {}".format(
-    #                             self, old_state, new_state
-    #                         )
-    #                     )
+    def handle_event(self, event):
+        event_name = event["eventname"]
+        if event_name.startswith("PROCESS_STATE"):
+            payload = event["payload"]
+            proc_info = payload.get("process")
+            if proc_info is not None:
+                proc_info = parse_dict(proc_info)
+                old = self.update_info(proc_info)
+                if old != self:
+                    old_state, new_state = old["statename"], self["statename"]
+                    send(self, event="process_changed")
+                    if old_state != new_state:
+                        info(
+                            "{} changed from {} to {}".format(
+                                self, old_state, new_state
+                            )
+                        )
 
     # Method to read information about the process from the supervisor.
     def read_info(self):
