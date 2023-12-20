@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { system } from '../store/supstore';
 	import { processes } from '../store/supstore';
 	import { count } from '../store/supstore';
@@ -8,52 +8,21 @@
 	import { ramChart } from '../store/supstore.js';
 	import Card from '../components/Card.svelte';
 	import CpuCore from '../components/CpuCore.svelte';
+	import { page } from '$app/stores';
 
-	let chart;
-	let textCpu = 'text-[#FF8C32]'; //initial text color for CPU as orange
-	let textRam;
-	let textCores;
+	let chart: any;
+	let textCpu: Boolean = true; //initial text color for CPU as orange
+	let textRam: Boolean;
+	let textCores: Boolean;
 	let chartState = true;
-
+	let labels;
 
 	//Initial data for ChartJS
 	let data = {
 		type: 'line',
 		data: {
 			//X axis data label
-			labels: [
-				'60s',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'',
-				'0s'
-			],
+			labels: Array($cpuChart.length).fill(''),
 			//set default dataset as CPU
 			datasets: [
 				{
@@ -66,6 +35,7 @@
 		},
 		options: {
 			fill: true,
+			resizeDelay: 0,
 			responsive: true,
 			maintainAspectRatio: false,
 			plugins: {
@@ -75,6 +45,11 @@
 				title: {
 					display: true,
 					text: 'Overall CPU usage'
+				},
+				subtitle: {
+					display: true,
+					text: '2 seconds interval',
+					position: 'bottom'
 				}
 			},
 			scales: {
@@ -94,22 +69,22 @@
 			ds.data = $cpuChart;
 		});
 		data.options.plugins.title.text = 'Overall CPU usage';
-		textCpu = 'text-[#FF8C32]';
-		textRam = 'text-black';
-		textCores = 'text-black';
+		textCpu = true;
+		textRam = false;
+		textCores = false;
 	} else if (chart == 'RAM %') {
 		data.data.datasets.forEach((ds) => {
 			ds.label = chart;
 			ds.data = $ramChart;
 		});
 		data.options.plugins.title.text = 'Overall RAM usage';
-		textCpu = 'text-black';
-		textRam = 'text-[#FF8C32]';
-		textCores = 'text-black';
+		textCpu = false;
+		textRam = true;
+		textCores = false;
 	} else if (chart == 'Cores') {
-		textCpu = 'text-black';
-		textRam = 'text-black';
-		textCores = 'text-[#FF8C32]';
+		textCpu = false;
+		textRam = false;
+		textCores = true;
 	}
 	//function for handling CPU's chart
 	function chartCpu() {
@@ -132,33 +107,35 @@
 	}
 </script>
 
-<div class="w-full h-screen px-10 space-y-5">
-	<h1 class="text-2xl font-semibold pt-5">Overview</h1>
-	<div class="space-y-5 h-3/4">
-		<div class="flex flex-row space-x-5">
-			<Card color={textCpu} content="{$system.cpu}%" title="Cpu Usage" on:event={chartCpu} />
-			<Card color={textRam} content="{$system.memory}%" title="Ram Usage" on:event={chartRam} />
-			<Card color={textCores} content={$cpuCount} title="Number of cores" on:event={chartCores} />
-			<a class="w-full" href="/processes">
-			<Card
-			content="{$count}/{Object.keys($processes).length}"
-			color="null"
-			title="Running processes"
-			/>	
-		</a>
+<div class="px-10 space-y-5 mb-5 flex flex-col w-full">
+	<h1 class="text-2xl font-semibold mt-5">Overview</h1>
+	<div class="flex flex-col gap-5">
+		<div class="grid xl:grid-cols-4 grid-cols-2 gap-7">
+			<Card enabled={textCpu} content="{$system.cpu}%" title="Cpu Usage" on:event={chartCpu} />
+			<Card enabled={textRam} content="{$system.memory}%" title="Ram Usage" on:event={chartRam} />
+			<Card enabled={textCores} content={$cpuCount} title="Number of cores" on:event={chartCores} />
+			<a class="" href="/processes">
+				<Card
+					content="{$count}/{Object.keys($processes).length}"
+					enabled={false}
+					title="Running processes"
+				/>
+			</a>
 		</div>
-		{#if chartState}
-		<div class="h-full flex justify-center">
-			<div class="w-3/4 h-3/4 relative border-2 bg-white rounded-md flex justify-center">
+	</div>
+	{#if chartState}
+		<div
+			class="max-w-[80vw] md:max-w-[60vw] aspect-video md:aspect-[21/9] sm:w-[60vw] w-[80vw] mx-auto overflow-auto"
+		>
+			<div class="bg-white border-2 h-full rounded-md">
 				<canvas class="p-2" use:chartJS={data} id="myChart" />
 			</div>
 		</div>
-		{:else}
-		<div class="grid grid-cols-4 justify-items-center place-content-center gap-10">
+	{:else}
+		<div class="grid lg:grid-cols-4 grid-cols-2 justify-items-center place-content-center gap-10">
 			{#each Object.entries($system.cores) as [key, value]}
-			<CpuCore coreName={key} coreValue={value} />
+				<CpuCore coreName={key} coreValue={value} />
 			{/each}
 		</div>
-		{/if}
-	</div>
+	{/if}
 </div>

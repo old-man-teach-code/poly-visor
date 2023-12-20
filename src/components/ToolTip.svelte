@@ -6,10 +6,10 @@
 	onMount(() => {
 		tooltip = 'invisible';
 	});
-	function handleMouseOver(e) {
+	function handleMouseOver() {
 		tooltip = 'visible';
 	}
-	function handleMouseOut(e) {
+	function handleMouseOut() {
 		tooltip = 'invisible';
 	}
 </script>
@@ -19,7 +19,7 @@
 		<slot />
 	</div>
 	<span
-		class="{tooltip} absolute text-center border border-solid border-gray-300 shadow-sm bg-white rounded px-1 text-gray-600 z-[1]"
+		class="{tooltip} absolute text-center border  border-solid border-gray-300 shadow-sm bg-white rounded px-1 text-gray-600 z-[1]"
 		>{title}</span
 	>
 </div>

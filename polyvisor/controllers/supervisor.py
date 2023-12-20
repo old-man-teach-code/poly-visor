@@ -4,7 +4,8 @@ import os
 import configparser
 from flask import send_file
 from polyvisor.models.modelSupervisor import Supervisor
-from polyvisor.finder import split_config_path
+from polyvisor.finder import configPolyvisorPath, split_config_path
+from polyvisor.models.modelPolyvisor import PolyVisor
 
 # Get PARENT path of project to import modules
 current = os.path.dirname(os.path.realpath(__file__))
@@ -81,26 +82,12 @@ def reread_and_update():
 
 
 
-    purpose = {
-        'command': 'The command that will be run when this program is started',
-        'numprocs': 'Supervisor will start as many instances of this program as named by numprocs',
-        'umask': 'The umask value that will be used when this program is started',
-        'numprocs_start': 'An integer offset that is used to compute the number at which process_num starts',
-        'priority': 'The relative priority of the program in the start and shutdown ordering',
-        'autostart': 'If true, the program will be automatically started when Supervisor starts',
-        'autorestart': 'Specifies if supervisord should automatically restart a process if it exits when it is in the RUNNING state',
-        'startsecs': 'The total number of seconds which the program needs to stay running after a startup to consider the start successful',
-        'startretries': 'The number of serial failure attempts that supervisord will allow when attempting to start the program before giving up and putting the process into an FATAL state',
-        'exitcodes': 'The list of “expected” exit codes for this program used with autorestart',
-        'stopsignal': 'The signal used to kill the program when a stop is requested',
-        'stopwaitsecs': 'The number of seconds to wait for the OS to return a SIGCHLD to supervisord after the program has been sent a stopsignal',
-        'stopasgroup': 'If true, the flag causes supervisor to send the stop signal to the whole process group and implies killasgroup is true',
-        'killasgroup': 'If true, the flag causes supervisor to send the kill signal to the whole process group',
-        'redirect_stderr': 'If true, cause the process’ stderr output to be sent back to supervisord on its stdout file descriptor',
-
-    }
+poly_visor = PolyVisor({"config_file": configPolyvisorPath()})  
+poly_visor.refresh()
 # Create config file for supervisor and check if file exist
 def createConfig(
+        pid,
+        supervisor_name,
         process_full_name, 
         command, 
         process_name='%(program_name)s_%(process_num)02d',
@@ -133,9 +120,9 @@ def createConfig(
         environment='', 
         serverurl='AUTO', 
         directory='/tmp'):
-    # if (os.path.isfile(split_config_path() + process_full_name + '.ini')):
-    #     return False
-    # else:
+    
+        
+    
         config = configparser.ConfigParser(interpolation= None)
         process_full_name = process_full_name.split('_')[0]
         config['program:' + process_full_name] = {
@@ -171,21 +158,72 @@ def createConfig(
             'serverurl': serverurl,
             'directory': directory
         }
-        with open(split_config_path() + process_full_name + '.ini', 'w') as config_file:
+        with open(split_config_path(pid) + process_full_name + '.ini', 'w') as config_file:
             config.write(config_file)
-        reread_and_update()
+        
+        poly_visor.reread_supervisors(supervisor_name)
+        poly_visor.update_supervisors(supervisor_name)
         return True
 
 
 
 # render config file
-def renderConfig(process_name):
+def renderConfig(process_name,pid):
     # remove the part after the '_' in the process_name and both the '_' 
-    if (os.path.isfile(split_config_path() + process_name + '.ini')):
+    if (os.path.isfile(split_config_path(pid) + process_name + '.ini')):
         # return the .ini file with dictionary format and omit the [program:process_name] header
         config = configparser.ConfigParser(interpolation=None)
-        config.read(split_config_path() + process_name + '.ini')
+        config.read(split_config_path(pid) + process_name + '.ini')
         return dict(config.items('program:' + process_name))
 
     else:
         return 'File not found'
+    
+    
+
+
+
+# get multiple supervisord instance 
+def getMultipleSupervisors():
+    supervisors = poly_visor.get_supervisors
+
+    return supervisors
+
+
+# get supervisord instance by uid
+def getSupervisor(uid):
+    
+    poly_visor.refresh()
+    supervisor = poly_visor.get_supervisor(uid)
+
+    return supervisor
+
+
+# get supervisord's processes by uid
+def getSupervisorProcesses(uid):
+    
+    supervisor = poly_visor.get_supervisor_processes(uid)
+    # poly_visor.refresh()
+
+    return supervisor
+
+# shutdown supervisord instance by uid
+
+def shutdownSupervisors(*names):
+    
+    poly_visor.shutdown_supervisors(*names)
+
+    return True
+
+# restart supervisord instance by names
+def restartSupervisors(*names):
+   
+    result = poly_visor.restart_supervisors(*names)
+
+    return result
+
+# start process by name
+
+
+
+

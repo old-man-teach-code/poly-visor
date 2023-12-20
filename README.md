@@ -15,6 +15,12 @@ This version has only been tested on Linux OS.
 
 To install polyvisor. The following steps need to be followed exactly.
 
+### Requirements
+Polyvisor needs some packages to run, install by ```pip```:
+```bash
+pip install -r requirements.txt
+```
+
 ### Web server
 Clone the repository from git
 ```bash
@@ -37,12 +43,89 @@ Add the following line to supervisord config file
 [rpcinterface:polyvisor]
 supervisor.rpcinterface_factory = polyvisor.rpc:make_rpc_interface
 bind=5000
+access_point=auto
 ```
+```access_point``` is optional, you can remove it if you don't want to access the web dashboard from LAN.
+You can specify access_point on an IP address or set to ```auto```, the program will automatically search for IP and get that value, if there is no data, they will run on ```localhost```
 
 Run supervisord along with polyvisor via supervisord.conf
 ```bash
 supervisord -c /route/to/conf/supervisord.conf
 ```
+
+To run multiple supervisord instances, first create a polyvisor.ini file to store all the urls of each supervisord instance (which is the "serverurl" in the "[supervisorctl]" section)
+```ini
+[supervisor:<name of the first supervisord instance>]
+url=<url of the first supervisord instance>
+
+[supervisor:<name of the second supervisord instance>]
+url=<url of the second supervisord instance>
+```
+And then run the supervisord instances sequentially with the following command
+```bash
+supervisord -c /route/to/conf/first_supervisord_instance.conf
+supervisord -c /route/to/conf/second_supervisord_instance.conf
+``` 
+After that run the polyvisor rpc interface via supervisord
+
+Here is the example
+
+polyvisor.ini:
+```ini
+[supervisor:lid001]
+url=localhost:9011
+
+
+[supervisor:lid002]
+url=localhost:9021
+
+
+[global]
+name=Test
+```
+
+lid001.conf:
+```ini
+[inet_http_server]
+port=:9011
+
+[supervisord]
+logfile_backups=10
+logfile_maxbytes=1MB
+pidfile=/tmp/supervisor_lid001.pid
+identifier=lid001
+
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+[supervisorctl]
+serverurl=http://localhost:9011
+
+[include]
+files = /etc/supervisor/conf.d/*.ini; change your process directory accordingly
+```
+
+lid002.conf:
+```ini
+[inet_http_server]
+port=:9021
+
+[supervisord]
+logfile_backups=10
+logfile_maxbytes=1MB
+pidfile=/tmp/supervisor_lid002.pid
+identifier=lid002
+
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+[supervisorctl]
+serverurl=http://localhost:9021
+
+[include]
+files = /etc/supervisor/conf2.d/*.ini; change your process directory accordingly
+```
+
 
 # Development
 

@@ -1,16 +1,16 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
 
-	export let options;
-	export let title;
+	export let options: any[];
+	export let title: string;
 	let statename = false;
-	export let result = [];
+	export let result: any[] = [];
 	onMount(() => {
 		result = options;
 	});
 </script>
 
-<div class="flex justify-end pr-24 ">
+<div class="flex justify-end ">
 	{#if statename}
 		<div
 			class="fixed top-0 left-0 w-screen h-screen"
@@ -37,7 +37,7 @@
 		<svg
 			class="{statename
 				? 'rotate-180'
-				: 'rotate-0'} -mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+				: 'rotate-0'} -mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500 transition-all duration-300"
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 20 20"
 			fill="currentColor"
@@ -53,7 +53,7 @@
 	<div
 		class="{statename
 			? 'transform opacity-100 scale-100 translate-y-5'
-			: 'transform opacity-0 scale-95 -translate-x-full invisible'} absolute z-10 mt-2 origin-top-right rounded-md bg-white p-4 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none"
+			: 'transform opacity-0 scale-95 -translate-x-full invisible'} absolute z-20 mt-2 origin-top-right rounded-md bg-white p-4 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none"
 	>
 		<form class="space-y-4">
 			{#each options as option}

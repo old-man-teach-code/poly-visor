@@ -11,14 +11,27 @@ def make_rpc_interface(supervisord,**config):
     sup = SupervisorNamespaceRPCInterface(supervisord)
     
     #p1=threading.Thread(target=run_server)
-    get_bind = config.get("bind",0)
-    bind = int(get_bind)
-    if(bind==0):
-        bind=5000
-    p1=multiprocessing.Process(target=run_server,args=(bind,))    
+    get_bind = config.get("bind",5000)
+    access_point = config.get("access_point","localhost")    
+    if access_point == "auto":        
+        access_point = get_ip()       
+    bind = int(get_bind)   
+    p1=multiprocessing.Process(target=run_server,args=(access_point,bind,))    
     p1.start()
     
 
-def run_server(bind):   
-    http_server = WSGIServer(("localhost", bind), app)
+def run_server(ipAddress,bind):   
+    http_server = WSGIServer((ipAddress, bind), app)
     http_server.serve_forever()
+
+def get_ip():
+    try:
+        import socket
+        # get ipv4 and ipv6 address of machine using socket module
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ipv4 = s.getsockname()[0]
+        s.close()
+        return ipv4
+    except:
+        return "localhost"

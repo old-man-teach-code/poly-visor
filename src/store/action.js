@@ -1,84 +1,114 @@
-//ChartJS import
-// import chartjs from 'chart.js';
-import { Chart, LineElement, PointElement, LineController, CategoryScale, LinearScale, Filler, Legend, Title, Tooltip } from 'chart.js';
-// import chartjs from 'chart.js/auto';
-// const { Chart, LineElement, PointElement, LineController, CategoryScale, LinearScale, Filler, Legend, Title, Tooltip } = chartjs;
-
+import {
+	Chart,
+	LineElement,
+	PointElement,
+	LineController,
+	CategoryScale,
+	LinearScale,
+	Filler,
+	Legend,
+	Title,
+	SubTitle,
+	Tooltip
+} from 'chart.js';
+import { currentPid, loading } from './supstore.js';
+import { get } from 'svelte/store';
 
 Chart.register(
-    LineElement,
-    PointElement,
-    LineController,
-    CategoryScale,
-    LinearScale,
-    Filler,
-    Legend,
-    Title,
-    Tooltip,
+	LineElement,
+	PointElement,
+	LineController,
+	CategoryScale,
+	LinearScale,
+	Filler,
+	Legend,
+	Title,
+	SubTitle,
+	Tooltip
 );
 
 let chart;
-//ChartJS function for creating, updating. Delete chart when there's no param
+
 export function chartJS(node, config) {
-    const ctx = node.getContext('2d');
-    chart = new Chart(ctx, config)
-    return {
-        update(newConfig) {
-            chart.data = newConfig.data;
-            Object.assign(chart.options, newConfig.options);
-            chart.update();
-        },
-        destroy() {
-            chart.destroy();
-        }
-    }
+	const ctx = node.getContext('2d');
+	chart = new Chart(ctx, config);
+	return {
+		update(newConfig) {
+			chart.data = newConfig.data;
+			Object.assign(chart.options, newConfig.options);
+			chart.update();
+		},
+		destroy() {
+			chart.destroy();
+		}
+	};
 }
 
 export function destroyChart() {
-    chart.destroy();
+	chart.destroy();
 }
 
+async function makeApiRequest(url, method, body) {
+	if (get(loading)) return;
+	loading.set(true);
+	try {
+		const response = await fetch(url, {
+			method: method,
+			body: body
+		});
 
-//call start process api
-export async function startProcess(name) {
-    const res = await fetch(`http://localhost:5000/process/start/${name}`);
-    const message = await res.json();
-    return message;
+		const data = await response.json();
+
+		if (data.status === 401) {
+			window.location.href = '/login';
+			alert('Unauthorized');
+			return;
+		}
+
+		return data;
+	} catch (error) {
+		console.error(error);
+	} finally {
+		loading.set(false);
+	}
 }
-export async function stopProcess(name) {
-    const res = await fetch(`http://localhost:5000/process/stop/${name}`);
-    const message = await res.json();
-    return message;
+
+export async function startProcess(formData) {
+	return makeApiRequest('/api/processes/start', 'POST', formData);
 }
-export async function startAllProcess() {
-    const res = await fetch('http://localhost:5000/processes/start');
-    const message = await res.json();
-    return message;
+
+export async function stopProcess(formData) {
+	return makeApiRequest('/api/processes/stop', 'POST', formData);
 }
-export async function stopAllProcess() {
-    const res = await fetch('http://localhost:5000/processes/stop');
-    const message = await res.json();
-    return message;
+
+export async function startAllProcess(supervisor) {
+	return makeApiRequest(`/api/processes/startAll/${supervisor}`);
+}
+
+export async function stopAllProcess(supervisor) {
+	return makeApiRequest(`/api/processes/stopAll/${supervisor}`);
 }
 
 export async function addNewProcessConf(conf) {
-    console.log(conf)
-    const res = await fetch('http://localhost:5000/config/create', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(conf)
-    });
-    const message = await res.json();
-    alert(message.message)
-    return message;
+	return makeApiRequest('/api/config/create', 'POST', JSON.stringify(conf));
 }
 
-
-export async function renderProcessConf(name){
-    const res = await fetch(`http://localhost:5000/config/render/${name}`);
-    const data = await res.json();
-    return data;
+export async function renderProcessConf(name) {
+	return makeApiRequest(`/api/config/render/${get(currentPid)}/${name}`);
 }
 
+export async function Taskset(pid, index) {
+	return makeApiRequest(`/api/cpu/set_affinity/${pid}/${index}`);
+}
+
+export async function getAllSupervisors() {
+	return makeApiRequest('/api/supervisors');
+}
+
+export async function login(formdata) {
+	return makeApiRequest('/api/login', 'POST', formdata);
+}
+
+export async function logout() {
+	return makeApiRequest('/api/logout', 'POST');
+}

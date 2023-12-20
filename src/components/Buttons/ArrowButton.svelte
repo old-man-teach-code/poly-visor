@@ -6,7 +6,7 @@
 		dispatch('event');
 	}
 
-	let arrow = {
+	let arrow :any = {
 		right: 'M8.25 4.5l7.5 7.5-7.5 7.5',
 		left: 'M15.75 19.5L8.25 12l7.5-7.5',
 		down: 'M19.5 8.25l-7.5 7.5-7.5-7.5',

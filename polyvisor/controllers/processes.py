@@ -1,27 +1,29 @@
 import sys
 import os
+from polyvisor.finder import configPolyvisorPath
+from polyvisor.models.modelPolyvisor import PolyVisor
 # Get parent path of project to import modules
 current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 # insert into PYTHONPATH
 sys.path.insert(1, parent)
-from polyvisor.models.modelProcess import Process, clear_all_process_log, read_stdErr_logFile, read_stdOut_logFile, startAllProcesses, startProcessByName, startProcessGroup, stopAllProcesses, stopProcessByName, clear_process_log, stopProcessGroup, tail_stdErr_logFile, tail_stdOut_logFile, get_process_affinity_CPU,set_process_affinity_CPU
+from polyvisor.models.modelProcess import Process, clear_all_process_log, read_stdErr_logFile, read_stdOut_logFile, startProcessGroup, stopAllProcesses, clear_process_log, stopProcessGroup, tail_stdErr_logFile, tail_stdOut_logFile, get_process_affinity_CPU,set_process_affinity_CPU
 
-#get all processes info
+# get all processes info
 def get_all_processes_model():
     return Process.getAllProcessInfo()
 
-#start all processes, return array result
-def start_all_processes_model():
-    return startAllProcesses()    
+# #start all processes, return array result
+# def start_all_processes_model():
+#     return startAllProcesses()    
 
 #start process by name, always return True unless error
-def start_process_by_name_model(name):
-    return startProcessByName(name)
+# def start_process_by_name_model(name):
+#     return startProcessByName(name)
 
 #stop process by name, always return True unless error
-def stop_process_by_name_model(name):
-    return stopProcessByName(name)
+# def stop_process_by_name_model(name):
+#     return stopProcessByName(name)
 
 #stop ALL process, return array result
 def stop_all_processes_model():
@@ -71,8 +73,44 @@ def process_Core_Index(pid):
     result = get_process_affinity_CPU(pid)
     if(result.find("failed")!=-1):
         return False
-    return result
+    return True
 
 # Set affinity list in CPU, Return True unless error, parameter core_index SHOULD be STRING, value can be "3,4,9" or "4-12"
 def set_Process_Core_Index(pid, core_index):
     return set_process_affinity_CPU(pid,core_index)
+
+poly_visor = PolyVisor({"config_file": configPolyvisorPath()})
+
+def stop_processes_by_name_model(*name):
+
+    poly_visor.refresh()
+    
+    result = poly_visor.stop_processes(*name)
+    return True
+    
+
+def restart_processes_by_name_model(*name):
+
+    
+    
+    result = poly_visor.restart_processes(*name)
+    return True    
+
+def start_processes_by_name_model(*name):
+
+    
+    result = poly_visor.start_processes(*name)
+    return True
+
+
+def stop_all_processes_by_supervisor_model(*name):
+
+    
+    result = poly_visor.stop_all_processes_by_supervisor(*name)
+    return True
+
+def start_all_processes_by_supervisor_model(*name):
+    
+        
+    result = poly_visor.start_all_processes_by_supervisor(*name)
+    return True

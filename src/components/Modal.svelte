@@ -11,14 +11,16 @@
 	import AddButton from './Buttons/AddButton.svelte';
 	import { addNewProcessConf } from '../store/action';
 	import ArrowButton from './Buttons/ArrowButton.svelte';
-	import {renderProcessConf} from '../store/action';
+	import { renderProcessConf } from '../store/action';
 	import EditButton from './Buttons/EditButton.svelte';
+	import Taskset from './Taskset.svelte';
+	import { currentSupervisor, currentPid } from '../store/supstore';
 
 	const dispatch = createEventDispatcher();
 	const close = () => dispatch('close');
-	export let content: String;
-	export let modalType: String;
-	export let stream: String;
+	export let content: any;
+	export let modalType: string;
+	export let stream: string;
 	export let name: string;
 	let modal: HTMLElement;
 	let scroll = true;
@@ -29,6 +31,8 @@
 	const processLog = writable('');
 
 	let conf = {
+		supervisor_name: $currentSupervisor,
+		pid: $currentPid,
 		process_full_name: '',
 		command: '',
 		numprocs: '1',
@@ -58,14 +62,14 @@
 		environment: '',
 		serverurl: 'AUTO',
 		directory: '/tmp',
-		stdout_logfile:'AUTO',
-		stderr_logfile:'AUTO',
-		edit:false
+		stdout_logfile: 'AUTO',
+		stderr_logfile: 'AUTO',
+		edit: 'false'
 	};
 
 	if (modalType === 'log') {
 		onMount(() => {
-			eventSource = new EventSource(`http://localhost:5000/process/${stream}/${name}`);
+			eventSource = new EventSource(`/api/process/${stream}/${$currentSupervisor}:${name}`);
 			eventSource.onmessage = (event) => {
 				let dataProcesses = JSON.parse(event.data);
 				if (logState) {
@@ -78,20 +82,29 @@
 				scrollToBottom(modal);
 			}
 		});
-	}else if(modalType === 'editProcess'){
-		//map the return of renderObjectConf to conf
-		renderProcessConf(name).then((data) => {
-			conf = data;
-			conf.process_full_name = name;
-			conf.edit = true;
-		});
-		
 	}
-	const scrollToBottom = async (node) => {
+	if (modalType === 'editProcess') {
+		//map the return of renderObjectConf to conf
+		onMount(async () => {
+			const renderedConf = await renderProcessConf(`${$currentSupervisor}:${name}`);
+			if (!renderedConf) {
+				return;
+			}
+			console.log(conf);
+			conf = { ...conf, ...renderedConf };
+			conf.edit = 'true';
+			if (!name.includes(content.group)) {
+				alert('This process may not exist, please check its configuration file');
+			} else {
+				conf.process_full_name = content.group;
+			}
+		});
+	}
+	const scrollToBottom = async (node: any) => {
 		node.scroll({ top: node.scrollHeight });
 	};
 
-	const handle_keydown = (e) => {
+	const handle_keydown = (e: any) => {
 		if (e.key === 'Escape') {
 			close();
 			return;
@@ -100,14 +113,15 @@
 		if (e.key === 'Tab') {
 			// trap focus
 			const nodes = modal.querySelectorAll('*');
-			const tabbable = Array.from(nodes).filter((n) => n.tabIndex >= 0);
+			const tabbable = Array.from(nodes).filter((n: any) => n.tabIndex >= 0);
 
+			// @ts-ignore
 			let index = tabbable.indexOf(document.activeElement);
 			if (index === -1 && e.shiftKey) index = 0;
 
 			index += tabbable.length + (e.shiftKey ? -1 : 1);
 			index %= tabbable.length;
-
+			// @ts-ignore
 			tabbable[index].focus();
 			e.preventDefault();
 		}
@@ -117,6 +131,7 @@
 
 	if (previously_focused) {
 		onDestroy(() => {
+			// @ts-ignore
 			previously_focused.focus();
 		});
 	}
@@ -124,10 +139,13 @@
 
 <svelte:window on:keydown={handle_keydown} />
 {#if modalType === 'log'}
-	<div class="modal-background" on:click={()=>{
-		close();
-		eventSource.close();
-	}} />
+	<div
+		class="modal-background"
+		on:click={() => {
+			close();
+			eventSource.close();
+		}}
+	/>
 	<div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
 		<div class="sticky top-0 bg-orange-200 py-5 flex items-center justify-between">
 			<div class="pl-8">
@@ -165,11 +183,12 @@
 			</ToolTip>
 			<div class="pr-5">
 				<ToolTip title="Close log">
-					<CloseButton on:event={()=> {
+					<CloseButton
+						on:event={() => {
 							close();
-							eventSource.close()
-						
-						}} />
+							eventSource.close();
+						}}
+					/>
 				</ToolTip>
 			</div>
 		</div>
@@ -227,11 +246,32 @@
 			{#if modalType === 'addProcess'}
 				<h1 class="font-bold text-xl">Add new process</h1>
 			{:else if modalType === 'editProcess'}
-				<h1 class="font-bold text-xl">Edit <span class="text-orange-400">{conf.process_full_name} </span>process</h1>
+				<h1 class="font-bold text-xl">
+					Edit <span class="text-orange-400">{name} </span>process
+				</h1>
 			{/if}
 			<CloseButton on:event={close} />
 		</div>
 		<div class="p-10 flex flex-col space-y-5">
+			<div class="place-self-center">
+				{#if modalType === 'addProcess'}
+					<ToolTip title="Add process config">
+						<AddButton
+							on:event={() => {
+								addNewProcessConf(conf);
+							}}
+						/>
+					</ToolTip>
+				{:else if modalType === 'editProcess'}
+					<ToolTip title="Edit process config">
+						<EditButton
+							on:event={() => {
+								addNewProcessConf(conf);
+							}}
+						/>
+					</ToolTip>
+				{/if}
+			</div>
 			{#if modalType === 'addProcess'}
 				<Input
 					bind:inputValue={conf.process_full_name}
@@ -382,43 +422,60 @@
 					inputPlaceholder="Server url for the process"
 				/>
 				<Input
-				bind:inputValue={conf.stdout_logfile}
-				inputLabel="Stdout_logfile"
-				inputPlaceholder="Log file location"
-			/>
-			<Input
-				bind:inputValue={conf.stderr_logfile}
-				inputLabel="Stderr_logfile"
-				inputPlaceholder="Error log file location"
-			/>
+					bind:inputValue={conf.stdout_logfile}
+					inputLabel="Stdout_logfile"
+					inputPlaceholder="Log file location"
+				/>
+				<Input
+					bind:inputValue={conf.stderr_logfile}
+					inputLabel="Stderr_logfile"
+					inputPlaceholder="Error log file location"
+				/>
 			{/if}
-			<div class="pt-5 place-self-center">
-				{#if modalType === 'addProcess'}
-					<ToolTip title="Add process config">
-						<AddButton
-							on:event={() => {
-								addNewProcessConf(conf);
-							}}
-						/>
-					</ToolTip>
-				{:else if modalType === 'editProcess'}
-					<ToolTip title="Edit process config">
-						<EditButton
-							on:event={() => {
-								addNewProcessConf(conf);
-							}}
-						/>
-					</ToolTip>
-				{/if}
-			</div>
 		</div>
 		<!-- svelte-ignore a11y-autofocus -->
+	</div>
+{:else if modalType === 'io'}
+	<div class="modal-background" on:click={close} />
+	<div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
+		<div class="sticky top-0 bg-orange-200 py-5 z-10 flex items-center justify-between px-10">
+			<h1 class="font-bold text-xl">
+				Input/Output
+				<span class="text-green-600">
+					{content?.name}
+				</span>
+			</h1>
+			<CloseButton on:event={close} />
+		</div>
+		<ul class="py-6 px-10 space-y-3">
+			{#each content?.network_io_counters as item}
+				<li>
+					{item.key}: {item.value}
+				</li>
+			{/each}
+		</ul>
+	</div>
+{:else if modalType === 'taskset'}
+	<div class="modal-background" on:click={close} />
+	<div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
+		<div class="sticky top-0 bg-orange-200 py-5 z-10 flex items-center justify-between px-10">
+			<h1 class="font-bold text-xl">
+				Taskset
+				<span class="text-green-600">
+					{content.process.pid}
+				</span>
+			</h1>
+			<CloseButton on:event={close} />
+		</div>
+		<hr class="pb-5" />
+		<Taskset on:closeTask={close} totalCore={content.cores} process={content.process} />
 	</div>
 {/if}
 
 <style>
 	.modal-background {
 		z-index: 10;
+		display: flex;
 		position: fixed;
 		top: 0;
 		left: 0;
@@ -428,13 +485,14 @@
 	}
 
 	.modal {
+		box-sizing: border-box;
 		z-index: 10;
-		position: absolute;
+		position: fixed;
 		left: 50%;
 		top: 50%;
 		width: calc(100vw - 4em);
+		height: 80%;
 		max-width: 32em;
-		max-height: calc(100vh - 4em);
 		overflow: auto;
 		transform: translate(-50%, -50%);
 		border-radius: 0.2em;
